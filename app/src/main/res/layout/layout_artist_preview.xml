@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="70dp"
+    android:background="@color/background_color">
+
+    <ImageView
+        android:id="@+id/artist_image"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:background="@drawable/avatar_shape"
+        android:src="@drawable/ic_spotify">
+    </ImageView>
+
+    <RelativeLayout
+        android:id="@+id/info_artist"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_toEndOf="@+id/artist_image"
+        android:layout_toStartOf="@+id/layout_follow_button">
+        <RelativeLayout
+            android:id="@+id/layout_artist_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/artist_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:text="Tên nghệ sĩ"
+                android:textColor="@color/white"
+                android:textSize="17sp"
+                android:fontFamily="@font/main_font"/>
+
+            <ImageView
+                android:layout_width="14dp"
+                android:layout_height="14dp"
+                android:layout_centerInParent="true"
+                android:layout_toEndOf="@+id/artist_name"
+                android:src="@drawable/ic_bluetick"
+                android:visibility="visible">
+
+            </ImageView>
+
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/type"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/layout_artist_name"
+            android:padding="4dp"
+            android:text="Nghệ sĩ"
+            android:textColor="@android:color/darker_gray"
+            android:textSize="12sp"
+            android:fontFamily="@font/main_font"/>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_follow_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/button_border"
+        android:paddingLeft="4dp"
+        android:paddingRight="4dp">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:text="Theo dõi"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/main_font"/>
+    </RelativeLayout>
+
+</RelativeLayout>

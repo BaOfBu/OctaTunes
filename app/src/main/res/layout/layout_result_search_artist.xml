@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp">
+
+            <include android:id="@+id/artist" layout="@layout/layout_artist_preview"/>
+
+            <TextView
+                android:id="@+id/textview_album"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="viewStart"
+                android:layout_marginTop="40dp"
+                android:layout_marginBottom="10dp"
+                android:layout_below="@id/artist"
+                android:text="Có sự xuất hiện của ..."
+                android:textSize="24dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:fontFamily="@font/main_font">
+
+            </TextView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_album_preview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/textview_album"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_album_preview" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_track_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                android:layout_below="@id/recyclerview_album_preview"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_track_preview" />
+
+        </RelativeLayout>
+
+    </ScrollView>
+</RelativeLayout>
