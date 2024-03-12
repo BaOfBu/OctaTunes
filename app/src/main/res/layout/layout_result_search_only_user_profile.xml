@@ -17,13 +17,13 @@
             android:layout_marginTop="15dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_album_preview_2"
+                android:id="@+id/recyclerview_user_profile_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_album_preview_2" />
+                tools:listitem="@layout/layout_user_profile_preview" />
 
         </RelativeLayout>
 
