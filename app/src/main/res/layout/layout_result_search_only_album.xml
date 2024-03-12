@@ -23,7 +23,7 @@
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_artist_preview" />
+                tools:listitem="@layout/layout_album_preview_2" />
 
         </RelativeLayout>
 
