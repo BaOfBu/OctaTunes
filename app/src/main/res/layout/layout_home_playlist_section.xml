@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Title for playlist section -->
+    <TextView
+        android:id="@+id/playlistHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:gravity="start"
+        android:textColor="@color/white"
+        android:background="?attr/selectableItemBackground"
+        android:textStyle="bold"
+        android:text="Made for Bình Lê Tuấn"/>
+
+
+    <!-- RecyclerView to display a list of playlists -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/playlistsRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:orientation="horizontal"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/layout_home_playlist_item" />
+</LinearLayout>

@@ -12,30 +12,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <!-- This TextView can serve as a title or header for the playlist section -->
-            <TextView
-                android:id="@+id/playlistHeader"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:padding="16dp"
-                android:text="Made for Bình Lê Tuấn"
-                android:textAppearance="@style/TextAppearance.AppCompat.Large"
-                android:gravity="start"
-                android:textColor="@color/white"
-                android:background="?attr/selectableItemBackground"
-                android:textStyle="bold" />
-
-            <!-- RecyclerView to display a list of playlists -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/playlistsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@id/playlistHeader"
-                android:orientation="horizontal"
-                android:padding="16dp"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_playlist_item" />
-
+            <include layout="@layout/layout_home_playlist_section" />
+            <include layout="@layout/layout_home_playlist_section" />
         </LinearLayout>
+
     </ScrollView>
 </RelativeLayout>
