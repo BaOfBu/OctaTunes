@@ -3,14 +3,14 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="20dp"
+    android:padding="10dp"
     android:background="@color/background_color">
         <ImageView
             android:id="@+id/artist_image"
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:scaleType="centerCrop"
-            android:src="@drawable/artist"
+            android:src="@drawable/ic_artist"
             android:background="@drawable/avatar_shape"
             android:layout_marginBottom="10dp"
             android:clipToOutline="true" />

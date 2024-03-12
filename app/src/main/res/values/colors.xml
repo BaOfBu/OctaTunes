@@ -7,4 +7,5 @@
     <color name="light_gray_color">#05CCCCCC</color>
     <color name="medium_gray_color">#10CCCCCC</color>
     <color name="bold_gray_color">#99CCCCCC</color>
+    <color name="light_black_color">#444a4a</color>
 </resources>
