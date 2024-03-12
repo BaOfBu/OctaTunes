@@ -15,9 +15,10 @@
         android:width="40dp"
         android:textAlignment="center"
         android:height="40dp"
+        android:textColor="@color/black"
         android:textStyle="bold"
         android:text="B"
-        android:background="@drawable/avatar_shape">
+        android:background="@drawable/ic_circle_background_orange">
     </TextView>
     <Button
         android:id="@+id/tab_all"
