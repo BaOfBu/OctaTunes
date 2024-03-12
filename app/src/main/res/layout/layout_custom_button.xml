@@ -13,6 +13,7 @@
         android:layout_height="50dp"
         android:text="Content"
         android:backgroundTint ="@color/light_gray_color"
-        android:textColor="@android:color/darker_gray" />
+        android:textColor="@android:color/darker_gray"
+        android:fontFamily="@font/Circular"/>
 
 </RelativeLayout>
