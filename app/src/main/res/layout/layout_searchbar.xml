@@ -41,7 +41,7 @@
                 android:textAllCaps="false"
                 android:textColorHint="@android:color/darker_gray"
                 tools:ignore="UnknownId"
-                android:fontFamily="@font/Circular"/>
+                android:fontFamily="@font/main_font"/>
 
             <ImageView
                 android:id="@+id/iconRemove"
@@ -71,7 +71,7 @@
                 android:clickable="true"
                 android:layout_centerHorizontal="true"
                 android:focusable="true"
-                android:fontFamily="@font/Circular"/>
+                android:fontFamily="@font/main_font"/>
         </RelativeLayout>
     </RelativeLayout>
 </RelativeLayout>

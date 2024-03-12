@@ -27,6 +27,6 @@
         android:textColor="@color/white"
         android:textSize="12sp"
         android:textStyle="bold"
-        android:fontFamily="@font/Circular"/>
+        android:fontFamily="@font/main_font"/>
 
 </RelativeLayout>

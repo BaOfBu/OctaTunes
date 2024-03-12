@@ -4,8 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:padding="4dp"
-    android:background="@color/background_color">
+    android:paddingEnd="6dp"
+    android:background="@color/background_color"
+    tools:ignore="RtlSymmetry">
 
     <Button
         android:id="@+id/layout_custom_button"
@@ -14,6 +15,6 @@
         android:text="Content"
         android:backgroundTint ="@color/light_gray_color"
         android:textColor="@android:color/darker_gray"
-        android:fontFamily="@font/Circular"/>
+        android:fontFamily="@font/main_font"/>
 
 </RelativeLayout>
