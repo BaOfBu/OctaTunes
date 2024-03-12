@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_color"
     xmlns:tools="http://schemas.android.com/tools">
     <ScrollView
@@ -13,8 +12,10 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
             <include layout="@layout/layout_home_playlist_section" />
-            <include layout="@layout/layout_home_playlist_section" />
-        </LinearLayout>
 
+            <include layout="@layout/layout_home_playlist_section" />
+
+            <include layout="@layout/layout_home_artist_section"/>
+        </LinearLayout>
     </ScrollView>
 </RelativeLayout>

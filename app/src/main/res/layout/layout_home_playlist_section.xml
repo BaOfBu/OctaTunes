@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
+        android:textSize="24sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:gravity="start"
         android:textColor="@color/white"
