@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:textSize="14sp"
         android:textColor="@color/bold_gray_color"
+        android:ellipsize="end"
         android:text="Artist Names or Description"
         android:maxLines="2"
 
