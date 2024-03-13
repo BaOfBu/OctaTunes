@@ -3,12 +3,36 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:padding="16dp">
+    <LinearLayout
+        android:id="@+id/text_title_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:id="@+id/text_title_container_icon"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginRight="10dp"
+            android:scaleType="center"
+            android:src="@drawable/ic_remove">
+
+        </ImageView>
+        <TextView
+            android:id="@+id/text_title_container_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Popular Single"
+            android:layout_marginBottom="8dp"
+            android:textSize="14sp"
+            android:textColor="#939393" />
+    </LinearLayout>
+
 
     <!-- FrameLayout for Background Image with Rounded Corners -->
     <FrameLayout
         android:id="@+id/image_container"
         android:layout_width="match_parent"
         android:layout_height="450dp"
+        android:layout_below="@id/text_title_container"
         android:clipToOutline="true"
         android:background="@drawable/rounded_corner">
 
@@ -27,7 +51,13 @@
             android:layout_height="match_parent"
             android:background="#44000000"/>
     </FrameLayout>
-
+    <!-- Include your tab layout here -->
+    <include
+        android:id="@+id/tab_layout"
+        layout="@layout/layout_home_tab_playlist_tab"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/image_container" />
     <!-- Bottom Toolbar overlaid on top of the FrameLayout -->
     <include
         android:id="@+id/toolbar"
