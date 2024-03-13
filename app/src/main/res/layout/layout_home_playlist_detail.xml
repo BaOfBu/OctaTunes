@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <!-- FrameLayout for Background Image with Rounded Corners -->
+    <FrameLayout
+        android:id="@+id/image_container"
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        android:clipToOutline="true"
+        android:background="@drawable/rounded_corner">
+
+        <ImageView
+            android:id="@+id/background_image"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@drawable/rounded_corner"
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            android:src="@drawable/playlist_bg" />
+
+        <!-- Semi-transparent Overlay -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#44000000"/>
+    </FrameLayout>
+
+    <!-- Bottom Toolbar overlaid on top of the FrameLayout -->
+    <include
+        android:id="@+id/toolbar"
+        layout="@layout/layout_home_playlist_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/image_container"/>
+
+    <!-- Playlist Details overlaid on top of the Bottom Toolbar -->
+    <include
+        layout="@layout/layout_home_playlist_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/toolbar"/>
+
+</RelativeLayout>

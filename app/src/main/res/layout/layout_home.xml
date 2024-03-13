@@ -29,6 +29,8 @@
             <include layout="@layout/layout_home_playlist_section" />
 
             <include layout="@layout/layout_home_artist_section" />
+            <include layout="@layout/layout_home_playlist_detail"/>
+            <include layout="@layout/layout_home_playlist_detail"/>
         </LinearLayout>
     </ScrollView>
 </RelativeLayout>
