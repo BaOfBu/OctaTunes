@@ -58,7 +58,8 @@
                 android:text="•"
                 android:layout_marginStart="4dp"
                 android:textColor="@android:color/darker_gray"
-                android:textSize="14sp"
+                android:layout_centerVertical="true"
+                android:textSize="8sp"
                 android:textStyle="bold"
                 android:fontFamily="@font/main_font"/>
             <TextView
