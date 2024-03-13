@@ -17,7 +17,7 @@
             android:layout_marginTop="15dp">
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerview_track_preview"
+                android:id="@+id/recyclerview_track_preview_only_track"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"

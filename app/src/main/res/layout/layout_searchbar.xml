@@ -26,7 +26,7 @@
                 android:src="@drawable/ic_search" />
 
             <EditText
-                android:id="@+id/idEdtSearch"
+                android:id="@+id/search_bar_edit_text"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_marginStart="42dp"
@@ -39,6 +39,7 @@
                 android:singleLine="true"
                 android:textAlignment="viewStart"
                 android:textAllCaps="false"
+                android:textColor="@color/white"
                 android:textColorHint="@android:color/darker_gray"
                 tools:ignore="UnknownId"
                 android:fontFamily="@font/main_font"/>
