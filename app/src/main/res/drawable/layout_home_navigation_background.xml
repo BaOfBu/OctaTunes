@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Default state -->
+    <item android:color="@color/light_black_color" />
+    <!-- Pressed state -->
+    <item android:color="@color/active_button_color" android:state_pressed="true"/>
+</selector>
