@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
+
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Navigation Section, fixed at the top -->
@@ -12,18 +13,18 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 
-    <!-- ScrollView starts below the navigation section -->
+    <!-- ScrollView starts below the navigation section and above the tab layout -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/navigation_section">
+        android:layout_below="@id/navigation_section"
+        android:layout_above="@id/tab_layout_container">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
-
             <!-- Your scrollable content -->
             <include layout="@layout/layout_home_playlist_section" />
             <include layout="@layout/layout_home_playlist_section" />
@@ -32,4 +33,22 @@
             <include layout="@layout/layout_home_playlist_detail"/>
         </LinearLayout>
     </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/tab_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#4D000000">
+
+        <include
+            android:id="@+id/tab_layout"
+            layout="@layout/layout_home_tab_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent" />
+    </FrameLayout>
+
+
+
 </RelativeLayout>
