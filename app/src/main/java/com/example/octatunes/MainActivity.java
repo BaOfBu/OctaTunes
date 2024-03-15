@@ -11,7 +11,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
+//        searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
     }
 
 //    private void searchActivity(String searchQuery) {
