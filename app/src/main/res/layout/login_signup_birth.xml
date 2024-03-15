@@ -2,7 +2,6 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_color"
     android:paddingTop="10dp"
     android:paddingLeft="20dp"
@@ -24,7 +23,7 @@
             android:fontFamily="@font/main_font"
             android:text="Tạo tài khoản"
             android:textColor="@color/white"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:layout_centerHorizontal="true"/>
     </RelativeLayout>
@@ -32,45 +31,26 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/main_font"
-        android:text="Tạo một mật khẩu"
+        android:text="Ngày sinh của bạn là gì"
         android:textColor="@color/white"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
-    <com.google.android.material.textfield.TextInputLayout
+    <DatePicker
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:passwordToggleEnabled="true"
-        app:passwordToggleTint="@color/white">
-        <EditText
-            android:id="@+id/password"
-            android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:inputType="textPassword"
-            android:layout_marginTop="10dp"
-            android:textSize="20dp"
-            android:fontFamily="@font/main_font"
-            android:background="@drawable/login_edit_border" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/main_font"
-        android:text="Sử dụng ít nhất 10 ký tự"
-        android:textColor="@color/white"
-        android:textSize="15dp"
-        android:layout_marginTop="10dp"/>
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"
+        android:theme="@style/DatePicker"/>
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnPassNext"
+        android:id="@+id/btnBỉthNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tiếp"
         android:fontFamily="@font/main_font"
         android:textAllCaps="false"
         android:textColor="@color/background_color"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_marginTop="30dp"

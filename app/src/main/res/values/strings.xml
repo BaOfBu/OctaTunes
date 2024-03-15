@@ -1,9 +1,16 @@
 <resources>
     <string name="app_name">OctaTunes</string>
     <string name="login_title">Hàng triệu bài hát.\nMiễn phí trên Spotify.</string>
-    <string name="sign_in_free">Đăng ký miễn phí</string>
+    <string name="signup_free">Đăng ký miễn phí</string>
     <string name="login_btn_phone">Tiếp tục bằng số điện thoại</string>
     <string name="login_btn_google">Tiếp tục bằng Google</string>
     <string name="login_btn_facebook">Tiếp tục bằng Facebook</string>
     <string name="login_btn">Đăng nhập</string>
+    <string name="signup_privacy">Để tìm hiểu thêm về cách thức Spotify thu thập, sử dụng,
+        chia sẻ và bảo vệ dữ liệu cá nhân của bạn,
+        vui lòng xem Chính sách quyền riêng tư của Spotify.</string>
+    <string name="signup_policy">Bằng việc nhấn vào "Tạo tài khoản",
+        bạn đồng ý với điều khoản sử dụng của Spotify</string>
+    <string name="information_application">Chia sẻ dữ liệu đăng ký của tôi với
+        các nhà cung cấp nội dung Spotify nhằm mục đích tiếp thị.</string>
 </resources>

@@ -32,7 +32,7 @@
             android:text="@string/login_title"
             android:textAlignment="center"
             android:textColor="@color/white"
-            android:textSize="32dp"
+            android:textSize="32sp"
             android:textStyle="bold" />
     </LinearLayout>
     <LinearLayout
@@ -45,19 +45,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="7dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:fontFamily="@font/main_font"
             android:background="@drawable/login_green_button"
-            android:text="@string/sign_in_free"/>
+            android:text="@string/signup_free"/>
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_login_phone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="7dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -71,7 +71,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="7dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/white"
@@ -85,7 +85,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="7dp"
-            android:textSize="20dp"
+            android:textSize="20sp"
             android:textStyle="bold"
             android:textAllCaps="false"
             android:textColor="@color/white"

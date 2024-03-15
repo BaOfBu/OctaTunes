@@ -19,14 +19,14 @@
         android:fontFamily="@font/main_font"
         android:text="Email hoặc tên người dùng"
         android:textColor="@color/white"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
         android:id="@+id/username"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border" />
     <TextView
@@ -35,14 +35,14 @@
         android:fontFamily="@font/main_font"
         android:text="Mật khẩu"
         android:textColor="@color/white"
-        android:textSize="32dp"
+        android:textSize="32sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
         android:id="@+id/password"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border" />
     <androidx.appcompat.widget.AppCompatButton
@@ -53,7 +53,7 @@
         android:fontFamily="@font/main_font"
         android:textAllCaps="false"
         android:textColor="@color/background_color"
-        android:textSize="20dp"
+        android:textSize="20sp"
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Đăng nhập không cần mật khẩu"
-        android:textSize="15dp"
+        android:textSize="15sp"
         android:fontFamily="@font/main_font"
         android:textAllCaps="false"
         android:textColor="@color/white"
