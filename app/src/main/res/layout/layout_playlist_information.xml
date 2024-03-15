@@ -7,16 +7,6 @@
     android:background = "@color/background_color"
     >
 
-    <ScrollView
-        android:layout_width="409dp"
-        android:layout_height="729dp"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp">
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +33,7 @@
                 android:text="playlist 2023"
                 android:paddingRight="131dp"
                 android:textColor="@color/white"
-                android:textSize="28sp"
+                android:textSize="30dp"
                 android:textStyle="bold"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
@@ -76,7 +66,7 @@
                     android:layout_weight="1"
                     android:layout_gravity="center"
                     android:layout_marginLeft="10dp"
-
+                    android:textColor="@color/white"
                     android:text="Tên người dùng" />
             </LinearLayout>
 
@@ -89,6 +79,7 @@
                     android:id="@+id/likes"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/bold_gray_color"
                     android:text="9999 likes" />
                 <TextView
                     android:layout_width="wrap_content"
@@ -100,6 +91,7 @@
                     android:id="@+id/total_times"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:textColor="@color/bold_gray_color"
                     android:text="4h 30min" />
             </LinearLayout>
             <LinearLayout
@@ -127,7 +119,6 @@
                     android:background="#00000000"
                     android:layout_weight="1"
                     android:layout_gravity="center_vertical"
-                    android:layout_toRightOf="@id/addToLibButton"
                     app:srcCompat="@drawable/ic_download_circle" />
                 <ImageButton
                     android:id="@+id/settingButton"
@@ -135,7 +126,6 @@
                     android:layout_height="wrap_content"
                     android:background="#00000000"
                     android:layout_weight="1"
-                    android:layout_toRightOf="@id/downloadButton"
                     android:layout_gravity="center_vertical"
                     app:srcCompat="@drawable/ic_menu" />
                 <Space
@@ -152,11 +142,5 @@
                     android:layout_gravity="center_vertical"
                     app:srcCompat="@drawable/ic_play_circle" />
             </LinearLayout>
-
-
-
-
-
         </LinearLayout>
-    </ScrollView>
 </RelativeLayout>
