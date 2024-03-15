@@ -2,8 +2,8 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/background_color"
-
     xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Navigation Section, fixed at the top -->
@@ -26,11 +26,31 @@
             android:layout_marginBottom="20dp"
             android:orientation="vertical">
             <!-- Your scrollable content -->
-            <include layout="@layout/layout_home_playlist_section" />
-            <include layout="@layout/layout_home_playlist_section" />
-            <include layout="@layout/layout_home_artist_section" />
-            <include layout="@layout/layout_home_playlist_detail"/>
-            <include layout="@layout/layout_home_playlist_detail"/>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/playlistSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_home_playlist_section">
+            </androidx.recyclerview.widget.RecyclerView>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/artistSection"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_home_artist_section">
+            </androidx.recyclerview.widget.RecyclerView>
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/playlistDetail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_home_playlist_detail">
+            </androidx.recyclerview.widget.RecyclerView>
         </LinearLayout>
     </ScrollView>
 
