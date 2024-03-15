@@ -11,4 +11,5 @@
     <color name="bold_gray_color">#99CCCCCC</color>
     <color name="light_black_color">#2a2a2a</color>
     <color name="medium_orange">#ff6437</color>
+    <color name="transparent_color">#00FFFFFF</color>
 </resources>
