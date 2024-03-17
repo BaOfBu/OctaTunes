@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#000">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- Information -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- Album Artwork -->
+            <ImageView
+                android:id="@+id/imageViewAlbumArt"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:layout_marginTop="70dp"
+                android:src="@drawable/ic_spotify"
+                android:scaleType="centerCrop"/>
+
+            <!-- Track Title -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_horizontal">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/textViewTrackTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+
+                        android:layout_marginTop="20dp"
+                        android:text="Track Title"
+                        android:textColor="#FFF"
+                        android:textSize="20sp"/>
+
+                    <!-- Artist Name -->
+                    <TextView
+                        android:id="@+id/textViewArtistName"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_below="@id/textViewTrackTitle"
+                        android:layout_centerHorizontal="true"
+                        android:layout_marginTop="10dp"
+                        android:text="Artist Name"
+                        android:textColor="#FFF"
+                        android:textSize="16sp"/>
+
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp">
+            <!-- Controls -->
+            <LinearLayout
+                android:id="@+id/controlsLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+                <!-- Like -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+
+                    <ImageButton
+                        android:id="@+id/imageButtonLike"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_favorite_border"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Like"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Hide song -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonHide"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_hide_song"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Hide song"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Add to playlist -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonAddplaylist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_playlist_add"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add to playlist"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Add to queue -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonAddqueue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_queue"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Add to queue"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Share -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonShare"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_share"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Share"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Go to radio -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonRadio"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_radio"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Go to radio"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- View album -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonViewAlbum"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_view"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View album"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- View artist -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonViewArtist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_person"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View artist"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Song credits -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="20dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonSongCredits"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_group"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Song credits"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Sleep mode -->
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="30dp"
+                    android:layout_marginBottom="10dp">
+                    <ImageButton
+                        android:id="@+id/imageButtonSleepMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_moon"
+                        android:background="#000"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Sleep Mode"
+                        android:textColor="#FFF"
+                        android:layout_gravity="center"
+                        android:layout_marginStart="10dp"/>
+                </LinearLayout>
+
+                <!-- Close -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:gravity="center_horizontal"
+                    android:layout_marginBottom="10dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Close"
+                        android:textColor="#FFF"/>
+                </LinearLayout>
+            </LinearLayout>
+        </ScrollView>
+
+
+
+    </LinearLayout>
+
+</LinearLayout>
