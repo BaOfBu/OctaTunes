@@ -10,9 +10,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_playlist);
+        setContentView(R.layout.activity_main);
+        loginActivity();
         //searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
-        playlistActivity();
     }
 
 //    private void searchActivity(String searchQuery) {
@@ -20,8 +20,8 @@ public class MainActivity extends AppCompatActivity {
 //        i.putExtra("searchQuery", searchQuery);
 //        startActivity(i);
 //    }
-        private void playlistActivity() {
-            Intent i = new Intent(MainActivity.this, PlaylistActivity.class);
-            startActivity(i);
-        }
+    private void loginActivity() {
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(i);
+    }
 }
