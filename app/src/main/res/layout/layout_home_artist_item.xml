@@ -9,14 +9,15 @@
             android:id="@+id/artist_image"
             android:layout_width="180dp"
             android:layout_height="180dp"
-            android:scaleType="centerCrop"
             android:src="@drawable/ic_artist"
             android:background="@drawable/avatar_shape"
             android:layout_marginBottom="10dp"
-            android:clipToOutline="true" />
+            android:scaleType="centerCrop"
+            android:clipToOutline="true"
+            />
         <!--  Artist Name      -->
         <TextView
-            android:id="@+id/playlist_item_title"
+            android:id="@+id/artist_item_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
