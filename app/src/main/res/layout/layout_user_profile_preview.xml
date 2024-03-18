@@ -11,7 +11,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/avatar_shape"
-        android:src="@drawable/ic_spotify">
+        android:src="@drawable/ic_spotify"
+        android:clipToOutline="true">
     </ImageView>
 
     <TextView
