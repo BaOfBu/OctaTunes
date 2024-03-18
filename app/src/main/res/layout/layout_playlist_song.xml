@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/background_color">
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlistsRecyclerView"
+        android:id="@+id/songsRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="0dp"

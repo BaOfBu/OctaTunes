@@ -21,9 +21,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
-            <include layout="@layout/layout_playlist_information" />
-            <include layout="@layout/layout_playlist_song" />
-            <include layout="@layout/layout_playlist_youmaylike" />
+            <include android:id="@+id/playlistInformation" layout="@layout/layout_playlist_information" />
+            <include android:id="@+id/playlistSongs" layout="@layout/layout_playlist_song" />
+            <include android:id="@+id/playlistYouMayLike" layout="@layout/layout_playlist_youmaylike" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
