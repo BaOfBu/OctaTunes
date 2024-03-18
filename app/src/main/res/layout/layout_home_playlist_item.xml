@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/background_color">
+    <!-- Image of the playlist -->
+    <ImageView
+        android:id="@+id/playlist_cover_image"
+        android:layout_width="180dp"
+        android:layout_height="180dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_spotify"
+        />
+    <!-- Playlist title -->
+    <TextView
+        android:id="@+id/playlist_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="4dp"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        android:text="Playlist Title"
+
+        />
+    <!-- Artist names or playlist description -->
+    <TextView
+        android:id="@+id/playlist_item_description"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="14sp"
+        android:textColor="@color/bold_gray_color"
+        android:ellipsize="end"
+        android:text="Artist Names or Description"
+        android:maxLines="2"
+
+        />
+</LinearLayout>

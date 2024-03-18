@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Navigation Section, fixed at the top -->
+    <include
+        android:id="@+id/navigation_section"
+        layout="@layout/layout_home_navigation_section"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <!-- ScrollView starts below the navigation section -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/navigation_section">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <!-- Your scrollable content -->
+            <include layout="@layout/layout_home_playlist_section" />
+            <include layout="@layout/layout_home_playlist_section" />
+            <include layout="@layout/layout_home_artist_section" />
+            <include layout="@layout/layout_home_playlist_detail"/>
+            <include layout="@layout/layout_home_playlist_detail"/>
+        </LinearLayout>
+    </ScrollView>
+</RelativeLayout>
