@@ -9,7 +9,7 @@
 
     <!-- Title for playlist section -->
     <TextView
-        android:id="@+id/playlistHeader"
+        android:id="@+id/artistHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:padding="16dp"
@@ -24,7 +24,7 @@
 
     <!-- RecyclerView to display a list of playlists -->
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/playlistsRecyclerView"
+        android:id="@+id/artistRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="0dp"
