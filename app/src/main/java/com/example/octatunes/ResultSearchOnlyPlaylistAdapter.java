@@ -14,43 +14,59 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<ResearchSearchOnlyArtistAdapter.ViewHolder>{
-    private ArrayList<UserProfileModel> artistProfileModels;
+public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<ResultSearchOnlyPlaylistAdapter.ViewHolder>{
+    private ArrayList<TrackPreviewModel> playlistPreviewModelsLeft;
+    private ArrayList<TrackPreviewModel> playlistPreviewModelsRight;
     private Context context;
 
-    public ResearchSearchOnlyArtistAdapter(ArrayList<UserProfileModel> artistProfileModels, Context context) {
-        this.artistProfileModels = artistProfileModels;
+    public ResultSearchOnlyPlaylistAdapter(ArrayList<TrackPreviewModel> playlistPreviewModelsLeft, ArrayList<TrackPreviewModel>  playlistPreviewModelsRight, Context context) {
+        this.playlistPreviewModelsLeft = playlistPreviewModelsLeft;
+        this.playlistPreviewModelsRight = playlistPreviewModelsRight;
         this.context = context;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        private ImageView userImage;
-        private TextView fullname;
+        private ImageView playlistImageLeft, playlistImageRight;
+        private TextView playlistNameLeft;
+        private TextView playlistNameRight;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
-            userImage = itemView.findViewById(R.id.artist_image);
-            fullname = itemView.findViewById(R.id.artist_name);
+            playlistImageLeft = itemView.findViewById(R.id.playlist_image_left);
+            playlistNameLeft = itemView.findViewById(R.id.playlist_name_left);
+
+            playlistImageRight = itemView.findViewById(R.id.playlist_image_right);
+            playlistNameRight = itemView.findViewById(R.id.playlist_name_right);
         }
     }
     @NonNull
     @Override
-    public ResearchSearchOnlyArtistAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_artist_preview, parent, false);
-        return new ResearchSearchOnlyArtistAdapter.ViewHolder(view);
+    public ResultSearchOnlyPlaylistAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_playlist_preview_2, parent, false);
+        return new ResultSearchOnlyPlaylistAdapter.ViewHolder(view);
     }
+
     @Override
-    public void onBindViewHolder(@NonNull ResearchSearchOnlyArtistAdapter.ViewHolder holder, int position) {
-        UserProfileModel userProfileModel = artistProfileModels.get(position);
-        Picasso.get().load(userProfileModel.getUserImageId()).into(holder.userImage);
-        holder.fullname.setText(userProfileModel.getFullName());
+    public void onBindViewHolder(@NonNull ResultSearchOnlyPlaylistAdapter.ViewHolder holder, int position) {
+        if(playlistPreviewModelsLeft.get(position) != null){
+            TrackPreviewModel trackPreviewModelLeft = playlistPreviewModelsLeft.get(position);
+            Picasso.get().load(trackPreviewModelLeft.getTrackImageId()).into(holder.playlistImageLeft);
+            holder.playlistNameLeft.setText(trackPreviewModelLeft.getTrackName());
+        }
+
+        if(playlistPreviewModelsRight.get(position) != null){
+            TrackPreviewModel trackPreviewModelRight = playlistPreviewModelsRight.get(position);
+            Picasso.get().load(trackPreviewModelRight.getTrackImageId()).into(holder.playlistImageRight);
+            holder.playlistNameRight.setText(trackPreviewModelRight.getTrackName());
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
     }
+
     @Override
     public int getItemCount() {
-        return artistProfileModels.size();
+        return Math.max(playlistPreviewModelsLeft.size(), playlistPreviewModelsRight.size());
     }
 }
