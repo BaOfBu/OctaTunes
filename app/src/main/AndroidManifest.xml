@@ -17,6 +17,11 @@
             android:exported="false"
             android:label="SearchActivity"
             android:theme="@style/Theme.OctaTunes" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:label="LoginActivity"
+            android:theme="@style/Theme.OctaTunes" />
 <!--        <activity-->
 <!--            android:name=".PlaylistActivity"-->
 <!--            android:exported="false"-->
