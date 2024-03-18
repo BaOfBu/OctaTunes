@@ -15,7 +15,7 @@
     <!-- ScrollView starts below the navigation section and above the tab layout -->
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/navigation_section"
         android:layout_above="@id/tab_layout_container">
 
