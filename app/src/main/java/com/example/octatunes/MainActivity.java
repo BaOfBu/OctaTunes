@@ -12,15 +12,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.layout_home);
         //loginActivity();
-        //searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
-        playlistActivity();
+        searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
+        //playlistActivity();
     }
 
-//    private void searchActivity(String searchQuery) {
-//        Intent i = new Intent(MainActivity.this, SearchActivity.class);
-//        i.putExtra("searchQuery", searchQuery);
-//        startActivity(i);
-//    }
+    private void searchActivity(String searchQuery) {
+        Intent i = new Intent(MainActivity.this, SearchActivity.class);
+        i.putExtra("searchQuery", searchQuery);
+        startActivity(i);
+    }
 //    private void loginActivity() {
 //        Intent i = new Intent(MainActivity.this, LoginActivity.class);
 //        startActivity(i);
