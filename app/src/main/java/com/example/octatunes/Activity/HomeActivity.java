@@ -5,14 +5,12 @@ import android.os.Bundle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.octatunes.NonScrollLinearLayoutManager;
 
 import com.example.octatunes.Adapter.*;
 import com.example.octatunes.Model.ArtistItemModel;
 import com.example.octatunes.Model.ArtistSectionModel;
 import com.example.octatunes.Model.PlaylistModel;
 import com.example.octatunes.Model.PlaylistSectionModel;
-import com.example.octatunes.NonScrollLinearLayoutManager;
 import com.example.octatunes.R;
 
 import java.util.ArrayList;
@@ -21,7 +19,6 @@ import java.util.List;
 public class HomeActivity extends AppCompatActivity {
     private RecyclerView playlistRecyclerView;
     private PlaylistAdapter playlistAdapter;
-
     private  ArtistItemAdapter artistAdapter;
 
     @Override
@@ -38,7 +35,6 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView recyclerViewPlaylist = findViewById(R.id.playlistSection);
         PlaylistSectionAdapter adapterPlaylist = new PlaylistSectionAdapter(this, playlistSections);
         recyclerViewPlaylist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        // recyclerViewPlaylist.setLayoutManager(new NonScrollLinearLayoutManager(this));
         recyclerViewPlaylist.setAdapter(adapterPlaylist);
 
         // Create artist sections and items for demonstration
@@ -50,8 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         RecyclerView recyclerViewArtist = findViewById(R.id.artistSection);
         ArtistSectionAdapter adapterArtist = new ArtistSectionAdapter(this, artistSection);
         recyclerViewArtist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        // .setLayoutManager(new NonScrollLinearLayoutManager(this));
-
         recyclerViewArtist.setAdapter(adapterArtist);
     }
 
