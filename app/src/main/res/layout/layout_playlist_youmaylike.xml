@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/youMayLikeTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:textSize="24sp"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"
+            android:gravity="start"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:background="@color/background_color"
+            android:text="You may also like"/>
+
+        <!-- Your scrollable content -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/playlistsRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingBottom="0dp"
+            android:orientation="horizontal"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            tools:listitem="@layout/layout_home_playlist_item" />
+    </LinearLayout>
+</LinearLayout>

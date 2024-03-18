@@ -8,13 +8,24 @@
     android:background="@color/background_color"
     tools:ignore="RtlSymmetry">
 
-    <Button
+    <ToggleButton
         android:id="@+id/layout_custom_button"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="36dp"
+        android:textSize="15dp"
         android:text="Content"
-        android:backgroundTint ="@color/light_gray_color"
-        android:textColor="@android:color/darker_gray"
-        android:fontFamily="@font/main_font"/>
+
+        android:background="@drawable/button_border"
+        android:textColor="@color/white"
+        android:fontFamily="@font/main_font"
+        android:checked="false"
+        android:textAllCaps="false"
+        android:textOn="Content"
+        android:textOff="Content"
+        android:gravity="center"
+        android:paddingStart="18dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="18dp"
+        android:paddingBottom="10dp"/>
 
 </RelativeLayout>

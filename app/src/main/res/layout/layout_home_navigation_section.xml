@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:background="@color/background_color"
+    android:gravity="center_vertical"
+    android:layout_marginBottom="20dp"
+    android:padding="8dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:width="40dp"
+        android:textAlignment="center"
+        android:height="40dp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        android:text="B"
+        android:background="@drawable/ic_circle_background_orange">
+    </TextView>
+    <Button
+        android:id="@+id/tab_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="All"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@drawable/layout_home_navigation_background"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginStart="8dp"/>/>
+
+    <Button
+        android:id="@+id/tab_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Music"
+        android:textColor="@android:color/white"
+        android:backgroundTint="@drawable/layout_home_navigation_background"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginStart="8dp"/>
+
+    <Button
+        android:id="@+id/tab_podcasts"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Podcasts"
+        android:textColor="@android:color/white"
+        android:padding="10dp"
+        android:backgroundTint="@drawable/layout_home_navigation_background"
+        android:gravity="center"
+        android:layout_marginStart="8dp"
+        />
+
+</LinearLayout>
