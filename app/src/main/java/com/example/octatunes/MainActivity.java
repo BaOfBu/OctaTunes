@@ -11,6 +11,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        loginActivity();
         //searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
     }
 
@@ -19,4 +20,8 @@ public class MainActivity extends AppCompatActivity {
 //        i.putExtra("searchQuery", searchQuery);
 //        startActivity(i);
 //    }
+    private void loginActivity() {
+        Intent i = new Intent(MainActivity.this, LoginActivity.class);
+        startActivity(i);
+    }
 }
