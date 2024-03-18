@@ -11,6 +11,9 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Adapter.PlaylistAdapter;
+import com.example.octatunes.Model.PlaylistModel;
+
 import java.util.ArrayList;
 
 public class PlaylistActivity extends AppCompatActivity{
@@ -59,6 +62,16 @@ public class PlaylistActivity extends AppCompatActivity{
         trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 10", "Bài hát", "Tên nghệ sĩ 10", 2024));
         return trackPreviewModels;
     }
+    private ArrayList<PlaylistModel> getDataPlaylistsFake(){
+        int id_default_image = R.drawable.ic_spotify;
+
+        ArrayList<PlaylistModel> albumPreviewModels = new ArrayList<>();
+        albumPreviewModels.add(new PlaylistModel( "Tên playlist 1", "Tên người tạo 1", id_default_image));
+        albumPreviewModels.add(new PlaylistModel( "Tên playlist 2", "Tên người tạo 2", id_default_image));
+        albumPreviewModels.add(new PlaylistModel( "Tên playlist 3", "Tên người tạo 3", id_default_image));
+        albumPreviewModels.add(new PlaylistModel( "Tên playlist 4", "Tên người tạo 4", id_default_image));
+        return albumPreviewModels;
+    }
     private void createFakeData() {
         _textPlaylistName.setText("Chúng ta của tương lai");
         _textLikes.setText("1000");
@@ -67,6 +80,10 @@ public class PlaylistActivity extends AppCompatActivity{
         ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
         TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
         _recyclerViewSongs.setAdapter(listSongsAdapter);
+
+        ArrayList<PlaylistModel> listYouMayLike = getDataPlaylistsFake();
+        PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
+        _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
 
     }
 }
