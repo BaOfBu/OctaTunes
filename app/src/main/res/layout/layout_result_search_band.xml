@@ -51,6 +51,8 @@
                 android:orientation="vertical"
                 android:layout_marginTop="10dp"
                 android:layout_below="@id/recyclerview_album_preview"
+                android:layout_marginTop="10dp"
+                android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/layout_track_preview" />
 
