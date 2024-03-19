@@ -10,10 +10,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.layout_home);
+        setContentView(R.layout.activity_main);
         //loginActivity();
         //searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
-        playlistActivity();
+//        playlistActivity();
     }
 
 //    private void searchActivity(String searchQuery) {

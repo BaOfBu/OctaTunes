@@ -1,13 +1,14 @@
 package com.example.octatunes.Activity;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.*;
-import com.example.octatunes.Model.ArtistItemModel;
+import com.example.octatunes.Model.ArtistModel;
 import com.example.octatunes.Model.ArtistSectionModel;
 import com.example.octatunes.Model.PlaylistModel;
 import com.example.octatunes.Model.PlaylistSectionModel;
@@ -20,6 +21,11 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView playlistRecyclerView;
     private PlaylistAdapter playlistAdapter;
     private  ArtistItemAdapter artistAdapter;
+
+    // Assuming you have reference to the included layout
+    View navigationSection = findViewById(R.id.navigation_section);
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,14 +53,15 @@ public class HomeActivity extends AppCompatActivity {
         ArtistSectionAdapter adapterArtist = new ArtistSectionAdapter(this, artistSection);
         recyclerViewArtist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerViewArtist.setAdapter(adapterArtist);
+
     }
 
-    private List<ArtistItemModel> createArtistListItem(){
-        List<ArtistItemModel> artisListItems = new ArrayList<>();
-        artisListItems.add(new ArtistItemModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistItemModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistItemModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistItemModel(R.drawable.ic_artist,"RPT MCK"));
+    private List<ArtistModel> createArtistListItem(){
+        List<ArtistModel> artisListItems = new ArrayList<>();
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
         return artisListItems;
     }
 

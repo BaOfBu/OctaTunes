@@ -2,13 +2,11 @@ package com.example.octatunes.Model;
 
 import java.util.List;
 
-import java.util.List;
-
 public class ArtistSectionModel {
     private String title;
-    private List<ArtistItemModel> artistItemList;
+    private List<ArtistModel> artistItemList;
 
-    public ArtistSectionModel(String title, List<ArtistItemModel> artistItemList) {
+    public ArtistSectionModel(String title, List<ArtistModel> artistItemList) {
         this.title = title;
         this.artistItemList = artistItemList;
     }
@@ -21,11 +19,11 @@ public class ArtistSectionModel {
         this.title = title;
     }
 
-    public List<ArtistItemModel> getArtistItemList() {
+    public List<ArtistModel> getArtistItemList() {
         return artistItemList;
     }
 
-    public void setArtistItemList(List<ArtistItemModel> artistItemList) {
+    public void setArtistItemList(List<ArtistModel> artistItemList) {
         this.artistItemList = artistItemList;
     }
 }

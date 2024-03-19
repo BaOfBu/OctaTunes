@@ -23,7 +23,7 @@
 <!--            android:label="PlaylistActivity"-->
 <!--            android:theme="@style/Theme.OctaTunes" />-->
         <activity
-            android:name=".PlaylistActivity"
+            android:name=".Activity.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

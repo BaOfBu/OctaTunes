@@ -10,7 +10,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Model.ArtistItemModel;
 import com.example.octatunes.Model.ArtistSectionModel;
 import com.example.octatunes.R;
 

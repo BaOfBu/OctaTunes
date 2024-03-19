@@ -1,10 +1,10 @@
 package com.example.octatunes.Model;
 
-public class ArtistItemModel {
+public class ArtistModel {
     private int imageResource;
     private String artistName;
 
-    public ArtistItemModel(int imageResource, String artistName) {
+    public ArtistModel(int imageResource, String artistName) {
         this.imageResource = imageResource;
         this.artistName = artistName;
     }
