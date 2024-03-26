@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color">
+
+    <RelativeLayout
+        android:id="@+id/layout_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="8dp">
+
+        <ImageView
+            android:id="@+id/icon_left"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:src="@drawable/ic_left"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_info_user"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_back"
+        android:layout_marginStart="16dp">
+
+        <ImageView
+            android:id="@+id/user_image"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:background="@drawable/avatar_shape"
+            android:src="@drawable/artist_sontungmtp"
+            android:clipToOutline="true">
+        </ImageView>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toEndOf="@+id/user_image"
+            android:layout_marginStart="16dp"
+            android:layout_centerVertical="true">
+
+            <TextView
+                android:id="@+id/username"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hailey tu"
+                android:fontFamily="@font/spotify_font"
+                android:textColor="@color/white"
+                android:textSize="24sp"/>
+
+            <RelativeLayout
+                android:id="@+id/layout_followers"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/username">
+
+                <TextView
+                    android:id="@+id/number_followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:text="13"
+                    android:fontFamily="@font/spotify_font"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+
+                <TextView
+                    android:id="@+id/text_followers"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/number_followers"
+                    android:layout_centerVertical="false"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginTop="3dp"
+                    android:text="người theo dõi"
+                    android:fontFamily="@font/spotify_font"
+                    android:textColor="@color/bold_gray_color"
+                    android:textSize="13sp"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/layout_following"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout_followers">
+
+                <TextView
+                    android:id="@+id/text_following"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginTop="6dp"
+                    android:text="Đang theo dõi"
+                    android:fontFamily="@font/spotify_font"
+                    android:textColor="@color/bold_gray_color"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:id="@+id/number_following"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@+id/text_following"
+                    android:layout_centerVertical="false"
+                    android:layout_marginStart="5dp"
+                    android:text="60"
+                    android:fontFamily="@font/spotify_font"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"/>
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/layout_info_user"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp">
+
+        <RelativeLayout
+            android:id="@+id/layout_follow_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_alignParentStart="true"
+            android:background="@drawable/button_border"
+            android:paddingLeft="4dp"
+            android:paddingRight="4dp">
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:text="Theo dõi"
+                android:layout_centerVertical="true"
+                android:backgroundTint="@android:color/transparent"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textSize="14sp"
+                android:fontFamily="@font/main_font"/>
+        </RelativeLayout>
+
+        <ImageView
+            android:id="@+id/icon_share"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@id/layout_follow_button"
+            android:src="@drawable/ic_share"
+            android:visibility="visible" />
+
+        <ImageView
+            android:id="@+id/icon_more"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="10dp"
+            android:layout_toEndOf="@id/icon_share"
+            android:layout_marginStart="20dp"
+            android:src="@drawable/ic_more"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_playlists"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_buttons"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="16dp">
+
+        <TextView
+            android:id="@+id/text_playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Danh sách phát"
+            android:textColor="@color/white"
+            android:textSize="24dp"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/text_playlist"
+            android:layout_marginTop="16dp">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerview_artist_preview"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:orientation="vertical"
+                android:layout_marginTop="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:listitem="@layout/layout_playlist_user" />
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/layout_view_all"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/layout_playlists"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/button_border" >
+        <Button
+            android:layout_width="150dp"
+            android:layout_height="35dp"
+            android:text="Xem tất cả playplist"
+            android:layout_centerVertical="true"
+            android:backgroundTint="@android:color/transparent"
+            android:textColor="@color/white"
+            android:textStyle="bold"
+            android:textSize="14sp"
+            android:fontFamily="@font/main_font"
+            android:maxLines="1"
+            android:ellipsize="end"/>
+    </RelativeLayout>
+</RelativeLayout>
