@@ -7,6 +7,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.ViewSwitcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -73,7 +74,7 @@ public class PlaylistActivity extends AppCompatActivity{
         return albumPreviewModels;
     }
     private void createFakeData() {
-        _textPlaylistName.setText("Chúng ta của tương lai");
+        _textPlaylistName.setText("Chúng ta tương lai");
         _textLikes.setText("1000");
         _textUsername.setText("Username");
         _textTotalTime.setText("4m 9s");
