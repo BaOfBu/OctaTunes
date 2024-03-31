@@ -13,16 +13,17 @@
         android:layout_height="wrap_content" />
 
     <!-- ScrollView starts below the navigation section and above the tab layout -->
-    <ScrollView
+    <!-- NestedScrollView to contain both RecyclerViews -->
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_below="@id/navigation_section"
         android:layout_above="@id/tab_layout_container">
 
+        <!-- Linear layout to hold both RecyclerViews vertically -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
             android:orientation="vertical">
 
             <androidx.recyclerview.widget.RecyclerView
@@ -31,8 +32,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_playlist_section">
-            </androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_playlist_section"></androidx.recyclerview.widget.RecyclerView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/artistSection"
@@ -40,8 +40,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_artist_section">
-            </androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_artist_section"></androidx.recyclerview.widget.RecyclerView>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/playlistDetail"
@@ -49,11 +48,10 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_playlist_detail">
-            </androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_playlist_detail"></androidx.recyclerview.widget.RecyclerView>
 
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/tab_layout_container"

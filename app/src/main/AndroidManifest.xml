@@ -17,13 +17,18 @@
             android:exported="false"
             android:label="SearchActivity"
             android:theme="@style/Theme.OctaTunes" />
+        <activity
+            android:name=".LoginActivity"
+            android:exported="false"
+            android:label="LoginActivity"
+            android:theme="@style/Theme.OctaTunes" />
 <!--        <activity-->
 <!--            android:name=".PlaylistActivity"-->
 <!--            android:exported="false"-->
 <!--            android:label="PlaylistActivity"-->
 <!--            android:theme="@style/Theme.OctaTunes" />-->
         <activity
-            android:name=".PlaylistActivity"
+            android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
