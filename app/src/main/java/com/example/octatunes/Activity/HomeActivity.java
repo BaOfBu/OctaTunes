@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.octatunes.Adapter.*;
 import com.example.octatunes.Model.ArtistModel;
 import com.example.octatunes.Model.ArtistSectionModel;
+import com.example.octatunes.Model.PlaylistDetailModel;
 import com.example.octatunes.Model.PlaylistModel;
 import com.example.octatunes.Model.PlaylistSectionModel;
 import com.example.octatunes.R;
@@ -18,14 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
-    private RecyclerView playlistRecyclerView;
-    private PlaylistAdapter playlistAdapter;
-    private  ArtistItemAdapter artistAdapter;
-
-    // Assuming you have reference to the included layout
-    View navigationSection = findViewById(R.id.navigation_section);
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +46,17 @@ public class HomeActivity extends AppCompatActivity {
         ArtistSectionAdapter adapterArtist = new ArtistSectionAdapter(this, artistSection);
         recyclerViewArtist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerViewArtist.setAdapter(adapterArtist);
+
+        // Add items to your list
+        List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
+        playlistDetailSection.add(new PlaylistDetailModel("Popular Single",null, R.drawable.playlist_bg));
+        playlistDetailSection.add(new PlaylistDetailModel("Trending",null, R.drawable.playlist_bg)); // Replace R.drawable.playlist_bg with your actual image resource
+        // Add more items as needed
+        // Add more items as needed
+        RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
+        PlaylistDetailAdapter playlistDetailAdapter = new PlaylistDetailAdapter(this, playlistDetailSection);
+        recyclerViewPlaylistDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        recyclerViewPlaylistDetail.setAdapter(playlistDetailAdapter);
 
     }
 

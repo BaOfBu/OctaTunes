@@ -17,17 +17,11 @@
             android:exported="false"
             android:label="SearchActivity"
             android:theme="@style/Theme.OctaTunes" />
-<!--        <activity-->
-<!--            android:name=".PlaylistActivity"-->
-<!--            android:exported="false"-->
-<!--            android:label="PlaylistActivity"-->
-<!--            android:theme="@style/Theme.OctaTunes" />-->
         <activity
             android:name=".Activity.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
