@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Checked state -->
+    <item android:state_checked="true" android:drawable="@drawable/toggle_button_checked"/>
     <!-- Default state -->
-    <item android:color="@color/light_black_color" />
-    <!-- Pressed state -->
-    <item android:color="@color/active_button_color" android:state_pressed="true"/>
+    <item android:state_checked="false" android:drawable="@drawable/toggle_button_unchecked"/>
 </selector>

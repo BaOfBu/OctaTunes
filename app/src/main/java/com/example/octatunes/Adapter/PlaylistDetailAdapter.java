@@ -36,6 +36,9 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
         PlaylistDetailModel item = details.get(position);
         holder.title.setText(item.getTitle());
         holder.imageView.setImageResource(item.getImageUrl());
+        holder.titlePlaylist.setText(item.getPlaylistModel().getTitle());
+        holder.decscription.setText(item.getPlaylistModel().getDescription());
+        holder.imageViewPlaylist.setImageResource(item.getPlaylistModel().getCoverImageResId());
         // Set additional properties or handle nested RecyclerView for PlaylistModel if needed
     }
 
@@ -48,10 +51,19 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
         TextView title;
         ImageView imageView;
 
+        TextView titlePlaylist;
+
+        ImageView imageViewPlaylist;
+
+        TextView decscription;
+
         public ViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.text_title_container_text);
             imageView = itemView.findViewById(R.id.background_image);
+            titlePlaylist = itemView.findViewById(R.id.playlist).findViewById(R.id.title);
+            decscription = itemView.findViewById((R.id.playlist)).findViewById(R.id.description);
+            imageViewPlaylist = itemView.findViewById(R.id.playlist).findViewById(R.id.imageView_playlist);
         }
     }
 }

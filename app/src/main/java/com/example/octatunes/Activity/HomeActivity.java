@@ -1,7 +1,10 @@
 package com.example.octatunes.Activity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.widget.CompoundButton;
+import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -19,11 +22,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HomeActivity extends AppCompatActivity {
-
+    ToggleButton toggleAll, toggleMusic, togglePodcasts;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_home);
+        setupToggleButtons();
 
         // Create playlist sections and items for demonstration
         List<PlaylistSectionModel> playlistSections = new ArrayList<>();
@@ -49,9 +53,12 @@ public class HomeActivity extends AppCompatActivity {
 
         // Add items to your list
         List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
-        playlistDetailSection.add(new PlaylistDetailModel("Popular Single",null, R.drawable.playlist_bg));
-        playlistDetailSection.add(new PlaylistDetailModel("Trending",null, R.drawable.playlist_bg)); // Replace R.drawable.playlist_bg with your actual image resource
-        // Add more items as needed
+        playlistDetailSection.add(new PlaylistDetailModel("Popular Single",
+                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist),
+                R.drawable.playlist_bg));
+        playlistDetailSection.add(new PlaylistDetailModel("Trending",
+                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist)
+                , R.drawable.playlist_bg)); // Replace R.drawable.playlist_bg with your actual image resource
         // Add more items as needed
         RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
         PlaylistDetailAdapter playlistDetailAdapter = new PlaylistDetailAdapter(this, playlistDetailSection);
@@ -59,7 +66,30 @@ public class HomeActivity extends AppCompatActivity {
         recyclerViewPlaylistDetail.setAdapter(playlistDetailAdapter);
 
     }
+    private void setupToggleButtons() {
+        toggleAll = findViewById(R.id.navigation_section).findViewById(R.id.tab_all);
+        toggleMusic = findViewById(R.id.navigation_section).findViewById(R.id.tab_music);
+        togglePodcasts = findViewById(R.id.navigation_section).findViewById(R.id.tab_podcasts);
 
+        CompoundButton.OnCheckedChangeListener listener = (buttonView, isChecked) -> {
+            if (isChecked) {
+                if (buttonView == toggleAll) {
+                    toggleMusic.setChecked(false);
+                    togglePodcasts.setChecked(false);
+                } else if (buttonView == toggleMusic) {
+                    toggleAll.setChecked(false);
+                    togglePodcasts.setChecked(false);
+                } else if (buttonView == togglePodcasts) {
+                    toggleAll.setChecked(false);
+                    toggleMusic.setChecked(false);
+                }
+            }
+        };
+
+        toggleAll.setOnCheckedChangeListener(listener);
+        toggleMusic.setOnCheckedChangeListener(listener);
+        togglePodcasts.setOnCheckedChangeListener(listener);
+    }
     private List<ArtistModel> createArtistListItem(){
         List<ArtistModel> artisListItems = new ArrayList<>();
         artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));

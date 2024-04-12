@@ -20,38 +20,40 @@
         android:text="B"
         android:background="@drawable/ic_circle_background_orange">
     </TextView>
-    <Button
+    <ToggleButton
         android:id="@+id/tab_all"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="All"
+        android:textOff="All"
+        android:textOn="All"
         android:textColor="@android:color/white"
-        android:backgroundTint="@drawable/layout_home_navigation_background"
-        android:padding="10dp"
-        android:gravity="center"
-        android:layout_marginStart="8dp"/>/>
-
-    <Button
-        android:id="@+id/tab_music"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Music"
-        android:textColor="@android:color/white"
-        android:backgroundTint="@drawable/layout_home_navigation_background"
+        android:checked="true"
+        android:background="@drawable/layout_home_navigation_background"
         android:padding="10dp"
         android:gravity="center"
         android:layout_marginStart="8dp"/>
 
-    <Button
+    <ToggleButton
+        android:id="@+id/tab_music"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textOff="Music"
+        android:textOn="Music"
+        android:textColor="@android:color/white"
+        android:background="@drawable/layout_home_navigation_background"
+        android:padding="10dp"
+        android:gravity="center"
+        android:layout_marginStart="8dp"/>
+
+    <ToggleButton
         android:id="@+id/tab_podcasts"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Podcasts"
+        android:textOff="Podcasts"
+        android:textOn="Podcasts"
         android:textColor="@android:color/white"
+        android:background="@drawable/layout_home_navigation_background"
         android:padding="10dp"
-        android:backgroundTint="@drawable/layout_home_navigation_background"
         android:gravity="center"
-        android:layout_marginStart="8dp"
-        />
-
+        android:layout_marginStart="8dp"/>
 </LinearLayout>
