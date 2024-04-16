@@ -12,7 +12,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.layout_home);
         //loginActivity();
-        searchActivity("Tên bài hát/ Tên ca sĩ/ Tên nhóm nhạc");
+        searchActivity("Chúng ta của tương lai");
         //playlistActivity();
     }
 

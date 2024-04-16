@@ -17,7 +17,7 @@ import com.example.octatunes.Model.PlaylistModel;
 
 import java.util.ArrayList;
 
-public class PlaylistActivity extends AppCompatActivity{
+public class AlbumActivity extends AppCompatActivity{
     RelativeLayout _layoutPlaylistInformation;
     LinearLayout _layoutPlaylistSongs;
     LinearLayout _layoutPlaylistYouMayLike;
@@ -75,9 +75,9 @@ public class PlaylistActivity extends AppCompatActivity{
     }
     private void createFakeData() {
         _textPlaylistName.setText("Chúng ta tương lai");
-        _textLikes.setText("1000");
+        _textLikes.setText("Album");
         _textUsername.setText("Username");
-        _textTotalTime.setText("4m 9s");
+        _textTotalTime.setText("2024");
         ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
         TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
         _recyclerViewSongs.setAdapter(listSongsAdapter);

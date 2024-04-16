@@ -10,16 +10,20 @@
         android:id="@+id/left_playlist"
         android:layout_width="190dp"
         android:layout_height="260dp">
+
         <ImageView
             android:id="@+id/playlist_image_left"
             android:layout_width="190dp"
             android:layout_height="200dp"
-            android:layout_margin="3dp"
-            android:src="@drawable/ic_spotify"/>
+            android:layout_marginStart="3dp"
+            android:layout_marginTop="3dp"
+            android:layout_marginEnd="3dp"
+            android:layout_marginBottom="3dp"
+            android:src="@drawable/ic_spotify" />
 
         <TextView
             android:id="@+id/playlist_name_left"
-            android:layout_width="120dp"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/playlist_image_left"
             android:layout_marginTop="3dp"
@@ -41,7 +45,7 @@
 
         <ImageView
             android:id="@+id/playlist_image_right"
-            android:layout_width="1900dp"
+            android:layout_width="190dp"
             android:layout_height="200dp"
             android:layout_marginStart="3dp"
             android:layout_marginTop="3dp"
@@ -51,7 +55,7 @@
 
         <TextView
             android:id="@+id/playlist_name_right"
-            android:layout_width="120dp"
+            android:layout_width="190dp"
             android:layout_height="wrap_content"
             android:layout_below="@id/playlist_image_right"
             android:layout_marginTop="3dp"

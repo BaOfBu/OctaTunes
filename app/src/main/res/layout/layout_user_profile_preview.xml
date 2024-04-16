@@ -25,7 +25,8 @@
         android:text="Tên người dùng"
         android:textColor="@color/white"
         android:textSize="17sp"
-        android:fontFamily="@font/main_font"/>
+        android:fontFamily="@font/main_font"
+        android:layout_marginStart="15px"/>
 
     <ImageView
         android:id="@+id/icon_right"
