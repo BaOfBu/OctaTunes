@@ -45,6 +45,15 @@
             android:clipToOutline="true"
             android:src="@drawable/playlist_bg" />
 
+<!--        <VideoView-->
+<!--            android:id="@+id/video_view"-->
+<!--            android:background="@drawable/rounded_corner"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="match_parent"-->
+<!--            android:scaleType="fitXY"-->
+<!--            android:clipToOutline="true"-->
+<!--            android:layout_gravity="center" />-->
+
         <!-- Semi-transparent Overlay -->
         <View
             android:layout_width="match_parent"

@@ -16,6 +16,7 @@ import com.example.octatunes.Model.ArtistSectionModel;
 import com.example.octatunes.Model.PlaylistDetailModel;
 import com.example.octatunes.Model.PlaylistModel;
 import com.example.octatunes.Model.PlaylistSectionModel;
+import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.R;
 
 import java.util.ArrayList;
@@ -53,11 +54,13 @@ public class HomeActivity extends AppCompatActivity {
 
         // Add items to your list
         List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
+        List<SongModel> songLists = new ArrayList<>();
+        songLists.add(new SongModel("Buồn Hay Vui (feat. RPT MCK, Obito, Ronboogz & Boyzed)","RPT MCK","RPT MCK",300,R.drawable.music_01,null));
         playlistDetailSection.add(new PlaylistDetailModel("Popular Single",
-                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist),
+                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist,songLists),
                 R.drawable.playlist_bg));
         playlistDetailSection.add(new PlaylistDetailModel("Trending",
-                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist)
+                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist,songLists)
                 , R.drawable.playlist_bg)); // Replace R.drawable.playlist_bg with your actual image resource
         // Add more items as needed
         RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
@@ -119,10 +122,10 @@ public class HomeActivity extends AppCompatActivity {
     // Method to create playlist items for demonstration
     private List<PlaylistModel> createPlaylistItems() {
         List<PlaylistModel> playlistItems = new ArrayList<>();
-        playlistItems.add(new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_spotify));
-        playlistItems.add(new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_spotify));
-        playlistItems.add(new PlaylistModel("Playlist 3", "Description 2",R.drawable.ic_spotify));
-        playlistItems.add(new PlaylistModel("Playlist 4", "Description 2",R.drawable.ic_spotify));
+        playlistItems.add(new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 3", "Description 2",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 4", "Description 2",R.drawable.ic_spotify,null));
         return playlistItems;
     }
 }

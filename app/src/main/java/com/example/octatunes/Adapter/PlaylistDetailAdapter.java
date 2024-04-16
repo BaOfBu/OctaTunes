@@ -5,7 +5,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -39,6 +41,19 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
         holder.titlePlaylist.setText(item.getPlaylistModel().getTitle());
         holder.decscription.setText(item.getPlaylistModel().getDescription());
         holder.imageViewPlaylist.setImageResource(item.getPlaylistModel().getCoverImageResId());
+        holder.musicName.setText(item.getPlaylistModel().getSongs().get(0).getTitle());
+        holder.numberOfMusic.setText(item.getPlaylistModel().getSongs().size() + " Songs");
+
+        // Ensure that VideoView and MediaController are initialized correctly
+        //MediaController mediaController = new MediaController(holder.itemView.getContext());
+        //mediaController.setAnchorView(holder.videoMusic);
+        //holder.videoMusic.setMediaController(mediaController);
+        //
+        //// Optional: Prepare VideoView for playing, assuming you have a valid URL
+        //// You should handle this carefully, especially if loading URLs directly
+        //holder.videoMusic.setVideoPath(item.getPlaylistModel().getSongs().get(0).getStreamUrl());
+        //holder.videoMusic.requestFocus();
+        //holder.videoMusic.start();  // You might not
         // Set additional properties or handle nested RecyclerView for PlaylistModel if needed
     }
 
@@ -57,6 +72,11 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
 
         TextView decscription;
 
+        TextView musicName;
+        TextView numberOfMusic;
+
+        VideoView videoMusic;
+
         public ViewHolder(View itemView) {
             super(itemView);
             title = itemView.findViewById(R.id.text_title_container_text);
@@ -64,6 +84,9 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
             titlePlaylist = itemView.findViewById(R.id.playlist).findViewById(R.id.title);
             decscription = itemView.findViewById((R.id.playlist)).findViewById(R.id.description);
             imageViewPlaylist = itemView.findViewById(R.id.playlist).findViewById(R.id.imageView_playlist);
+            musicName = itemView.findViewById(R.id.tab_layout).findViewById(R.id.music_name);
+            numberOfMusic = itemView.findViewById(R.id.toolbar).findViewById(R.id.song_count);
+            //videoMusic = itemView.findViewById(R.id.video_view);
         }
     }
 }

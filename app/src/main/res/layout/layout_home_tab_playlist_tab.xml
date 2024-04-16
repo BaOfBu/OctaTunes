@@ -15,6 +15,7 @@
         android:layout_marginRight="5dp">
 
         <TextView
+            android:id="@+id/music_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="O.Lew - Rồi ta sẽ ngắm pháo hoa cùng nhau"
