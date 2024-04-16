@@ -55,14 +55,19 @@ public class HomeActivity extends AppCompatActivity {
         // Add items to your list
         List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
         List<SongModel> songLists = new ArrayList<>();
-        songLists.add(new SongModel("Buồn Hay Vui (feat. RPT MCK, Obito, Ronboogz & Boyzed)","RPT MCK","RPT MCK",300,R.drawable.music_01,null));
+
         playlistDetailSection.add(new PlaylistDetailModel("Popular Single",
-                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist,songLists),
+                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist,createSongListItems()),
                 R.drawable.playlist_bg));
+
         playlistDetailSection.add(new PlaylistDetailModel("Trending",
-                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist,songLists)
-                , R.drawable.playlist_bg)); // Replace R.drawable.playlist_bg with your actual image resource
-        // Add more items as needed
+                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist,createSongListItems())
+                , R.drawable.playlist_bg));
+
+        playlistDetailSection.add(new PlaylistDetailModel("Trending",
+                new PlaylistModel("Playlist 3", "Description 3",R.drawable.ic_artist,createSongListItems())
+                , R.drawable.playlist_bg));
+
         RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
         PlaylistDetailAdapter playlistDetailAdapter = new PlaylistDetailAdapter(this, playlistDetailSection);
         recyclerViewPlaylistDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -98,6 +103,7 @@ public class HomeActivity extends AppCompatActivity {
                 break;
         }
     }
+
     private void showAllContent() {
         // Show all playlists and artists
         findViewById(R.id.playlistSection).setVisibility(View.VISIBLE);
@@ -105,27 +111,39 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
     }
     void showMusicContent() {
-        // Show only music related content
         findViewById(R.id.playlistSection).setVisibility(View.GONE);
         findViewById(R.id.artistSection).setVisibility(View.GONE);
         findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
     }
+
     private List<ArtistModel> createArtistListItem(){
         List<ArtistModel> artisListItems = new ArrayList<>();
         artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
         artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
         artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
         artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
         return artisListItems;
     }
-
-    // Method to create playlist items for demonstration
     private List<PlaylistModel> createPlaylistItems() {
         List<PlaylistModel> playlistItems = new ArrayList<>();
         playlistItems.add(new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_spotify,null));
         playlistItems.add(new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 3", "Description 2",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 4", "Description 2",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 3", "Description 3",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 4", "Description 4",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 5", "Description 5",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 6", "Description 6",R.drawable.ic_spotify,null));
+        playlistItems.add(new PlaylistModel("Playlist 7", "Description 7",R.drawable.ic_spotify,null));
         return playlistItems;
+    }
+    private List<SongModel> createSongListItems(){
+        List<SongModel> songLists = new ArrayList<>();
+        songLists.add(new SongModel("Tại vì sao","RPT MCK",
+                "99%",202,R.drawable.music_01,null));
+        songLists.add(new SongModel("Making My Way","Sơn Tùng MTP",
+                "Making My Way",258,R.drawable.music_01,null));
+        return songLists;
     }
 }
