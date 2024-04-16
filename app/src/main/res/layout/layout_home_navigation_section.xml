@@ -44,16 +44,4 @@
         android:padding="10dp"
         android:gravity="center"
         android:layout_marginStart="8dp"/>
-
-    <ToggleButton
-        android:id="@+id/tab_podcasts"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textOff="Podcasts"
-        android:textOn="Podcasts"
-        android:textColor="@android:color/white"
-        android:background="@drawable/layout_home_navigation_background"
-        android:padding="10dp"
-        android:gravity="center"
-        android:layout_marginStart="8dp"/>
 </LinearLayout>

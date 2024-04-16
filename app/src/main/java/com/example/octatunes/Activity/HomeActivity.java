@@ -69,26 +69,43 @@ public class HomeActivity extends AppCompatActivity {
     private void setupToggleButtons() {
         toggleAll = findViewById(R.id.navigation_section).findViewById(R.id.tab_all);
         toggleMusic = findViewById(R.id.navigation_section).findViewById(R.id.tab_music);
-        togglePodcasts = findViewById(R.id.navigation_section).findViewById(R.id.tab_podcasts);
 
         CompoundButton.OnCheckedChangeListener listener = (buttonView, isChecked) -> {
             if (isChecked) {
                 if (buttonView == toggleAll) {
                     toggleMusic.setChecked(false);
-                    togglePodcasts.setChecked(false);
+                    updateNestedScrollViewContent("all");
                 } else if (buttonView == toggleMusic) {
                     toggleAll.setChecked(false);
-                    togglePodcasts.setChecked(false);
-                } else if (buttonView == togglePodcasts) {
-                    toggleAll.setChecked(false);
-                    toggleMusic.setChecked(false);
+                    updateNestedScrollViewContent("music");
                 }
             }
         };
 
         toggleAll.setOnCheckedChangeListener(listener);
         toggleMusic.setOnCheckedChangeListener(listener);
-        togglePodcasts.setOnCheckedChangeListener(listener);
+    }
+    private void updateNestedScrollViewContent(String category) {
+        switch (category) {
+            case "all":
+                showAllContent();
+                break;
+            case "music":
+                showMusicContent();
+                break;
+        }
+    }
+    private void showAllContent() {
+        // Show all playlists and artists
+        findViewById(R.id.playlistSection).setVisibility(View.VISIBLE);
+        findViewById(R.id.artistSection).setVisibility(View.VISIBLE);
+        findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
+    }
+    void showMusicContent() {
+        // Show only music related content
+        findViewById(R.id.playlistSection).setVisibility(View.GONE);
+        findViewById(R.id.artistSection).setVisibility(View.GONE);
+        findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
     }
     private List<ArtistModel> createArtistListItem(){
         List<ArtistModel> artisListItems = new ArrayList<>();
