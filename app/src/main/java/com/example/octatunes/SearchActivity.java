@@ -24,7 +24,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
     RecyclerView listCategoriesButtonRecyclerView;
 
     private static ToggleButton selectedButton = null;
-    private String searchType = "Artist";
+    private String searchType = "Track";
 
     public static ToggleButton getSelectedButton(){
         return selectedButton;
@@ -299,7 +299,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
         if(category.equals("Track")){
             getTracks(searchQuery);
         }else{
-            UserProfileModel artistModel = new UserProfileModel(R.drawable.artist_sontungmtp, "Sơn Tùng MTP");
+            UserProfileModel artistModel = new UserProfileModel(R.drawable.artist_sontungmtp, "Tên nhóm nhạc");
 
             ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
 
@@ -309,7 +309,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
             }else if(category.equals("Artist")){
-                artistModel.setFullName("Tên nghệ sĩ");
+                artistModel.setFullName("Sơn Tùng MTP");
                 ResearchSearchByArtistAdapter researchSearchByArtistAdapter = new ResearchSearchByArtistAdapter(artistModel, trackPreviewModels, this);
                 listSearchResultRecyclerView.setAdapter(researchSearchByArtistAdapter);
                 researchSearchByArtistAdapter.notifyDataSetChanged();

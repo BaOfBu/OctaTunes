@@ -34,4 +34,5 @@
         android:orientation="horizontal"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         tools:listitem="@layout/layout_home_artist_item" />
+
 </LinearLayout>
