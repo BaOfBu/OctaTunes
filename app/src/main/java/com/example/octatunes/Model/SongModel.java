@@ -1,6 +1,7 @@
 package com.example.octatunes.Model;
 
 public class SongModel {
+
     private int SongID;
     private String Title;
     private String Artist;

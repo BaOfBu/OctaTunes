@@ -6,6 +6,9 @@ public class ArtistsModel {
     private String Genre;
     private String Image;
 
+    public ArtistsModel(){
+
+    }
     public ArtistsModel(int artistID, String name, String genre, String image) {
         ArtistID = artistID;
         Name = name;

@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_color"
+    xmlns:tools="http://schemas.android.com/tools">
+    <androidx.core.widget.NestedScrollView
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Image -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <!-- Container for Image and Back Icon -->
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="10dp">
+
+                    <!-- Image in the center of the FrameLayout -->
+                    <ImageView
+                        android:id="@+id/playlist_cover_image_spotify"
+                        android:layout_width="240dp"
+                        android:layout_height="240dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/playlist_06" />
+
+                    <!-- Back Icon aligned to the left inside the FrameLayout -->
+                    <ImageView
+                        android:id="@+id/back_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+
+                        android:src="@drawable/ic_back_arrow"
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground" />
+                </FrameLayout>
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/playlistDescriptionSpotify"
+                android:layout_marginTop="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="#a7a7a7"
+                android:textSize="14sp"
+                android:text="Thông tin cập nhật hằng ngày về những bản nhạc được nghe nhiều nhất tại Việt Nam"
+            />
+            <!-- Spotify icon -->
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_gravity="center"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="54dp"
+                    android:layout_height="36dp"
+                    android:scaleType="centerCrop"
+                    android:layout_marginLeft="-10dp"
+                    android:background="@drawable/ic_spotify">
+                </ImageView>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#fff"
+                    android:textStyle="bold"
+                    android:layout_gravity="center"
+                    android:text="Spotify"
+                />
+            </LinearLayout>
+            <!-- Date create and update -->
+            <TextView
+                android:layout_marginTop="10dp"
+                android:textColor="#a7a7a7"
+                android:id="@+id/playlist_date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Apr 16, 2024 - 1 New Entry"
+            />
+            <!-- Icon and ToolBar -->
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_gravity="center"
+                    android:layout_height="28dp"
+                    android:backgroundTint="#a7a7a7"
+                    android:layout_marginRight="18dp"
+                    android:background="@drawable/round_add_circle_outline_24"
+                />
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#a7a7a7"
+                    android:layout_marginRight="18dp"
+                    android:background="@drawable/baseline_arrow_circle_down_24"
+                    />
+                <ImageView
+                    android:id="@+id/more_info"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#a7a7a7"
+                    android:background="@drawable/baseline_more_vert_24"
+                    />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1" />
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_gravity="center"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="5dp"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_shuffle_24"
+                    />
+                <ImageView
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_play_circle_filled_24"
+                    />
+            </LinearLayout>
+            <!-- Item -->
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_playlist_spotify_item" />
+
+            </RelativeLayout>
+</LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Footer section -->
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <!-- Other footer items would be added here. -->
+
+    </RelativeLayout>
+    <FrameLayout
+        android:id="@+id/tab_layout_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#4D000000">
+
+        <include
+            android:id="@+id/tab_layout"
+            layout="@layout/layout_home_tab_section"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent" />
+    </FrameLayout>
+
+</RelativeLayout>

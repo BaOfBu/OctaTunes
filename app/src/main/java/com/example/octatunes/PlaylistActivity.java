@@ -1,19 +1,17 @@
 package com.example.octatunes;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.PlaylistAdapter;
-import com.example.octatunes.Model.PlaylistModel;
+import com.example.octatunes.Model.PlaylistsModel;
 
 import java.util.ArrayList;
 
@@ -63,14 +61,12 @@ public class PlaylistActivity extends AppCompatActivity{
         trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 10", "Bài hát", "Tên nghệ sĩ 10", 2024));
         return trackPreviewModels;
     }
-    private ArrayList<PlaylistModel> getDataPlaylistsFake(){
+    private ArrayList<PlaylistsModel> getDataPlaylistsFake(){
         int id_default_image = R.drawable.ic_spotify;
 
-        ArrayList<PlaylistModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new PlaylistModel( "Tên playlist 1", "Tên người tạo 1", id_default_image));
-        albumPreviewModels.add(new PlaylistModel( "Tên playlist 2", "Tên người tạo 2", id_default_image));
-        albumPreviewModels.add(new PlaylistModel( "Tên playlist 3", "Tên người tạo 3", id_default_image));
-        albumPreviewModels.add(new PlaylistModel( "Tên playlist 4", "Tên người tạo 4", id_default_image));
+        ArrayList<PlaylistsModel> albumPreviewModels = new ArrayList<>();
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
         return albumPreviewModels;
     }
     private void createFakeData() {
@@ -82,7 +78,7 @@ public class PlaylistActivity extends AppCompatActivity{
         TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
         _recyclerViewSongs.setAdapter(listSongsAdapter);
 
-        ArrayList<PlaylistModel> listYouMayLike = getDataPlaylistsFake();
+        ArrayList<PlaylistsModel> listYouMayLike = getDataPlaylistsFake();
         PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
         _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
 

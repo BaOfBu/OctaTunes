@@ -1,11 +1,26 @@
 package com.example.octatunes.Model;
 
-public class PlaylistsModel {
+import com.google.firebase.database.PropertyName;
+import com.google.gson.Gson;
+
+import java.io.Serializable;
+
+public class PlaylistsModel implements Serializable {
+    @PropertyName("playlistID")
     private int PlaylistID;
+    @PropertyName("userId")
     private int UserID;
+    @PropertyName("name")
     private String Name;
-    private String Image;
+
+    @PropertyName("description")
     private String Description;
+    @PropertyName("image")
+    private String Image;
+
+    public PlaylistsModel() {
+
+    }
 
     public PlaylistsModel(int playlistID, int userID, String name, String image, String description) {
         PlaylistID = playlistID;
@@ -13,6 +28,15 @@ public class PlaylistsModel {
         Name = name;
         Image = image;
         Description = description;
+    }
+
+    public String getDescription () {
+        return Description;
+    }
+
+    public void setDescription (String description){
+        Description = description;
+
     }
 
     public int getPlaylistID() {
@@ -47,11 +71,9 @@ public class PlaylistsModel {
         Image = image;
     }
 
-    public String getDescription() {
-        return Description;
-    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
 
-    public void setDescription(String description) {
-        Description = description;
     }
 }
