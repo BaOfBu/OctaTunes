@@ -1,0 +1,37 @@
+package com.example.octatunes.Model;
+
+public class SimilarityModel {
+    private int UserID;
+    private int SongID;
+    private float SimilarityScore;
+
+    public SimilarityModel(int userID, int songID, float similarityScore) {
+        UserID = userID;
+        SongID = songID;
+        SimilarityScore = similarityScore;
+    }
+
+    public int getUserID() {
+        return UserID;
+    }
+
+    public void setUserID(int userID) {
+        UserID = userID;
+    }
+
+    public int getSongID() {
+        return SongID;
+    }
+
+    public void setSongID(int songID) {
+        SongID = songID;
+    }
+
+    public float getSimilarityScore() {
+        return SimilarityScore;
+    }
+
+    public void setSimilarityScore(float similarityScore) {
+        SimilarityScore = similarityScore;
+    }
+}

@@ -151,7 +151,8 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_next"
                 android:background="@null"
-                android:layout_marginEnd="20dp"/>
+                android:layout_marginEnd="20dp"
+                />
 
             <ImageButton
                 android:id="@+id/imageButtonRepeat"

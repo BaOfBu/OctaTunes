@@ -1,69 +1,58 @@
 package com.example.octatunes.Model;
 
 public class SongModel {
-    // Attributes of the song
-    private String title;
-    private String artist;
-    private String album;
-    private int duration;
-    private int imageUrl;
-    private String streamUrl;
 
-    public SongModel(String title, String artist, String album, int duration, int imageUrl, String streamUrl) {
-        this.title = title;
-        this.artist = artist;
-        this.album = album;
-        this.duration = duration;
-        this.imageUrl = imageUrl;
-        this.streamUrl = streamUrl;
+    private int SongID;
+    private String Title;
+    private String Artist;
+    private String Album;
+    private String Genre;
+
+    public SongModel(int songID, String title, String artist, String album, String genre) {
+        SongID = songID;
+        Title = title;
+        Artist = artist;
+        Album = album;
+        Genre = genre;
     }
 
-    // Getters and setters for each attribute
+    public int getSongID() {
+        return SongID;
+    }
+
+    public void setSongID(int songID) {
+        SongID = songID;
+    }
+
     public String getTitle() {
-        return title;
+        return Title;
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        Title = title;
     }
 
     public String getArtist() {
-        return artist;
+        return Artist;
     }
 
     public void setArtist(String artist) {
-        this.artist = artist;
+        Artist = artist;
     }
 
     public String getAlbum() {
-        return album;
+        return Album;
     }
 
     public void setAlbum(String album) {
-        this.album = album;
+        Album = album;
     }
 
-    public int getDuration() {
-        return duration;
+    public String getGenre() {
+        return Genre;
     }
 
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    public int getImageUrl() {
-        return imageUrl;
-    }
-
-    public void setImageUrl(int imageUrl) {
-        this.imageUrl = imageUrl;
-    }
-
-    public String getStreamUrl() {
-        return streamUrl;
-    }
-
-    public void setStreamUrl(String streamUrl) {
-        this.streamUrl = streamUrl;
+    public void setGenre(String genre) {
+        Genre = genre;
     }
 }

@@ -140,10 +140,10 @@ public class HomeActivity extends AppCompatActivity {
     }
     private List<SongModel> createSongListItems(){
         List<SongModel> songLists = new ArrayList<>();
-        songLists.add(new SongModel("Tại vì sao","RPT MCK",
-                "99%",202,R.drawable.music_01,null));
-        songLists.add(new SongModel("Making My Way","Sơn Tùng MTP",
-                "Making My Way",258,R.drawable.music_01,null));
+        //songLists.add(new SongModel("Tại vì sao","RPT MCK",
+        //        "99%",202,R.drawable.music_01,null));
+        //songLists.add(new SongModel("Making My Way","Sơn Tùng MTP",
+        //        "Making My Way",258,R.drawable.music_01,null));
         return songLists;
     }
 }

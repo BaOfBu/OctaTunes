@@ -8,6 +8,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.octatunes.Model.SongModel;
+import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
@@ -15,11 +16,11 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder> {
-    private List<SongModel> songs;
+    private List<TracksModel> songs;
 
     private Context context;
 
-    public SongAdapter(Context context,List<SongModel> songs) {
+    public SongAdapter(Context context,List<TracksModel> songs) {
         this.context = context;
         this.songs = songs;
     }
@@ -33,17 +34,17 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
 
     @Override
     public void onBindViewHolder(SongViewHolder holder, int position) {
-        SongModel song = songs.get(position);
-        holder.title.setText(song.getTitle());
-        holder.artist.setText(song.getArtist());
-        holder.image.setImageResource(song.getImageUrl());
-        holder.itemNumber.setText(position + 1 + "");
-        holder.songMoreInfor.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View view) {
-                showBottomSheetDialog(song);
-            }
-        });
+        //TracksModel song = songs.get(position);
+        //holder.title.setText(song.getTitle());
+        //holder.artist.setText(song.getArtist());
+        //holder.image.setImageResource(song.getImageUrl());
+        //holder.itemNumber.setText(position + 1 + "");
+        //holder.songMoreInfor.setOnClickListener(new View.OnClickListener(){
+        //    @Override
+        //    public void onClick(View view) {
+        //        showBottomSheetDialog(song);
+        //    }
+        //});
         // Additional setup for other views and click listeners
     }
     public void showBottomSheetDialog(SongModel song) {
@@ -59,7 +60,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.SongViewHolder
         TextView itemArtist = bottomSheetView.findViewById(R.id.item_artist);
 
         // Set the data for the BottomSheet views
-        itemImage.setImageResource(song.getImageUrl());
+        //itemImage.setImageResource(song.getImageUrl());
         itemTitle.setText(song.getTitle());
         itemArtist.setText(song.getArtist());
 

@@ -14,6 +14,17 @@
         android:theme="@style/Theme.OctaTunes"
         android:networkSecurityConfig="@xml/networksecurityconfig"
         tools:targetApi="31">
+        <service
+            android:name="BackgroundSoundService"
+            android:enabled="true"
+            />
+
+        <activity
+            android:name=".TrackView"
+            android:exported="false"
+            android:label="TrackView"
+            android:theme="@style/Theme.OctaTunes" />
+
         <activity
             android:name=".SearchActivity"
             android:exported="false"
@@ -29,4 +40,8 @@
         </activity>
     </application>
 
+    <uses-permission android:name="android.permission.WAKE_LOCK"
+        tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 </manifest>
