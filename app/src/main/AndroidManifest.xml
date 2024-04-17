@@ -20,7 +20,7 @@
             android:label="SearchActivity"
             android:theme="@style/Theme.OctaTunes" />
         <activity
-            android:name=".Activity.HomeActivity"
+            android:name=".Activity.PlaylistSpotifyActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
