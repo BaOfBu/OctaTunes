@@ -12,10 +12,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OctaTunes"
         tools:targetApi="31">
-        <service
-            android:name="BackgroundSoundService"
-            android:enabled="true"
-            />
 
         <activity
             android:name=".TrackView"
