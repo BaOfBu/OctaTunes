@@ -6,7 +6,11 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Adapter.ListPlaylistAdapter;
+import com.example.octatunes.Adapter.PlaylistSectionAdapter;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -24,16 +28,26 @@ public class HomeActivity extends AppCompatActivity {
         setupToggleButtons();
 
         //// Create playlist sections and items for demonstration
-        //List<PlaylistSectionModel> playlistSections = new ArrayList<>();
-        //playlistSections.add(new PlaylistSectionModel("Made For Bình Lê Tuấn", createPlaylistItems()));
-        //playlistSections.add(new PlaylistSectionModel("Made For Nguyễn Lê Quốc Khánh", createPlaylistItems()));
-        //
-        //// Add more sections as needed
-        //RecyclerView recyclerViewPlaylist = findViewById(R.id.playlistSection);
-        //PlaylistSectionAdapter adapterPlaylist = new PlaylistSectionAdapter(this, playlistSections);
-        //recyclerViewPlaylist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        //recyclerViewPlaylist.setAdapter(adapterPlaylist);
-        //
+        List<String> sectionTitles = new ArrayList<>();
+        sectionTitles.add("Featured Playlists");
+        sectionTitles.add("Recommended Playlists");
+
+        List<List<PlaylistsModel>> playlistsBySection = new ArrayList<>();
+
+        // Add your playlists for each section
+        List<PlaylistsModel> featuredPlaylists = new ArrayList<>();
+        // Add featured playlists...
+        playlistsBySection.add(featuredPlaylists);
+
+        List<PlaylistsModel> recommendedPlaylists = new ArrayList<>();
+        // Add recommended playlists...
+        playlistsBySection.add(recommendedPlaylists);
+
+        PlaylistSectionAdapter adapter = new PlaylistSectionAdapter(sectionTitles, playlistsBySection);
+        RecyclerView playlistSectionRecyclerView = findViewById(R.id.playlistSection);
+        playlistSectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        playlistSectionRecyclerView.setAdapter(adapter);
+
         //// Create artist sections and items for demonstration
         //List<ArtistSectionModel> artistSection = new ArrayList<>();
         //artistSection.add(new ArtistSectionModel("Ca sĩ nổi bật", createArtistListItem()));

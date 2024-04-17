@@ -1,5 +1,6 @@
 package com.example.octatunes.Adapter;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,29 +13,49 @@ import com.example.octatunes.R;
 
 import java.util.List;
 
-public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
+public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapter.ViewHolder> {
 
+    public ListPlaylistAdapter() {
+
+    }
+
+    public String getListPlaylistTitle() {
+        return ListPlaylistTitle;
+    }
+
+    public void setListPlaylistTitle(String listPlaylistTitle) {
+        ListPlaylistTitle = listPlaylistTitle;
+    }
+
+    private String ListPlaylistTitle;
+
+    public List<PlaylistsModel> getPlaylistItems() {
+        return playlistItems;
+    }
+
+    public void setPlaylistItems(List<PlaylistsModel> playlistItems) {
+        this.playlistItems = playlistItems;
+    }
 
     private List<PlaylistsModel> playlistItems;
 
-    public PlaylistAdapter(List<PlaylistsModel> playlistItems) {
+    public ListPlaylistAdapter(String ListPlaylistTitle,List<PlaylistsModel> playlistItems) {
+        this.ListPlaylistTitle =ListPlaylistTitle;
         this.playlistItems = playlistItems;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView titleTextView;
-        public TextView descriptionTextView;
+        public TextView playlistHeader;
 
         public ViewHolder(View itemView) {
             super(itemView);
-            titleTextView = itemView.findViewById(R.id.playlist_item_title);
-            descriptionTextView = itemView.findViewById(R.id.playlist_item_description);
+            playlistHeader = itemView.findViewById(R.id.playlistHeader);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_home_playlist_item, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_home_playlist_section, parent, false);
         return new ViewHolder(view);
     }
 
@@ -43,6 +64,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         //PlaylistsModel item = playlistItems.get(position);
         //holder.titleTextView.setText(item.getTitle());
         //holder.descriptionTextView.setText(item.getDescription());
+        holder.playlistHeader.setText(this.ListPlaylistTitle);
+
     }
 
     @Override
