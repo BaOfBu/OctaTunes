@@ -1,6 +1,7 @@
 package com.example.octatunes.Activity;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
@@ -10,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Adapter.ArtistSectionAdapter;
 import com.example.octatunes.Adapter.ListPlaylistAdapter;
 import com.example.octatunes.Adapter.PlaylistSectionAdapter;
 import com.example.octatunes.Model.ArtistsModel;
@@ -17,8 +19,11 @@ import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.UserService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,7 +34,11 @@ public class HomeActivity extends AppCompatActivity {
 
     List<List<PlaylistsModel>> playlistsBySection = new ArrayList<>();
 
+    List<List<ArtistsModel>> artistsBySection = new ArrayList<>();
+
     private PlaylistService playlistService = new PlaylistService();
+
+    private ArtistService artistService = new ArtistService();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,17 +46,37 @@ public class HomeActivity extends AppCompatActivity {
         setupToggleButtons();
 
         /* Playlist section */
-        List<String> sectionTitles = new ArrayList<>();
-        sectionTitles.add("Featured Playlists");
-        sectionTitles.add("Recommended Playlists");
+        List<String> playlistSectionTitles = new ArrayList<>();
+        playlistSectionTitles.add("Featured Playlists");
+        playlistSectionTitles.add("Recommended Playlists");
 
         // Fetch and display featured playlists
-        getFeaturedPlaylists(sectionTitles);
+        getFeaturedPlaylists(playlistSectionTitles);
 
         // Fetch and display recommended playlists
-        getRecommendedPlaylists(sectionTitles);
+        getRecommendedPlaylists(playlistSectionTitles);
 
         /* Artist section */
+        List<String> artistSectionTitles = new ArrayList<>();
+        artistSectionTitles.add("Popular artists");
+        getArtists(artistSectionTitles);
+
+        //List<ArtistsModel> singleArtistList = new ArrayList<>();
+        //ArtistsModel artist = new ArtistsModel(1,"Artist Name","Genre","");
+        //singleArtistList.add(artist);
+        //singleArtistList.add(artist);
+        //singleArtistList.add(artist);
+        //singleArtistList.add(artist);
+        //// Add the new list with the single artist to artistsBySection
+        //artistsBySection.add(singleArtistList);
+        //setupArtistSectionAdapter(artistSectionTitles);
+
+    }
+    private void setupArtistSectionAdapter(List<String> sectionTitles) {
+        ArtistSectionAdapter adapter = new ArtistSectionAdapter(this,sectionTitles, artistsBySection);
+        RecyclerView artistSectionRecyclerView = findViewById(R.id.artistSection);
+        artistSectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        artistSectionRecyclerView.setAdapter(adapter);
     }
     private void setupPlaylistSectionAdapter(List<String> sectionTitles) {
         PlaylistSectionAdapter adapter = new PlaylistSectionAdapter(this,sectionTitles, playlistsBySection);
@@ -82,6 +111,24 @@ public class HomeActivity extends AppCompatActivity {
             Log.e("TAG", "Failed to fetch recommended playlists: " + throwable.getMessage());
             return null;
         });
+    }
+    private void getArtists(List<String> sectionTitles) {
+        artistService.getRandomArtists(6,
+                new OnSuccessListener<List<ArtistsModel>>() {
+                    @Override
+                    public void onSuccess(List<ArtistsModel> featuredArtists) {
+                        artistsBySection.add(featuredArtists);
+                        setupArtistSectionAdapter(sectionTitles);
+                    }
+                },
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle failure to fetch featured artists
+                        Log.e("TAG", "Failed to fetch featured artists: " + e.getMessage());
+                    }
+                }
+        );
     }
     private void setupToggleButtons() {
         toggleAll = findViewById(R.id.navigation_section).findViewById(R.id.tab_all);
