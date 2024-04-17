@@ -56,20 +56,27 @@ public class HomeActivity extends AppCompatActivity {
         // Fetch and display recommended playlists
         getRecommendedPlaylists(playlistSectionTitles);
 
+        //List<PlaylistsModel> playlistsModels = new ArrayList<>();
+        //playlistsModels.add(new PlaylistsModel(
+        //        1,
+        //        1,
+        //        "Playlist Name",
+        //        "Image",
+        //        "Description"));
+        //playlistService.addPlaylists(playlistsModels);
+
         /* Artist section */
         List<String> artistSectionTitles = new ArrayList<>();
         artistSectionTitles.add("Popular artists");
         getArtists(artistSectionTitles);
 
-        //List<ArtistsModel> singleArtistList = new ArrayList<>();
-        //ArtistsModel artist = new ArtistsModel(1,"Artist Name","Genre","");
-        //singleArtistList.add(artist);
-        //singleArtistList.add(artist);
-        //singleArtistList.add(artist);
-        //singleArtistList.add(artist);
-        //// Add the new list with the single artist to artistsBySection
-        //artistsBySection.add(singleArtistList);
-        //setupArtistSectionAdapter(artistSectionTitles);
+        //artistService.addArtist(new ArtistsModel(
+        //    0,
+        //    "Phuc Du",
+        //    "viet chill rap",
+        //    "https://firebasestorage.googleapis.com/v0/b/octatunes-495d2.appspot.com/o" +
+        //            "/images%2Fartists%2F008.jpg?alt=media&token=32639bc8-023e-42e5-9ca3-18a5bcca1ec2"
+        //));
 
     }
     private void setupArtistSectionAdapter(List<String> sectionTitles) {
