@@ -1,5 +1,7 @@
 package com.example.octatunes.Adapter;
 
+import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +19,10 @@ public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSection
 
     private List<String> sectionTitles;
     private List<List<PlaylistsModel>> playlistsBySection;
+    private static Context context;
 
-    public PlaylistSectionAdapter(List<String> sectionTitles, List<List<PlaylistsModel>> playlistsBySection) {
+    public PlaylistSectionAdapter(Context context, List<String> sectionTitles, List<List<PlaylistsModel>> playlistsBySection) {
+        this.context = context;
         this.sectionTitles = sectionTitles;
         this.playlistsBySection = playlistsBySection;
     }
@@ -32,10 +36,9 @@ public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSection
             super(itemView);
             playlistHeader = itemView.findViewById(R.id.playlistHeader);
             playlistsRecyclerView = itemView.findViewById(R.id.playlistsRecyclerView);
-
-            // Set up inner RecyclerView
-            playlistAdapter = new ListPlaylistAdapter();
-            playlistsRecyclerView.setLayoutManager(new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+            playlistAdapter = new ListPlaylistAdapter(context);
+            LinearLayoutManager layoutManager = new LinearLayoutManager(itemView.getContext(), LinearLayoutManager.HORIZONTAL, false);
+            playlistsRecyclerView.setLayoutManager(layoutManager);
             playlistsRecyclerView.setAdapter(playlistAdapter);
         }
     }
@@ -53,7 +56,6 @@ public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSection
 
         // Bind playlists for this section
         holder.playlistAdapter.setPlaylistItems(playlistsBySection.get(position));
-        holder.playlistAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -61,3 +63,4 @@ public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSection
         return sectionTitles.size();
     }
 }
+

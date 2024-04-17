@@ -28,7 +28,7 @@
 
                     <!-- Image in the center of the FrameLayout -->
                     <ImageView
-                        android:id="@+id/playlist_cover_image"
+                        android:id="@+id/playlist_cover_image_spotify"
                         android:layout_width="240dp"
                         android:layout_height="240dp"
                         android:scaleType="centerCrop"
@@ -52,7 +52,7 @@
             </RelativeLayout>
 
             <TextView
-                android:id="@+id/playlistDescription"
+                android:id="@+id/playlistDescriptionSpotify"
                 android:layout_marginTop="20dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

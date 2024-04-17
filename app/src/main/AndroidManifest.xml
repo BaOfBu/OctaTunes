@@ -38,6 +38,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".Activity.PlaylistSpotifyActivity"
+            android:label="PlaylistSpotifyActivity">
+        </activity>
     </application>
 
     <uses-permission android:name="android.permission.WAKE_LOCK"

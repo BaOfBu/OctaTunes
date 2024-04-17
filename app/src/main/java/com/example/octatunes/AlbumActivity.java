@@ -65,10 +65,10 @@ public class AlbumActivity extends AppCompatActivity{
         int id_default_image = R.drawable.ic_spotify;
 
         ArrayList<PlaylistsModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
         return albumPreviewModels;
     }
     private void createFakeData() {
