@@ -5,12 +5,14 @@ public class PlaylistsModel {
     private int UserID;
     private String Name;
     private String Image;
+    private String Description;
 
-    public PlaylistsModel(int playlistID, int userID, String name, String image) {
+    public PlaylistsModel(int playlistID, int userID, String name, String image, String description) {
         PlaylistID = playlistID;
         UserID = userID;
         Name = name;
         Image = image;
+        Description = description;
     }
 
     public int getPlaylistID() {
@@ -43,5 +45,13 @@ public class PlaylistsModel {
 
     public void setImage(String image) {
         Image = image;
+    }
+
+    public String getDescription() {
+        return Description;
+    }
+
+    public void setDescription(String description) {
+        Description = description;
     }
 }
