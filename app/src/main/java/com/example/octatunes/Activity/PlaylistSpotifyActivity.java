@@ -27,10 +27,10 @@ public class PlaylistSpotifyActivity extends AppCompatActivity {
         setContentView(R.layout.layout_playlist_spotify);
 
         songList = new ArrayList<>();
-        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, ""));
-        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, ""));
-        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, ""));
-        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, ""));
+        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
+        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
+        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
+        songList.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
 
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

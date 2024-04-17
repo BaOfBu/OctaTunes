@@ -14,10 +14,10 @@
         android:theme="@style/Theme.OctaTunes"
         android:networkSecurityConfig="@xml/networksecurityconfig"
         tools:targetApi="31">
-        <service
-            android:name="BackgroundSoundService"
-            android:enabled="true"
-            />
+<!--        <service-->
+<!--            android:name="BackgroundSoundService"-->
+<!--            android:enabled="true"-->
+<!--            />-->
 
         <activity
             android:name=".TrackView"
@@ -31,7 +31,7 @@
             android:label="SearchActivity"
             android:theme="@style/Theme.OctaTunes" />
         <activity
-            android:name=".Activity.PlaylistSpotifyActivity"
+            android:name=".Activity.HomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

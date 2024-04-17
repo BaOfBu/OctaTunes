@@ -7,11 +7,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Adapter.PlaylistAdapter;
-import com.example.octatunes.Model.PlaylistSectionModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
 
 import java.util.List;
@@ -19,9 +17,9 @@ import java.util.List;
 public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSectionAdapter.ViewHolder> {
 
     private Context context;
-    private List<PlaylistSectionModel> playlistSections;
+    private List<PlaylistsModel> playlistSections;
 
-    public PlaylistSectionAdapter(Context context, List<PlaylistSectionModel> playlistSections) {
+    public PlaylistSectionAdapter(Context context, List<PlaylistsModel> playlistSections) {
         this.context = context;
         this.playlistSections = playlistSections;
     }
@@ -35,13 +33,13 @@ public class PlaylistSectionAdapter extends RecyclerView.Adapter<PlaylistSection
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PlaylistSectionModel playlistSection = playlistSections.get(position);
-        holder.titleTextView.setText(playlistSection.getTitle());
-
-        // Create an adapter for the playlist items in this section
-        PlaylistAdapter itemAdapter = new PlaylistAdapter(playlistSection.getPlaylistItems());
-        holder.playlistRecyclerView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
-        holder.playlistRecyclerView.setAdapter(itemAdapter);
+        //PlaylistSectionModel playlistSection = playlistSections.get(position);
+        //holder.titleTextView.setText(playlistSection.getTitle());
+        //
+        //// Create an adapter for the playlist items in this section
+        //PlaylistAdapter itemAdapter = new PlaylistAdapter(playlistSection.getPlaylistItems());
+        //holder.playlistRecyclerView.setLayoutManager(new LinearLayoutManager(holder.itemView.getContext(), LinearLayoutManager.HORIZONTAL, false));
+        //holder.playlistRecyclerView.setAdapter(itemAdapter);
     }
 
 

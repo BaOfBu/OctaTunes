@@ -1,22 +1,15 @@
 package com.example.octatunes.Activity;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Adapter.*;
-import com.example.octatunes.Model.ArtistModel;
-import com.example.octatunes.Model.ArtistSectionModel;
-import com.example.octatunes.Model.PlaylistDetailModel;
-import com.example.octatunes.Model.PlaylistModel;
-import com.example.octatunes.Model.PlaylistSectionModel;
-import com.example.octatunes.Model.SongModel;
+import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 
 import java.util.ArrayList;
@@ -30,48 +23,47 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.layout_home);
         setupToggleButtons();
 
-        // Create playlist sections and items for demonstration
-        List<PlaylistSectionModel> playlistSections = new ArrayList<>();
-        playlistSections.add(new PlaylistSectionModel("Made For Bình Lê Tuấn", createPlaylistItems()));
-        playlistSections.add(new PlaylistSectionModel("Made For Nguyễn Lê Quốc Khánh", createPlaylistItems()));
-
-        // Add more sections as needed
-        RecyclerView recyclerViewPlaylist = findViewById(R.id.playlistSection);
-        PlaylistSectionAdapter adapterPlaylist = new PlaylistSectionAdapter(this, playlistSections);
-        recyclerViewPlaylist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerViewPlaylist.setAdapter(adapterPlaylist);
-
-        // Create artist sections and items for demonstration
-        List<ArtistSectionModel> artistSection = new ArrayList<>();
-        artistSection.add(new ArtistSectionModel("Ca sĩ nổi bật", createArtistListItem()));
-        artistSection.add(new ArtistSectionModel("Ca sĩ trẻ bứt phá", createArtistListItem()));
-
-        // Add more sections as needed
-        RecyclerView recyclerViewArtist = findViewById(R.id.artistSection);
-        ArtistSectionAdapter adapterArtist = new ArtistSectionAdapter(this, artistSection);
-        recyclerViewArtist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerViewArtist.setAdapter(adapterArtist);
-
-        // Add items to your list
-        List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
-        List<SongModel> songLists = new ArrayList<>();
-
-        playlistDetailSection.add(new PlaylistDetailModel("Popular Single",
-                new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist,createSongListItems()),
-                R.drawable.playlist_bg));
-
-        playlistDetailSection.add(new PlaylistDetailModel("Trending",
-                new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist,createSongListItems())
-                , R.drawable.playlist_bg));
-
-        playlistDetailSection.add(new PlaylistDetailModel("Trending",
-                new PlaylistModel("Playlist 3", "Description 3",R.drawable.ic_artist,createSongListItems())
-                , R.drawable.playlist_bg));
-
-        RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
-        PlaylistDetailAdapter playlistDetailAdapter = new PlaylistDetailAdapter(this, playlistDetailSection);
-        recyclerViewPlaylistDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        recyclerViewPlaylistDetail.setAdapter(playlistDetailAdapter);
+        //// Create playlist sections and items for demonstration
+        //List<PlaylistSectionModel> playlistSections = new ArrayList<>();
+        //playlistSections.add(new PlaylistSectionModel("Made For Bình Lê Tuấn", createPlaylistItems()));
+        //playlistSections.add(new PlaylistSectionModel("Made For Nguyễn Lê Quốc Khánh", createPlaylistItems()));
+        //
+        //// Add more sections as needed
+        //RecyclerView recyclerViewPlaylist = findViewById(R.id.playlistSection);
+        //PlaylistSectionAdapter adapterPlaylist = new PlaylistSectionAdapter(this, playlistSections);
+        //recyclerViewPlaylist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        //recyclerViewPlaylist.setAdapter(adapterPlaylist);
+        //
+        //// Create artist sections and items for demonstration
+        //List<ArtistSectionModel> artistSection = new ArrayList<>();
+        //artistSection.add(new ArtistSectionModel("Ca sĩ nổi bật", createArtistListItem()));
+        //artistSection.add(new ArtistSectionModel("Ca sĩ trẻ bứt phá", createArtistListItem()));
+        //
+        //// Add more sections as needed
+        //RecyclerView recyclerViewArtist = findViewById(R.id.artistSection);
+        //ArtistSectionAdapter adapterArtist = new ArtistSectionAdapter(this, artistSection);
+        //recyclerViewArtist.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        //recyclerViewArtist.setAdapter(adapterArtist);
+        //
+        //// Add items to your list
+        //List<PlaylistDetailModel>  playlistDetailSection = new ArrayList<>();
+        //
+        //playlistDetailSection.add(new PlaylistDetailModel("Popular Single",
+        //        new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_artist,createSongListItems()),
+        //        R.drawable.playlist_bg));
+        //
+        //playlistDetailSection.add(new PlaylistDetailModel("Trending",
+        //        new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_artist,createSongListItems())
+        //        , R.drawable.playlist_bg));
+        //
+        //playlistDetailSection.add(new PlaylistDetailModel("Trending",
+        //        new PlaylistModel("Playlist 3", "Description 3",R.drawable.ic_artist,createSongListItems())
+        //        , R.drawable.playlist_bg));
+        //
+        //RecyclerView recyclerViewPlaylistDetail = findViewById(R.id.playlistDetail);
+        //PlaylistDetailAdapter playlistDetailAdapter = new PlaylistDetailAdapter(this, playlistDetailSection);
+        //recyclerViewPlaylistDetail.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        //recyclerViewPlaylistDetail.setAdapter(playlistDetailAdapter);
 
     }
     private void setupToggleButtons() {
@@ -116,34 +108,27 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
     }
 
-    private List<ArtistModel> createArtistListItem(){
-        List<ArtistModel> artisListItems = new ArrayList<>();
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
-        artisListItems.add(new ArtistModel(R.drawable.ic_artist,"RPT MCK"));
+    private List<ArtistsModel> createArtistListItem(){
+        List<ArtistsModel> artisListItems = new ArrayList<>();
+        artisListItems.add(new ArtistsModel(1,"RPT-MCK","",""));
+        artisListItems.add(new ArtistsModel(1,"RPT-MCK","",""));
         return artisListItems;
     }
-    private List<PlaylistModel> createPlaylistItems() {
-        List<PlaylistModel> playlistItems = new ArrayList<>();
-        playlistItems.add(new PlaylistModel("Playlist 1", "Description 1",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 2", "Description 2",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 3", "Description 3",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 4", "Description 4",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 5", "Description 5",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 6", "Description 6",R.drawable.ic_spotify,null));
-        playlistItems.add(new PlaylistModel("Playlist 7", "Description 7",R.drawable.ic_spotify,null));
+    private List<PlaylistsModel> createPlaylistItems() {
+        List<PlaylistsModel> playlistItems = new ArrayList<>();
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
+        playlistItems.add(new PlaylistsModel(1,1,"Tên Playlist 1",""));
         return playlistItems;
     }
-    private List<SongModel> createSongListItems(){
-        List<SongModel> songLists = new ArrayList<>();
-        //songLists.add(new SongModel("Tại vì sao","RPT MCK",
-        //        "99%",202,R.drawable.music_01,null));
-        //songLists.add(new SongModel("Making My Way","Sơn Tùng MTP",
-        //        "Making My Way",258,R.drawable.music_01,null));
+    private List<TracksModel> createSongListItems(){
+        List<TracksModel> songLists = new ArrayList<>();
+        songLists.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
+        songLists.add(new TracksModel(1,1,"Chúng ta của tương lai", 310, "",""));
         return songLists;
     }
 }

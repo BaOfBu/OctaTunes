@@ -5,13 +5,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Model.PlaylistDetailModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
 
 import java.util.List;
@@ -19,9 +18,9 @@ import java.util.List;
 public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAdapter.ViewHolder> {
 
     private Context context;
-    private List<PlaylistDetailModel> details;
+    private List<PlaylistsModel> details;
 
-    public PlaylistDetailAdapter(Context context, List<PlaylistDetailModel> details) {
+    public PlaylistDetailAdapter(Context context, List<PlaylistsModel> details) {
         this.context = context;
         this.details = details;
     }
@@ -35,26 +34,14 @@ public class PlaylistDetailAdapter extends RecyclerView.Adapter<PlaylistDetailAd
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        PlaylistDetailModel item = details.get(position);
-        holder.title.setText(item.getTitle());
-        holder.imageView.setImageResource(item.getImageUrl());
-        holder.titlePlaylist.setText(item.getPlaylistModel().getTitle());
-        holder.decscription.setText(item.getPlaylistModel().getDescription());
-        holder.imageViewPlaylist.setImageResource(item.getPlaylistModel().getCoverImageResId());
-        holder.musicName.setText(item.getPlaylistModel().getSongs().get(0).getTitle());
-        holder.numberOfMusic.setText(item.getPlaylistModel().getSongs().size() + " Songs");
-
-        // Ensure that VideoView and MediaController are initialized correctly
-        //MediaController mediaController = new MediaController(holder.itemView.getContext());
-        //mediaController.setAnchorView(holder.videoMusic);
-        //holder.videoMusic.setMediaController(mediaController);
-        //
-        //// Optional: Prepare VideoView for playing, assuming you have a valid URL
-        //// You should handle this carefully, especially if loading URLs directly
-        //holder.videoMusic.setVideoPath(item.getPlaylistModel().getSongs().get(0).getStreamUrl());
-        //holder.videoMusic.requestFocus();
-        //holder.videoMusic.start();  // You might not
-        // Set additional properties or handle nested RecyclerView for PlaylistModel if needed
+        //PlaylistDetailModel item = details.get(position);
+        //holder.title.setText(item.getTitle());
+        //holder.imageView.setImageResource(item.getImageUrl());
+        //holder.titlePlaylist.setText(item.getPlaylistModel().getTitle());
+        //holder.decscription.setText(item.getPlaylistModel().getDescription());
+        //holder.imageViewPlaylist.setImageResource(item.getPlaylistModel().getCoverImageResId());
+        //holder.musicName.setText(item.getPlaylistModel().getSongs().get(0).getName());
+        //holder.numberOfMusic.setText(item.getPlaylistModel().getSongs().size() + " Songs");
     }
 
     @Override

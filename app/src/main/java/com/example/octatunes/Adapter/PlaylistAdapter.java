@@ -7,16 +7,16 @@ import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Model.PlaylistModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
 
 import java.util.List;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private List<PlaylistModel> playlistItems;
+    private List<PlaylistsModel> playlistItems;
 
-    public PlaylistAdapter(List<PlaylistModel> playlistItems) {
+    public PlaylistAdapter(List<PlaylistsModel> playlistItems) {
         this.playlistItems = playlistItems;
     }
 
@@ -39,9 +39,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PlaylistModel item = playlistItems.get(position);
-        holder.titleTextView.setText(item.getTitle());
-        holder.descriptionTextView.setText(item.getDescription());
+        //PlaylistsModel item = playlistItems.get(position);
+        //holder.titleTextView.setText(item.getTitle());
+        //holder.descriptionTextView.setText(item.getDescription());
     }
 
     @Override

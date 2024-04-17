@@ -8,16 +8,17 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import com.example.octatunes.Model.ArtistModel;
+
+import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.R;
 import java.util.List;
 
 
 public class ArtistItemAdapter extends RecyclerView.Adapter<ArtistItemAdapter.ArtistViewHolder> {
 
-    private List<ArtistModel> artistList;
+    private List<ArtistsModel> artistList;
 
-    public ArtistItemAdapter(List<ArtistModel> artistList) {
+    public ArtistItemAdapter(List<ArtistsModel> artistList) {
         this.artistList = artistList;
     }
 
@@ -41,10 +42,10 @@ public class ArtistItemAdapter extends RecyclerView.Adapter<ArtistItemAdapter.Ar
 
     @Override
     public void onBindViewHolder(@NonNull ArtistViewHolder holder, int position) {
-        ArtistModel artistItemModel = artistList.get(position);
-
-        holder.artistImage.setImageResource(artistItemModel.getImageResource());
-        holder.artistName.setText(artistItemModel.getArtistName());
+        //ArtistModel artistItemModel = artistList.get(position);
+        //
+        //holder.artistImage.setImageResource(artistItemModel.getImageResource());
+        //holder.artistName.setText(artistItemModel.getArtistName());
     }
 
     @Override

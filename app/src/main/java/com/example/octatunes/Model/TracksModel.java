@@ -5,14 +5,25 @@ public class TracksModel {
     private int AlubumID;
     private String Name;
     private int Duration;
+
+    private String Image;
     private String File;
 
-    public TracksModel(int trackID, int alubumID, String name, int duration, String file) {
+    public TracksModel(int trackID, int alubumID, String name, int duration, String file,String image) {
         TrackID = trackID;
         AlubumID = alubumID;
+        Image = image;
         Name = name;
         Duration = duration;
         File = file;
+    }
+
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
     }
 
     public int getTrackID() {
