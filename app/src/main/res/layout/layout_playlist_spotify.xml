@@ -16,31 +16,41 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
             <!-- Image -->
-            <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-                <!-- Image in the center of the Frame -->
-                <ImageView
-                    android:id="@+id/playlist_cover_image"
-                    android:layout_width="240dp"
-                    android:layout_height="240dp"
-                    android:scaleType="centerCrop"
-                    android:layout_gravity="center"
-                    android:src="@drawable/playlist_06" />
-
-                <!-- Back Icon aligned to the left inside the Frame -->
-                <ImageView
-                    android:id="@+id/back_icon"
-                    android:layout_width="wrap_content"
+                <!-- Container for Image and Back Icon -->
+                <FrameLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:src="@drawable/ic_back_arrow"
-                    android:padding="16dp"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:background="?attr/selectableItemBackground" />
-            </FrameLayout>
+                    android:paddingTop="10dp">
+
+                    <!-- Image in the center of the FrameLayout -->
+                    <ImageView
+                        android:id="@+id/playlist_cover_image"
+                        android:layout_width="240dp"
+                        android:layout_height="240dp"
+                        android:scaleType="centerCrop"
+                        android:layout_gravity="center_horizontal"
+                        android:src="@drawable/playlist_06" />
+
+                    <!-- Back Icon aligned to the left inside the FrameLayout -->
+                    <ImageView
+                        android:id="@+id/back_icon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+
+                        android:src="@drawable/ic_back_arrow"
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground" />
+                </FrameLayout>
+
+            </RelativeLayout>
+
             <TextView
                 android:id="@+id/playlistDescription"
                 android:layout_marginTop="20dp"
@@ -48,7 +58,7 @@
                 android:layout_height="wrap_content"
                 android:textColor="#a7a7a7"
                 android:textSize="14sp"
-                android:text="Your daily update of the most played tracks right now."
+                android:text="Thông tin cập nhật hằng ngày về những bản nhạc được nghe nhiều nhất tại Việt Nam"
             />
             <!-- Spotify icon -->
             <LinearLayout
@@ -103,6 +113,7 @@
                     android:background="@drawable/baseline_arrow_circle_down_24"
                     />
                 <ImageView
+                    android:id="@+id/more_info"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"
