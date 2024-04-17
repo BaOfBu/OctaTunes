@@ -13,27 +13,30 @@ public class PlaylistsModel implements Serializable {
     @PropertyName("name")
     private String Name;
 
-    public String getDescription() {
-        return Description;
-    }
-
-    public void setDescription(String description) {
-        Description = description;
-    }
-
     @PropertyName("description")
     private String Description;
     @PropertyName("image")
     private String Image;
+
     public PlaylistsModel() {
 
     }
-    public PlaylistsModel(int playlistID, int userID, String name, String image,String description) {
-        Description = description;
+
+    public PlaylistsModel(int playlistID, int userID, String name, String image, String description) {
         PlaylistID = playlistID;
         UserID = userID;
         Name = name;
         Image = image;
+        Description = description;
+    }
+
+    public String getDescription () {
+        return Description;
+    }
+
+    public void setDescription (String description){
+        Description = description;
+
     }
 
     public int getPlaylistID() {
@@ -71,5 +74,6 @@ public class PlaylistsModel implements Serializable {
     @Override
     public String toString() {
         return new Gson().toJson(this);
+
     }
 }
