@@ -1,11 +1,17 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 public class TracksModel {
     private int TrackID;
     private int AlubumID;
     private String Name;
     private int Duration;
     private String File;
+
+    public TracksModel() {
+
+    }
 
     public TracksModel(int trackID, int alubumID, String name, int duration, String file) {
         TrackID = trackID;
@@ -14,7 +20,6 @@ public class TracksModel {
         Duration = duration;
         File = file;
     }
-
 
     public int getTrackID() {
         return TrackID;
@@ -54,5 +59,10 @@ public class TracksModel {
 
     public void setFile(String file) {
         File = file;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

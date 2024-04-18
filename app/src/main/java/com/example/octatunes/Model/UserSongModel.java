@@ -1,11 +1,17 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 
 public class UserSongModel {
     private int UserID;
     private int SongID;
     private Date PlayDate;
+
+    public UserSongModel() {
+
+    }
 
     public UserSongModel(int userID, int songID, Date playDate) {
         UserID = userID;
@@ -35,5 +41,10 @@ public class UserSongModel {
 
     public void setPlayDate(Date playDate) {
         PlayDate = playDate;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

@@ -1,9 +1,15 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 public class SimilarityModel {
     private int UserID;
     private int SongID;
     private float SimilarityScore;
+
+    public SimilarityModel() {
+
+    }
 
     public SimilarityModel(int userID, int songID, float similarityScore) {
         UserID = userID;
@@ -33,5 +39,10 @@ public class SimilarityModel {
 
     public void setSimilarityScore(float similarityScore) {
         SimilarityScore = similarityScore;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

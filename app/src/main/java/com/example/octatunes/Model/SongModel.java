@@ -1,5 +1,7 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 public class SongModel {
 
     private int SongID;
@@ -7,6 +9,9 @@ public class SongModel {
     private String Artist;
     private String Album;
     private String Genre;
+
+    public SongModel() {
+    }
 
     public SongModel(int songID, String title, String artist, String album, String genre) {
         SongID = songID;
@@ -54,5 +59,10 @@ public class SongModel {
 
     public void setGenre(String genre) {
         Genre = genre;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }
