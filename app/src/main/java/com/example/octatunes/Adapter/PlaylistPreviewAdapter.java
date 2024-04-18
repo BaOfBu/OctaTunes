@@ -1,6 +1,7 @@
 package com.example.octatunes.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,8 +13,10 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -74,8 +77,19 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         holder.playlistTitle.setText(playlist.getName());
         holder.playlistDescription.setText(playlist.getDescription());
         if (!Objects.equals(playlist.getImage(), "")){
-            Picasso.get().load(playlist.getImage()).into(holder.playlistImage);
+            Picasso.get().load(playlist.getImage()).into(holder.artistPlaylistImage);
         }
+
+        holder.itemView.setOnClickListener(v -> {
+            if (playlist.getUserID()==1){
+                // Open PlayListSpotifyActivity on item click
+                Intent intent = new Intent(context, PlaylistSpotifyActivity.class);
+                intent.putExtra("playlistItem", new Gson().toJson(playlist));
+                context.startActivity(intent);
+            }
+
+        });
+
     }
 
     @Override
