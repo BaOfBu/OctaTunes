@@ -67,7 +67,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         int iconResourceId = iconResourceIds.get(position);
 
         holder.playlistDetailIcon.setImageResource(iconResourceId);
-        int color = ContextCompat.getColor(context, R.color.light_black_color); // Replace "your_color" with the color you want
+        int color = ContextCompat.getColor(context, R.color.dark_gray);
         holder.playlistDetailIcon.setColorFilter(color);
 
         holder.text_title_container_text.setText(preview);

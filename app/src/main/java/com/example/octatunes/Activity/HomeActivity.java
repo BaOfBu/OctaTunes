@@ -37,6 +37,8 @@ public class HomeActivity extends AppCompatActivity {
 
     List<List<ArtistsModel>> artistsBySection = new ArrayList<>();
 
+    List<PlaylistsModel> playlistPreviewBySection = new ArrayList<>();
+
     private PlaylistService playlistService = new PlaylistService();
 
     private ArtistService artistService = new ArtistService();
@@ -80,24 +82,18 @@ public class HomeActivity extends AppCompatActivity {
         //));
 
         /* Playlist Detail Section */
-        RecyclerView playlistDetailRecyclerView = findViewById(R.id.playlistDetail);
-
         List<String> playlistPreviews = new ArrayList<>();
         playlistPreviews.add("Trending");
         playlistPreviews.add("Popular Playlist");
+        playlistPreviews.add("Newest Playlist");
+        playlistPreviews.add("Popular Album");
 
         List<Integer> playlistPreviewIcon = new ArrayList<>();
         playlistPreviewIcon.add(R.drawable.baseline_trending_up_24);
         playlistPreviewIcon.add(R.drawable.baseline_favorite_border_24);
-
-        List<PlaylistsModel> playlistsModels = new ArrayList<>();
-        playlistsModels.add(new PlaylistsModel(1,1,"Playlist Name","","freferfer"));
-        playlistsModels.add(new PlaylistsModel(1,1,"Playlist Name","","freferfer"));
-
-        PlaylistPreviewAdapter playlistPreviewAdapter = new PlaylistPreviewAdapter(this, playlistPreviews,
-                playlistsModels,playlistPreviewIcon);
-        playlistDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        playlistDetailRecyclerView.setAdapter(playlistPreviewAdapter);
+        playlistPreviewIcon.add(R.drawable.baseline_trending_up_24);
+        playlistPreviewIcon.add(R.drawable.baseline_favorite_border_24);
+        getPlaylistMusicPreview(playlistPreviews,playlistPreviewIcon);
 
     }
     private void setupArtistSectionAdapter(List<String> sectionTitles) {
@@ -109,6 +105,12 @@ public class HomeActivity extends AppCompatActivity {
     private void setupPlaylistSectionAdapter(List<String> sectionTitles) {
         PlaylistSectionAdapter adapter = new PlaylistSectionAdapter(this,sectionTitles, playlistsBySection);
         RecyclerView playlistSectionRecyclerView = findViewById(R.id.playlistSection);
+        playlistSectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        playlistSectionRecyclerView.setAdapter(adapter);
+    }
+    private void setupPlaylistPreviewSectionAdapter(List<String> sectionTitles, List<Integer> playlistPreviewIcon) {
+        PlaylistPreviewAdapter adapter = new PlaylistPreviewAdapter(this,sectionTitles, playlistPreviewBySection,playlistPreviewIcon);
+        RecyclerView playlistSectionRecyclerView = findViewById(R.id.playlistDetail);
         playlistSectionRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         playlistSectionRecyclerView.setAdapter(adapter);
     }
@@ -157,6 +159,18 @@ public class HomeActivity extends AppCompatActivity {
                     }
                 }
         );
+    }
+    private void getPlaylistMusicPreview(List<String> sectionTitles,List<Integer> playlistPreviewIcon){
+        playlistService.getRandomPlaylists(sectionTitles.size()).thenAccept(playlists -> {
+            for (PlaylistsModel playlist : playlists) {
+                playlistPreviewBySection.add(playlist);
+            }
+            setupPlaylistPreviewSectionAdapter(sectionTitles,playlistPreviewIcon);
+        }).exceptionally(throwable -> {
+            // Handle exceptions if playlist retrieval fails
+            Log.e("TAG", "Failed to fetch recommended playlists: " + throwable.getMessage());
+            return null;
+        });
     }
     private void setupToggleButtons() {
         toggleAll = findViewById(R.id.navigation_section).findViewById(R.id.tab_all);
