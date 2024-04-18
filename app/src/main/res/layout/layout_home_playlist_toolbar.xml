@@ -25,7 +25,7 @@
         android:padding="10dp"/>
 
     <TextView
-        android:id="@+id/song_count"
+        android:id="@+id/tbin_song_count"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"

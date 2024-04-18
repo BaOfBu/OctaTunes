@@ -15,6 +15,7 @@
     <!-- ScrollView starts below the navigation section and above the tab layout -->
     <!-- NestedScrollView to contain both RecyclerViews -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/navigation_section"

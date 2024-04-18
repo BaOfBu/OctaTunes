@@ -5,9 +5,11 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ScrollView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -158,6 +160,7 @@ public class HomeActivity extends AppCompatActivity {
         //newTrack.setFile("https://firebasestorage.googleapis.com/v0/b/octatunes-495d2.appspot.com/o/musics%2F054_SomMai_Ronboogz.mp3?alt=media&token=bd524d07-ae8d-4ab5-b447-b895e5c020fa");
         //
         //trackService.addTrack(newTrack);
+
     }
     private void setupArtistSectionAdapter(List<String> sectionTitles) {
         ArtistSectionAdapter adapter = new ArtistSectionAdapter(this,sectionTitles, artistsBySection);
@@ -267,11 +270,25 @@ public class HomeActivity extends AppCompatActivity {
         findViewById(R.id.playlistSection).setVisibility(View.VISIBLE);
         findViewById(R.id.artistSection).setVisibility(View.VISIBLE);
         findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
+        NestedScrollView scrollView = findViewById(R.id.homeScroll); // Thay "scrollView" bằng ID của ScrollView của bạn
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.scrollTo(0, 0);
+            }
+        });
     }
     void showMusicContent() {
         findViewById(R.id.playlistSection).setVisibility(View.GONE);
         findViewById(R.id.artistSection).setVisibility(View.GONE);
         findViewById(R.id.playlistDetail).setVisibility(View.VISIBLE);
+        NestedScrollView scrollView = findViewById(R.id.homeScroll); // Thay "scrollView" bằng ID của ScrollView của bạn
+        scrollView.post(new Runnable() {
+            @Override
+            public void run() {
+                scrollView.scrollTo(0, 0);
+            }
+        });
     }
 
 }
