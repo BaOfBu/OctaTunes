@@ -1,11 +1,12 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 public class ArtistsModel {
     private int ArtistID;
     private String Name;
     private String Genre;
     private String Image;
-
     public ArtistsModel(){
 
     }
@@ -45,5 +46,10 @@ public class ArtistsModel {
 
     public void setImage(String image) {
         Image = image;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

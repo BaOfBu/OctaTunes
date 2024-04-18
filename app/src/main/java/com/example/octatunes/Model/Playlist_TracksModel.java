@@ -1,9 +1,15 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 public class Playlist_TracksModel {
     private int PlaylistID;
     private int TrackID;
     private int Order;
+
+    public Playlist_TracksModel() {
+
+    }
 
     public Playlist_TracksModel(int playlistID, int trackID, int order) {
         PlaylistID = playlistID;
@@ -33,5 +39,10 @@ public class Playlist_TracksModel {
 
     public void setOrder(int order) {
         Order = order;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

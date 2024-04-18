@@ -1,12 +1,16 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 import java.time.LocalDateTime;
 
 public class LikesModel {
     private int UserID;
     private int TrackID;
     private LocalDateTime LikeDateTime;
+    public LikesModel() {
 
+    }
     public LikesModel(int userID, int trackID, LocalDateTime likeDateTime) {
         UserID = userID;
         TrackID = trackID;
@@ -35,5 +39,10 @@ public class LikesModel {
 
     public void setLikeDateTime(LocalDateTime likeDateTime) {
         LikeDateTime = likeDateTime;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }

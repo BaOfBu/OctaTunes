@@ -1,5 +1,7 @@
 package com.example.octatunes.Model;
 
+import com.google.gson.Gson;
+
 import java.util.Date;
 
 public class UsersModel {
@@ -9,6 +11,10 @@ public class UsersModel {
     private String Password;
     private Date DateOfBirth;
     private String Image;
+
+    public UsersModel() {
+
+    }
 
     public UsersModel(int userID, String name, String email, String password, Date dateOfBirth, String image) {
         UserID = userID;
@@ -65,5 +71,10 @@ public class UsersModel {
 
     public void setImage(String image) {
         Image = image;
+    }
+    @Override
+    public String toString() {
+        return new Gson().toJson(this);
+
     }
 }
