@@ -14,6 +14,7 @@ import com.example.octatunes.R;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
@@ -48,7 +49,10 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
         PlaylistsModel item = playlistItems.get(position);
         holder.titleTextView.setText(item.getName());
         holder.descriptionTextView.setText(item.getDescription());
-        Picasso.get().load(item.getImage()).into(holder.imageView);
+        if (!Objects.equals(item.getImage(), "")){
+            Picasso.get().load(item.getImage()).into(holder.imageView);
+        }
+
     }
 
     @Override

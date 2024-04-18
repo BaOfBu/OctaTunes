@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.ViewHolder>{
     private List<ArtistsModel> artistsList;
@@ -57,7 +58,7 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
     public void onBindViewHolder(@NonNull ListArtistAdapter.ViewHolder holder, int position) {
         ArtistsModel item = artistsList.get(position);
         holder.artist_item_title.setText(item.getName());
-        if (item.getImage()!=""){
+        if (!Objects.equals(item.getImage(), "")){
             Picasso.get().load(item.getImage()).into(holder.imageView);
         }
     }

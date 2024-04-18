@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.ArtistSectionAdapter;
 import com.example.octatunes.Adapter.ListPlaylistAdapter;
+import com.example.octatunes.Adapter.PlaylistPreviewAdapter;
 import com.example.octatunes.Adapter.PlaylistSectionAdapter;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -77,6 +78,26 @@ public class HomeActivity extends AppCompatActivity {
         //    "https://firebasestorage.googleapis.com/v0/b/octatunes-495d2.appspot.com/o" +
         //            "/images%2Fartists%2F008.jpg?alt=media&token=32639bc8-023e-42e5-9ca3-18a5bcca1ec2"
         //));
+
+        /* Playlist Detail Section */
+        RecyclerView playlistDetailRecyclerView = findViewById(R.id.playlistDetail);
+
+        List<String> playlistPreviews = new ArrayList<>();
+        playlistPreviews.add("Trending");
+        playlistPreviews.add("Popular Playlist");
+
+        List<Integer> playlistPreviewIcon = new ArrayList<>();
+        playlistPreviewIcon.add(R.drawable.baseline_trending_up_24);
+        playlistPreviewIcon.add(R.drawable.baseline_favorite_border_24);
+
+        List<PlaylistsModel> playlistsModels = new ArrayList<>();
+        playlistsModels.add(new PlaylistsModel(1,1,"Playlist Name","","freferfer"));
+        playlistsModels.add(new PlaylistsModel(1,1,"Playlist Name","","freferfer"));
+
+        PlaylistPreviewAdapter playlistPreviewAdapter = new PlaylistPreviewAdapter(this, playlistPreviews,
+                playlistsModels,playlistPreviewIcon);
+        playlistDetailRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        playlistDetailRecyclerView.setAdapter(playlistPreviewAdapter);
 
     }
     private void setupArtistSectionAdapter(List<String> sectionTitles) {
