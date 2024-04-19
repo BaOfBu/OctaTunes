@@ -105,6 +105,7 @@
                     android:background="@drawable/round_add_circle_outline_24"
                 />
                 <ImageView
+                    android:id="@+id/download_playlist_spotify"
                     android:layout_width="28dp"
                     android:layout_height="28dp"
                     android:layout_gravity="center"

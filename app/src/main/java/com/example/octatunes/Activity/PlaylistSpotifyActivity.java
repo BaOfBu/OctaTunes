@@ -83,6 +83,20 @@ public class PlaylistSpotifyActivity extends Fragment {
 
                 bottomSheetDialog.show();
             });
+
+            ImageView download = view.findViewById(R.id.download_playlist_spotify);
+            download.setOnClickListener(v ->{
+                // Creating the BottomSheetDialog
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+                bottomSheetDialog.setContentView(R.layout.bottom_sheet_playlist_spotify_download);
+                ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.download_bottom_sheet_image);
+                TextView tbin_playlist_bottom_sheet_title = bottomSheetDialog.findViewById(R.id.download_bottom_sheet_title);
+
+                tbin_playlist_bottom_sheet_image.setImageDrawable(imageView.getDrawable());
+                tbin_playlist_bottom_sheet_title.setText("Want to download " + playlistsModel.getName());
+
+                bottomSheetDialog.show();
+            });
         }
         return view;
     }
