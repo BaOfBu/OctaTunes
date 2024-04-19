@@ -55,19 +55,19 @@
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:id="@+id/tab_layout_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#4D000000">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/tab_layout_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="#4D000000">-->
 
-        <include
-            android:id="@+id/tab_layout"
-            layout="@layout/layout_home_tab_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent" />
-    </FrameLayout>
+<!--        <include-->
+<!--            android:id="@+id/tab_layout"-->
+<!--            layout="@layout/layout_home_tab_section"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@android:color/transparent" />-->
+<!--    </FrameLayout>-->
 
 </RelativeLayout>
