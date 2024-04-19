@@ -16,7 +16,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/background_color"
-            android:src="@drawable/ic_back_arrow"/>
+            android:src="@drawable/ic_back_arrow"
+            android:id="@+id/btnPrev"/>
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -43,7 +44,7 @@
         android:calendarViewShown="false"
         android:theme="@style/DatePicker"/>
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnBỉthNext"
+        android:id="@+id/btnNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tiếp"

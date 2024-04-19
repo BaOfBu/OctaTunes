@@ -7,12 +7,14 @@
     android:paddingLeft="20dp"
     android:paddingRight="20dp"
     android:paddingBottom="50dp"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/signup_email_frag">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatImageButton
+            android:id="@+id/btnPrev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/background_color"
@@ -37,7 +39,7 @@
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
-        android:id="@+id/email"
+        android:id="@+id/edtEmail"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_marginTop="10dp"
@@ -53,7 +55,7 @@
         android:textSize="15sp"
         android:layout_marginTop="10dp"/>
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/btnEmailNext"
+        android:id="@+id/btnNext"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tiếp"
