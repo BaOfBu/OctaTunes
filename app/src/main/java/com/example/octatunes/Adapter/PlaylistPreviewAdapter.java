@@ -20,6 +20,7 @@ import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -53,6 +54,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         public TextView playlistDescription;
         public TextView music_name;
         public TextView song_count;
+        public ImageView tbin_homepage_playlist_detail_menu_button;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -64,6 +66,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             playlistTitle = itemView.findViewById(R.id.playlist).findViewById(R.id.title);
             playlistDescription = itemView.findViewById(R.id.playlist).findViewById(R.id.description);
             song_count = itemView.findViewById(R.id.tbin_song_count);
+            tbin_homepage_playlist_detail_menu_button=itemView.findViewById(R.id.tbin_homepage_playlist_detail_menu_button);
         }
     }
 
@@ -92,6 +95,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             Picasso.get().load(playlist.getImage()).into(holder.artistPlaylistImage);
         }
 
+        /* Image changw */
         holder.itemView.setOnClickListener(v -> {
             if (playlist.getUserID()==1){
                 // Open PlayListSpotifyActivity on item click
@@ -135,6 +139,30 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
 
         // Initial execution
         handler.post(updateTrackRunnable);
+
+        /* More Info button */
+        holder.tbin_homepage_playlist_detail_menu_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_playlist_spotify);
+                ImageView bottomSheetImage = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
+                TextView bottomSheetTitle = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_title);
+                if (!Objects.equals(playlist.getImage(), "")){
+                    Picasso.get().load(playlist.getImage()).into(bottomSheetImage);
+                }
+                bottomSheetTitle.setText(playlist.getName());
+                View listenAdFreeView = bottomSheetDialog.findViewById(R.id.action_listen_ad_free);
+                listenAdFreeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                });
+                bottomSheetDialog.show();
+            }
+        });
+
+
 
     }
 
