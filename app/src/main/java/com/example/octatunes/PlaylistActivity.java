@@ -42,7 +42,7 @@ public class PlaylistActivity extends AppCompatActivity{
         _buttonSetting = findViewById(R.id.settingButton);
         _recyclerViewSongs = findViewById(R.id.songsRecyclerView);
         _recyclerViewYouMayLike = findViewById(R.id.youMayLikeRecyclerView);
-        createFakeData();
+        //createFakeData();
     }
 
     private ArrayList<TrackPreviewModel> getDataTracksFake(){
@@ -69,18 +69,18 @@ public class PlaylistActivity extends AppCompatActivity{
         albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
         return albumPreviewModels;
     }
-    private void createFakeData() {
-        _textPlaylistName.setText("Chúng ta tương lai");
-        _textLikes.setText("1000");
-        _textUsername.setText("Username");
-        _textTotalTime.setText("4m 9s");
-        ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
-        TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
-        _recyclerViewSongs.setAdapter(listSongsAdapter);
-
-        ArrayList<PlaylistsModel> listYouMayLike = getDataPlaylistsFake();
-        PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
-        _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
-
-    }
+//    private void createFakeData() {
+//        _textPlaylistName.setText("Chúng ta tương lai");
+//        _textLikes.setText("1000");
+//        _textUsername.setText("Username");
+//        _textTotalTime.setText("4m 9s");
+//        ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
+//        TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
+//        _recyclerViewSongs.setAdapter(listSongsAdapter);
+//
+//        ArrayList<PlaylistsModel> listYouMayLike = getDataPlaylistsFake();
+//        PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
+//        _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
+//
+//    }
 }

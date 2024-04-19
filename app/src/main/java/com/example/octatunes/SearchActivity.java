@@ -284,25 +284,25 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listCategoriesButtonAdapter.notifyDataSetChanged();
     }
     private void getTracks(String searchQuery) {
-//        ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
-//        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
-//        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-//        trackPreviewAdapter.notifyDataSetChanged();
-        trackService.findTrackByName(searchQuery,
-                new OnSuccessListener<List<TracksModel>>() {
-                    @Override
-                    public void onSuccess(List<TracksModel> trackPreviewModels) {
-                        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, getContext());
-                        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-                        trackPreviewAdapter.notifyDataSetChanged();
-                    }
-                },
-                new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        // Handle the error
-                    }
-                });
+        ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
+        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
+        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+        trackPreviewAdapter.notifyDataSetChanged();
+//        trackService.findTrackByName(searchQuery,
+//                new OnSuccessListener<List<TracksModel>>() {
+//                    @Override
+//                    public void onSuccess(List<TracksModel> trackPreviewModels) {
+//                        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, getContext());
+//                        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+//                        trackPreviewAdapter.notifyDataSetChanged();
+//                    }
+//                },
+//                new OnFailureListener() {
+//                    @Override
+//                    public void onFailure(@NonNull Exception e) {
+//                        // Handle the error
+//                    }
+//                });
     }
     private void getListUserProfile(String searchQuery) {
         ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
