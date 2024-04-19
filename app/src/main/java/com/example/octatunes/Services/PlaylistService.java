@@ -26,7 +26,6 @@ public class PlaylistService {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistsRef = database.getReference("playlists");
     }
-
     public void addPlaylists(List<PlaylistsModel> playlists) {
         playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -63,7 +62,6 @@ public class PlaylistService {
             }
         });
     }
-
     public CompletableFuture<List<PlaylistsModel>> getAllPlaylists() {
         CompletableFuture<List<PlaylistsModel>> future = new CompletableFuture<>();
         playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
