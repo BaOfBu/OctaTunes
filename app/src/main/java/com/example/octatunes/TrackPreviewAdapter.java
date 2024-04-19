@@ -10,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.TracksModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapter.ViewHolder> {
     private ArrayList<TrackPreviewModel> trackPreviewModels;
@@ -42,11 +44,11 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     }
     @Override
     public void onBindViewHolder(@NonNull TrackPreviewAdapter.ViewHolder holder, int position) {
-        TrackPreviewModel trackPreviewModel = trackPreviewModels.get(position);
-        Picasso.get().load(trackPreviewModel.getTrackImageId()).into(holder.trackImage);
-        holder.trackName.setText(trackPreviewModel.getTrackName());
-        holder.trackArtist.setText(trackPreviewModel.getTrackArtist());
-        holder.type.setText(trackPreviewModel.getType());
+        TrackPreviewModel tracksModel = trackPreviewModels.get(position);
+        Picasso.get().load(tracksModel.getTrackImageId()).into(holder.trackImage);
+        holder.trackName.setText(tracksModel.getTrackName());
+        holder.trackArtist.setText(tracksModel.getTrackArtist());
+        holder.type.setText(tracksModel.getType());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

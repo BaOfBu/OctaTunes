@@ -2,50 +2,60 @@ package com.example.octatunes;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
 
 import com.example.octatunes.Activity.HomeActivity;
-import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.octatunes.Activity.NowPlayingBarFragment;
+import com.example.octatunes.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
-
-    private BottomNavigationView bottomNavigationView;
+    ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-//        getSupportFragmentManager().beginTransaction()
-//                .replace(R.id.fragment_container, new HomeActivity())
-//                .commit();
-        Bundle bundle = new Bundle();
-        bundle.putString("searchQuery", "Sơn Tùng M-TP");
-        Fragment searchActivity = new SearchActivity();
-        searchActivity.setArguments(bundle);
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, searchActivity)
-                .commit();
-        bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.home) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new HomeActivity())
-                        .commit();
-                return true;
-            }
-            if (item.getItemId() == R.id.search) {
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        replaceFragment(new HomeActivity());
+
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemID = item.getItemId();
+            if(itemID == R.id.home){
+                replaceFragment(new HomeActivity());
+            }else if(itemID == R.id.search){
                 Bundle bundleNavigation = new Bundle();
                 bundleNavigation.putString("searchQuery", "");
                 Fragment searchActivityNavigation = new SearchActivity();
                 searchActivityNavigation.setArguments(bundleNavigation);
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, searchActivityNavigation)
-                        .commit();
-            }
-            return false;
-        });
+                replaceFragment(searchActivityNavigation);
+            }else if(itemID == R.id.library){
 
+            }else if(itemID == R.id.Premium){
+
+            }
+            return true;
+        });
+    }
+
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, fragment);
+        fragmentTransaction.commit();
+    }
+
+    private void showNowPlayingBar(){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.frame_layout, new NowPlayingBarFragment());
+        fragmentTransaction.commit();
+        FrameLayout frameLayout = findViewById(R.id.frame_layout);
+        frameLayout.setVisibility(View.VISIBLE);
     }
 }
