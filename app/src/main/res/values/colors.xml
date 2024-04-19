@@ -6,6 +6,7 @@
     <color name="active_button_color">#14833b</color>
     <color name="border_button_color">#727272</color>
     <color name="dark_gray">#a7a7a7</color>
+    <color name="gray">#B3B3B3</color>
     <color name="search_bar_color">#424242</color>
     <color name="light_gray_color">#05CCCCCC</color>
     <color name="medium_gray_color">#10CCCCCC</color>
