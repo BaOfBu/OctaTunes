@@ -20,6 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapter.ViewHolder> {
 
@@ -63,7 +64,7 @@ public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapte
         PlaylistsModel item = playlistItems.get(position);
         holder.titleTextView.setText(item.getName());
         holder.descriptionTextView.setText(item.getDescription());
-        if (item.getImage()!=""){
+        if (!Objects.equals(item.getImage(), "")){
             Picasso.get().load(item.getImage()).into(holder.imageView);
         }
         // Set click listener
