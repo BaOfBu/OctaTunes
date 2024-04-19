@@ -2,6 +2,7 @@ package com.example.octatunes.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -68,15 +71,30 @@ public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapte
             Picasso.get().load(item.getImage()).into(holder.imageView);
         }
         // Set click listener
+        //holder.itemView.setOnClickListener(v -> {
+        //    if (item.getUserID()==1){
+        //        // Open PlayListSpotifyActivity on item click
+        //        Intent intent = new Intent(context, PlaylistSpotifyActivity.class);
+        //        intent.putExtra("playlistItem", new Gson().toJson(item)); // Pass entire PlaylistsModel object as JSON string
+        //        context.startActivity(intent);
+        //    }
+        //
+        //});
         holder.itemView.setOnClickListener(v -> {
-            if (item.getUserID()==1){
-                // Open PlayListSpotifyActivity on item click
-                Intent intent = new Intent(context, PlaylistSpotifyActivity.class);
-                intent.putExtra("playlistItem", new Gson().toJson(item)); // Pass entire PlaylistsModel object as JSON string
-                context.startActivity(intent);
-            }
+            if (item.getUserID() == 1) {
+                // Replace the current fragment with PlaylistSpotifyFragment
+                PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("playlistItem", new Gson().toJson(item)); // Pass entire PlaylistsModel object as JSON string
+                fragment.setArguments(bundle);
 
+                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null); // Add fragment to back stack so user can navigate back
+                transaction.commit();
+            }
         });
+
 
     }
 
