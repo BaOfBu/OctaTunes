@@ -1,31 +1,38 @@
-package com.example.octatunes.Adapter;
-
+package  com.example.octatunes.Adapter;
+import android.media.Image;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Model.PlaylistModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.Objects;
 
 public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHolder> {
 
-    private List<PlaylistModel> playlistItems;
+    private List<PlaylistsModel> playlistItems;
 
-    public PlaylistAdapter(List<PlaylistModel> playlistItems) {
+    public PlaylistAdapter(List<PlaylistsModel> playlistItems) {
         this.playlistItems = playlistItems;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        public ImageView imageView;
         public TextView titleTextView;
         public TextView descriptionTextView;
 
         public ViewHolder(View itemView) {
             super(itemView);
+            imageView = itemView.findViewById(R.id.playlist_cover_image_item);
             titleTextView = itemView.findViewById(R.id.playlist_item_title);
             descriptionTextView = itemView.findViewById(R.id.playlist_item_description);
         }
@@ -39,9 +46,13 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PlaylistModel item = playlistItems.get(position);
-        holder.titleTextView.setText(item.getTitle());
+        PlaylistsModel item = playlistItems.get(position);
+        holder.titleTextView.setText(item.getName());
         holder.descriptionTextView.setText(item.getDescription());
+        if (!Objects.equals(item.getImage(), "")){
+            Picasso.get().load(item.getImage()).into(holder.imageView);
+        }
+
     }
 
     @Override

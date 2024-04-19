@@ -15,6 +15,7 @@
     <!-- ScrollView starts below the navigation section and above the tab layout -->
     <!-- NestedScrollView to contain both RecyclerViews -->
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/navigation_section"
@@ -26,13 +27,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/playlistSection"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_playlist_section"></androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_playlist_section" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/artistSection"
@@ -40,7 +42,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_artist_section"></androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_artist_section" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/playlistDetail"
@@ -48,24 +50,24 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:listitem="@layout/layout_home_playlist_detail"></androidx.recyclerview.widget.RecyclerView>
+                tools:listitem="@layout/layout_home_playlist_detail" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 
-    <FrameLayout
-        android:id="@+id/tab_layout_container"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:background="#4D000000">
+<!--    <FrameLayout-->
+<!--        android:id="@+id/tab_layout_container"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_alignParentBottom="true"-->
+<!--        android:background="#4D000000">-->
 
-        <include
-            android:id="@+id/tab_layout"
-            layout="@layout/layout_home_tab_section"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@android:color/transparent" />
-    </FrameLayout>
+<!--        <include-->
+<!--            android:id="@+id/tab_layout"-->
+<!--            layout="@layout/layout_home_tab_section"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:background="@android:color/transparent" />-->
+<!--    </FrameLayout>-->
 
 </RelativeLayout>

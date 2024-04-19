@@ -7,9 +7,9 @@
     android:background="@color/background_color">
     <!-- Image of the playlist -->
     <ImageView
-        android:id="@+id/playlist_cover_image"
-        android:layout_width="180dp"
-        android:layout_height="180dp"
+        android:id="@+id/playlist_cover_image_item"
+        android:layout_width="170dp"
+        android:layout_height="170dp"
         android:scaleType="centerCrop"
         android:src="@drawable/ic_spotify"
         />
@@ -35,7 +35,7 @@
         android:textColor="@color/bold_gray_color"
         android:ellipsize="end"
         android:text="Artist Names or Description"
-        android:maxLines="2"
+        android:maxLines="1"
 
         />
 </LinearLayout>

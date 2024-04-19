@@ -24,7 +24,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
     RecyclerView listCategoriesButtonRecyclerView;
 
     private static ToggleButton selectedButton = null;
-    private String searchType = "Band";
+    private String searchType = "Track";
 
     public static ToggleButton getSelectedButton(){
         return selectedButton;
@@ -71,116 +71,174 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
     }
 
     private ArrayList<TrackPreviewModel> getDataTracksFake(){
-        int id_default_image = R.drawable.ic_spotify;
+        int []song_images = {R.drawable.song_chungtacuatuonglai,
+                R.drawable.song_theresnooneatall,
+                R.drawable.song_muonroisaomacon,
+                R.drawable.song_makingmyway,
+                R.drawable.song_haytraochoanh,
+                R.drawable.song_chungtacuahientai,
+                R.drawable.song_noinaycoanh,
+                R.drawable.song_chacaidoseve,
+                R.drawable.song_emcuangayhomqua,
+                R.drawable.song_nangamxadan
+        };
 
         ArrayList<TrackPreviewModel> trackPreviewModels = new ArrayList<>();
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 1", "Bài hát", "Tên nghệ sĩ 1", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 2", "Bài hát", "Tên nghệ sĩ 2", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 3", "Bài hát", "Tên nghệ sĩ 3", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 4", "Bài hát", "Tên nghệ sĩ 4", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 5", "Bài hát", "Tên nghệ sĩ 5", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 6", "Bài hát", "Tên nghệ sĩ 6", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 7", "Bài hát", "Tên nghệ sĩ 7", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 8", "Bài hát", "Tên nghệ sĩ 8", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 9", "Bài hát", "Tên nghệ sĩ 9", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 10", "Bài hát", "Tên nghệ sĩ 10", 2024));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[0], "Chúng ta của tương lai", "Bài hát", "Sơn Tùng MTP", 2024));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[1], "There's no one a tall", "Bài hát", "Sơn Tùng MTP", 2022));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[2], "Muộn rồi sao mà còn", "Bài hát", "Sơn Tùng MTP", 2021));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[3], "Making my way", "Bài hát", "Sơn Tùng MTP", 2023));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[4], "Hãy trao cho anh", "Bài hát", "Sơn Tùng MTP", 2019));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[5], "Chúng ta của hiện tại", "Bài hát", "Sơn Tùng MTP", 2020));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[6], "Nơi này có anh", "Bài hát", "Sơn Tùng MTP", 2017));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[7], "Chắc ai đó sẽ về", "Bài hát", "Sơn Tùng MTP", 2017));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[8], "Em của ngày hôm qua", "Bài hát", "Sơn Tùng MTP", 2014));
+        trackPreviewModels.add(new TrackPreviewModel(song_images[9], "Nắng ấm xa dần", "Bài hát", "Sơn Tùng MTP", 2014));
         return trackPreviewModels;
     }
     private ArrayList<UserProfileModel> getDataUserProfileFake(){
         int id_default_image = R.drawable.ic_spotify;
 
+        int []userprofile_images = {
+            R.drawable.userprofile_sontung1,
+            R.drawable.userprofile_sontung2,
+            R.drawable.userprofile_sontung3,
+            R.drawable.userprofile_sontung4,
+            R.drawable.userprofile_sontung5,
+            R.drawable.userprofile_sontung6,
+            R.drawable.userprofile_sontung7,
+            R.drawable.userprofile_sontung8,
+            R.drawable.userprofile_sontung9,
+            R.drawable.userprofile_sontung10
+        };
+
         ArrayList<UserProfileModel> userProfileModels = new ArrayList<>();
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 1"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 2"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 3"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 4"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 5"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 6"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 7"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 8"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 9"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên người dùng 10"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[0], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[1], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[2], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[3], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[4], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[5], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[6], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[7], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[8], "Sơn Tùng"));
+        userProfileModels.add(new UserProfileModel(userprofile_images[9], "Sơn Tùng"));
         return userProfileModels;
     }
 
     private ArrayList<UserProfileModel> getDataArtistFake(){
         int id_default_image = R.drawable.ic_spotify;
 
+        int []artist_images = {
+            R.drawable.artist_sontungmtp,
+            R.drawable.artist_mono,
+            R.drawable.artist_jack97,
+            R.drawable.artist_bichphuong,
+            R.drawable.artist_sontuyen
+        };
+
         ArrayList<UserProfileModel> userProfileModels = new ArrayList<>();
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 1"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 2"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 3"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 4"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 5"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 6"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 7"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 8"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 9"));
-        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 10"));
+        userProfileModels.add(new UserProfileModel(artist_images[0], "Sơn Tùng MTP"));
+        userProfileModels.add(new UserProfileModel(artist_images[1], "Mono"));
+        userProfileModels.add(new UserProfileModel(artist_images[2], "Jack J97"));
+        userProfileModels.add(new UserProfileModel(artist_images[3], "Bích Phương"));
+        userProfileModels.add(new UserProfileModel(artist_images[4], "Sơn Tuyền"));
+//        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 6"));
+//        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 7"));
+//        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 8"));
+//        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 9"));
+//        userProfileModels.add(new UserProfileModel(id_default_image, "Tên nghệ sĩ 10"));
         return userProfileModels;
     }
     private ArrayList<TrackPreviewModel> getDataAlbumsFakeLeft(){
-        int id_default_image = R.drawable.ic_spotify;
+
+        int []album_images = {
+                R.drawable.album_chungtacuatuonglai,
+                R.drawable.album_makingmyway,
+                R.drawable.album_noinaycoanh,
+                R.drawable.album_cochacyeuladay,
+                R.drawable.album_haytraochoanh,
+                R.drawable.album_chungtacuahientai,
+                R.drawable.album_mtp,
+                R.drawable.album_nangamxadan,
+                R.drawable.album_emcuangayhomqua,
+                R.drawable.album_khongphaidangvuadau,
+        };
+
 
         ArrayList<TrackPreviewModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 1", "Album", "Tên nghệ sĩ 1", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 3", "Album", "Tên nghệ sĩ 2", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 5", "Album", "Tên nghệ sĩ 3", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 7", "Album", "Tên nghệ sĩ 4", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 9", "Album", "Tên nghệ sĩ 5", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 11", "Album", "Tên nghệ sĩ 6", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 13", "Album", "Tên nghệ sĩ 7", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 15", "Album", "Tên nghệ sĩ 8", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 17", "Album", "Tên nghệ sĩ 9", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 19", "Album", "Tên nghệ sĩ 10", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[0], "Chúng ta của tương lai", "Album", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[1], "Making my way", "Album", "Sơn Tùng MTP", 2023));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[2], "Nơi này có anh", "Album", "Sơn Tùng MTP", 2017));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[3], "Có chắc yêu là đây", "Album", "Sơn Tùng MTP", 2020));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[4], "Hãy trao cho anh", "Album", "Sơn Tùng MTP", 2019));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[5], "Chúng ta của hiện tại", "Album", "Sơn Tùng MTP", 2020));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[6], "mtp M-TP", "Album", "Sơn Tùng MTP", 2017));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[7], "Nắng ấm xa dần", "Album", "Sơn Tùng MTP", 2014));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[8], "Em của ngày hôm qua", "Album", "Sơn Tùng MTP", 2014));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[9], "Không phải dạng vừa đâu", "Album", "Sơn Tùng MTP", 2015));
         return albumPreviewModels;
     }
     private ArrayList<TrackPreviewModel> getDataAlbumsFakeRight(){
-        int id_default_image = R.drawable.ic_spotify;
+        int []album_images = {
+                R.drawable.album_theresononeatall,
+                R.drawable.album_skydecade,
+                R.drawable.album_muonroimasaocon,
+                R.drawable.album_chayngaydi,
+                R.drawable.album_nangamxadan,
+                R.drawable.album_amthambenem,
+                R.drawable.album_lactroi,
+                R.drawable.album_khuonmatdangthuong,
+                R.drawable.album_rememberme,
+                R.drawable.album_annutnhothagiacmo
+        };
+
 
         ArrayList<TrackPreviewModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 2", "Album", "Tên nghệ sĩ 1", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 4", "Album", "Tên nghệ sĩ 2", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 6", "Album", "Tên nghệ sĩ 3", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 8", "Album", "Tên nghệ sĩ 4", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 10", "Album", "Tên nghệ sĩ 5", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 12", "Album", "Tên nghệ sĩ 6", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 14", "Album", "Tên nghệ sĩ 7", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 16", "Album", "Tên nghệ sĩ 8", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 18", "Album", "Tên nghệ sĩ 9", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên album 20", "Album", "Tên nghệ sĩ 10", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[0], "There's no one at all", "Album", "Sơn Tùng MTP", 2022));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[1], "Sky decade", "Album", "Sơn Tùng MTP", 2022));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[2], "Muộn rồi mà sao còn", "Album", "Sơn Tùng MTP", 2021));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[3], "Chạy ngay đi", "Album", "Sơn Tùng MTP", 2018));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[4], "Nắng ấm xa dần", "Album", "Sơn Tùng MTP", 2019));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[5], "Âm thầm bên em", "Album", "Sơn Tùng MTP", 2015));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[6], "Lạc trôi", "Album", "Sơn Tùng MTP", 2016));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[7], "Khuôn mặt đáng thương", "Album", "Sơn Tùng MTP", 2015));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[8], "Remember me", "Album", "Sơn Tùng MTP", 2021));
+        albumPreviewModels.add(new TrackPreviewModel(album_images[9], "Ấn nút nhớ thả giấc mơ", "Album", "Sơn Tùng MTP", 2015));
         return albumPreviewModels;
     }
     private ArrayList<TrackPreviewModel> getDataPlaylistsFakeLeft(){
-        int id_default_image = R.drawable.ic_spotify;
+        int []playlist_images = {
+                R.drawable.playlist_dungvetrenha,
+                R.drawable.playlist_maiyeusontungmtp,
+                R.drawable.playlist_sontungmtp,
+                R.drawable.playlist_sontungmtpmix,
+                R.drawable.playlist_sontungremix
+        };
 
         ArrayList<TrackPreviewModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 1", "Album", "Tên nghệ sĩ 1", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 3", "Album", "Tên nghệ sĩ 2", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 5", "Album", "Tên nghệ sĩ 3", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 7", "Album", "Tên nghệ sĩ 4", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 9", "Album", "Tên nghệ sĩ 5", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 11", "Album", "Tên nghệ sĩ 6", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 13", "Album", "Tên nghệ sĩ 7", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 15", "Album", "Tên nghệ sĩ 8", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 17", "Album", "Tên nghệ sĩ 9", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 19", "Album", "Tên nghệ sĩ 10", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[0], "Đừng về trễ nha", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[1], "Mãi yêu sơn tùng mtp", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[2], "Sơn Tùng MTP", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[3], "Sơn Tùng MTP Mix", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[4], "Sơn Tùng Remix", "Playlist", "Sơn Tùng MTP", 2024));
         return albumPreviewModels;
     }
     private ArrayList<TrackPreviewModel> getDataPlaylistsFakeRight(){
-        int id_default_image = R.drawable.ic_spotify;
+        int []playlist_images = {
+                R.drawable.playlist_dungvetrenhasontungmtp,
+                R.drawable.playlist_nhacsontungmtp,
+                R.drawable.playlist_sontungmtplist,
+                R.drawable.playlist_sontungmtpplaylist,
+                R.drawable.playlist_tuyentapcuasontungmtp
+        };
 
         ArrayList<TrackPreviewModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 2", "Album", "Tên nghệ sĩ 1", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 4", "Album", "Tên nghệ sĩ 2", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 6", "Album", "Tên nghệ sĩ 3", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 8", "Album", "Tên nghệ sĩ 4", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 10", "Album", "Tên nghệ sĩ 5", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 12", "Album", "Tên nghệ sĩ 6", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 14", "Album", "Tên nghệ sĩ 7", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 16", "Album", "Tên nghệ sĩ 8", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 18", "Album", "Tên nghệ sĩ 9", 2024));
-        albumPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên playlist 20", "Album", "Tên nghệ sĩ 10", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[0], "Đừng về trễ nhà - Sơn Tùng MTP", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[1], "Nhạc Sơn Tùng MTP", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[2], "Sơn Tùng MTP List", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[3], "Sơn Tùng MTP Play list", "Playlist", "Sơn Tùng MTP", 2024));
+        albumPreviewModels.add(new TrackPreviewModel(playlist_images[4], "Tuyển tập của Sơn Tùng MTP", "Playlist", "Sơn Tùng MTP", 2024));
         return albumPreviewModels;
     }
     private ArrayList<String> getListCategories(){
@@ -241,7 +299,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
         if(category.equals("Track")){
             getTracks(searchQuery);
         }else{
-            UserProfileModel artistModel = new UserProfileModel(R.drawable.ic_spotify, "Tên nhóm nhạc");
+            UserProfileModel artistModel = new UserProfileModel(R.drawable.artist_sontungmtp, "Tên nhóm nhạc");
 
             ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
 
@@ -251,7 +309,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
             }else if(category.equals("Artist")){
-                artistModel.setFullName("Tên nghệ sĩ");
+                artistModel.setFullName("Sơn Tùng MTP");
                 ResearchSearchByArtistAdapter researchSearchByArtistAdapter = new ResearchSearchByArtistAdapter(artistModel, trackPreviewModels, this);
                 listSearchResultRecyclerView.setAdapter(researchSearchByArtistAdapter);
                 researchSearchByArtistAdapter.notifyDataSetChanged();

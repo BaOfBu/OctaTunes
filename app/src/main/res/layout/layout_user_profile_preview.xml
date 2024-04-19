@@ -11,7 +11,8 @@
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="@drawable/avatar_shape"
-        android:src="@drawable/ic_spotify">
+        android:src="@drawable/ic_spotify"
+        android:clipToOutline="true">
     </ImageView>
 
     <TextView
@@ -24,7 +25,8 @@
         android:text="Tên người dùng"
         android:textColor="@color/white"
         android:textSize="17sp"
-        android:fontFamily="@font/main_font"/>
+        android:fontFamily="@font/main_font"
+        android:layout_marginStart="15px"/>
 
     <ImageView
         android:id="@+id/icon_right"
