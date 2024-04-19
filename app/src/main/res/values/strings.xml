@@ -13,4 +13,6 @@
         bạn đồng ý với điều khoản sử dụng của Spotify</string>
     <string name="information_application">Chia sẻ dữ liệu đăng ký của tôi với
         các nhà cung cấp nội dung Spotify nhằm mục đích tiếp thị.</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
