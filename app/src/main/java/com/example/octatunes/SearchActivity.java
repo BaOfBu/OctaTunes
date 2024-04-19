@@ -1,7 +1,11 @@
 package com.example.octatunes;
 
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
@@ -11,17 +15,32 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.util.ArrayList;
+import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Services.ArtistService;
+import com.example.octatunes.Services.PlaylistService;
+import com.example.octatunes.Services.TrackService;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 
-public class SearchActivity extends AppCompatActivity implements ListCategoriesButtonAdapter.OnCategorySelectedListener{
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+public class SearchActivity extends Fragment implements ListCategoriesButtonAdapter.OnCategorySelectedListener{
     String searchQuery = "";
     private EditText searchEditText;
     RelativeLayout listSearchResultLayout;
     static RecyclerView listSearchResultRecyclerView;
     RecyclerView listCategoriesButtonRecyclerView;
+
+    private PlaylistService playlistService = new PlaylistService();
+    private ArtistService artistService = new ArtistService();
+    private TrackService trackService = new TrackService();
 
     private static ToggleButton selectedButton = null;
     private String searchType = "Track";
@@ -34,26 +53,28 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
         selectedButton = button;
     }
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_result_search);
+        View rootView = inflater.inflate(R.layout.layout_result_search, container, false);
+        searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
 
-        searchEditText = findViewById(R.id.search_bar_edit_text);
-        listSearchResultLayout = findViewById(R.id.list_search_result);
+        searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
+        listSearchResultLayout = rootView.findViewById(R.id.list_search_result);
 
         View recyclerViewLayout = getLayoutInflater().inflate(R.layout.layout_result_search_track, null);
         listSearchResultRecyclerView = recyclerViewLayout.findViewById(R.id.recyclerview_track_preview_only_track);
-        listCategoriesButtonRecyclerView = findViewById(R.id.recyclerview_categories_search);
+        listCategoriesButtonRecyclerView = rootView.findViewById(R.id.recyclerview_categories_search);
 
         if (listSearchResultRecyclerView.getParent() != null) {
             ((ViewGroup) listSearchResultRecyclerView.getParent()).removeView(listSearchResultRecyclerView);
         }
 
-        listSearchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        //listSearchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         listSearchResultLayout.addView(listSearchResultRecyclerView);
-
-        searchQuery = getIntent().getStringExtra("searchQuery");
+        if(getArguments()!=null){
+            searchQuery = getArguments().getString("searchQuery");
+        }
         searchEditText.setText(searchQuery);
         searchEditText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
             @Override
@@ -68,6 +89,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
 
         getListCategoriesButton();
         getBestMatchResults(searchQuery, searchType);
+        return rootView;
     }
 
     private ArrayList<TrackPreviewModel> getDataTracksFake(){
@@ -257,40 +279,71 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
     private void getListCategoriesButton(){
         ArrayList<String> listCategories = getListCategories();
         
-        ListCategoriesButtonAdapter listCategoriesButtonAdapter = new ListCategoriesButtonAdapter(listCategories, this, this);
+        ListCategoriesButtonAdapter listCategoriesButtonAdapter = new ListCategoriesButtonAdapter(listCategories, this.getContext(), this);
         listCategoriesButtonRecyclerView.setAdapter(listCategoriesButtonAdapter);
         listCategoriesButtonAdapter.notifyDataSetChanged();
     }
     private void getTracks(String searchQuery) {
-        ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
-        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this);
-        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-        trackPreviewAdapter.notifyDataSetChanged();
+//        ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
+//        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
+//        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+//        trackPreviewAdapter.notifyDataSetChanged();
+        trackService.findTrackByName(searchQuery,
+                new OnSuccessListener<List<TracksModel>>() {
+                    @Override
+                    public void onSuccess(List<TracksModel> trackPreviewModels) {
+                        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, getContext());
+                        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+                        trackPreviewAdapter.notifyDataSetChanged();
+                    }
+                },
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the error
+                    }
+                });
     }
     private void getListUserProfile(String searchQuery) {
         ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
-        UserProfileAdapter userProfileAdapter = new UserProfileAdapter(userProfileModels, this);
+        UserProfileAdapter userProfileAdapter = new UserProfileAdapter(userProfileModels, this.getContext());
         listSearchResultRecyclerView.setAdapter(userProfileAdapter);
         userProfileAdapter.notifyDataSetChanged();
     }
 
     private void getListArtist(String searchQuery) {
-        ArrayList<UserProfileModel> userProfileModels = getDataArtistFake();
-        ResearchSearchOnlyArtistAdapter researchSearchOnlyArtistAdapter = new ResearchSearchOnlyArtistAdapter(userProfileModels, this);
-        listSearchResultRecyclerView.setAdapter(researchSearchOnlyArtistAdapter);
-        researchSearchOnlyArtistAdapter.notifyDataSetChanged();
+        //ArrayList<UserProfileModel> userProfileModels = getDataArtistFake();
+        Context context = this.getContext();
+        artistService.findArtistByName(searchQuery,
+                new OnSuccessListener<List<ArtistsModel>>() {
+                    @Override
+                    public void onSuccess(List<ArtistsModel> artistsModels) {
+                        ResearchSearchOnlyArtistAdapter researchSearchOnlyArtistAdapter = new ResearchSearchOnlyArtistAdapter(artistsModels, context);
+                        listSearchResultRecyclerView.setAdapter(researchSearchOnlyArtistAdapter);
+                        researchSearchOnlyArtistAdapter.notifyDataSetChanged();
+                    }
+                },
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        // Handle the error
+                    }
+                });
+//        ResearchSearchOnlyArtistAdapter researchSearchOnlyArtistAdapter = new ResearchSearchOnlyArtistAdapter(userProfileModels, this.getContext());
+//        listSearchResultRecyclerView.setAdapter(researchSearchOnlyArtistAdapter);
+//        researchSearchOnlyArtistAdapter.notifyDataSetChanged();
     }
     private void getAlbums(String searchQuery) {
         ArrayList<TrackPreviewModel> albumPreviewModelsLeft = getDataAlbumsFakeLeft();
         ArrayList<TrackPreviewModel> albumPreviewModelsRight = getDataAlbumsFakeRight();
-        ResultSearchOnlyAlbumAdapter resultSearchOnlyAlbumAdapter = new ResultSearchOnlyAlbumAdapter(albumPreviewModelsLeft, albumPreviewModelsRight, this);
+        ResultSearchOnlyAlbumAdapter resultSearchOnlyAlbumAdapter = new ResultSearchOnlyAlbumAdapter(albumPreviewModelsLeft, albumPreviewModelsRight, this.getContext());
         listSearchResultRecyclerView.setAdapter(resultSearchOnlyAlbumAdapter);
         resultSearchOnlyAlbumAdapter.notifyDataSetChanged();
     }
     private void getPlaylists(String searchQuery) {
         ArrayList<TrackPreviewModel> playlistPreviewModelsLeft = getDataPlaylistsFakeLeft();
         ArrayList<TrackPreviewModel> playlistPreviewModelsRight = getDataPlaylistsFakeRight();
-        ResultSearchOnlyPlaylistAdapter resultSearchOnlyPlaylistAdapter = new ResultSearchOnlyPlaylistAdapter(playlistPreviewModelsLeft, playlistPreviewModelsRight, this);
+        ResultSearchOnlyPlaylistAdapter resultSearchOnlyPlaylistAdapter = new ResultSearchOnlyPlaylistAdapter(playlistPreviewModelsLeft, playlistPreviewModelsRight, this.getContext());
         listSearchResultRecyclerView.setAdapter(resultSearchOnlyPlaylistAdapter);
         resultSearchOnlyPlaylistAdapter.notifyDataSetChanged();
     }
@@ -305,12 +358,12 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
 
             if(category.equals("Band")){
                 ArrayList<TrackPreviewModel> albumPreviewModels = getDataAlbumsFakeLeft();
-                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artistModel, albumPreviewModels, trackPreviewModels, this);
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artistModel, albumPreviewModels, trackPreviewModels, this.getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
             }else if(category.equals("Artist")){
                 artistModel.setFullName("Sơn Tùng MTP");
-                ResearchSearchByArtistAdapter researchSearchByArtistAdapter = new ResearchSearchByArtistAdapter(artistModel, trackPreviewModels, this);
+                ResearchSearchByArtistAdapter researchSearchByArtistAdapter = new ResearchSearchByArtistAdapter(artistModel, trackPreviewModels, this.getContext());
                 listSearchResultRecyclerView.setAdapter(researchSearchByArtistAdapter);
                 researchSearchByArtistAdapter.notifyDataSetChanged();
             }

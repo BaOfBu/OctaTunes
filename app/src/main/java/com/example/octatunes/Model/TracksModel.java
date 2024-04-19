@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 public class TracksModel {
     private int TrackID;
-    private int AlubumID;
+    private int AlbumID;
     private String Name;
     private int Duration;
     private String File;
@@ -13,9 +13,9 @@ public class TracksModel {
 
     }
 
-    public TracksModel(int trackID, int alubumID, String name, int duration, String file) {
+    public TracksModel(int trackID, int albumID, String name, int duration, String file) {
         TrackID = trackID;
-        AlubumID = alubumID;
+        AlbumID = albumID;
         Name = name;
         Duration = duration;
         File = file;
@@ -29,12 +29,12 @@ public class TracksModel {
         TrackID = trackID;
     }
 
-    public int getAlubumID() {
-        return AlubumID;
+    public int getAlbumID() {
+        return AlbumID;
     }
 
-    public void setAlubumID(int alubumID) {
-        AlubumID = alubumID;
+    public void setAlubumID(int albumID) {
+        AlbumID = albumID;
     }
 
     public String getName() {

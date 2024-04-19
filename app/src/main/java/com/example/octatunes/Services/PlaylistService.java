@@ -108,4 +108,21 @@ public class PlaylistService {
         return future;
     }
 
+    public CompletableFuture<List<PlaylistsModel>> getPlaylistByName(String playlistName){
+        CompletableFuture<List<PlaylistsModel>> future = new CompletableFuture<>();
+        getAllPlaylists().thenAccept(playlists -> {
+            List<PlaylistsModel> playlistsByName = new ArrayList<>();
+            for (PlaylistsModel playlist : playlists) {
+                if (playlist.getName().equals(playlistName)) {
+                    playlistsByName.add(playlist);
+                }
+            }
+            future.complete(playlistsByName);
+        }).exceptionally(throwable -> {
+            future.completeExceptionally(throwable);
+            return null;
+        });
+        return future;
+    }
+
 }

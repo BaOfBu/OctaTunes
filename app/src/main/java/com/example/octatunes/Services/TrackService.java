@@ -112,7 +112,7 @@ public class TrackService {
         });
     }
     public void getImageForTrack(final TracksModel track, final OnImageLoadedListener listener) {
-        final int albumId = track.getAlubumID();
+        final int albumId = track.getAlbumID();
         Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -129,6 +129,27 @@ public class TrackService {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void findTrackByName(String query, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+        tracksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<TracksModel> tracks = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    TracksModel track = snapshot.getValue(TracksModel.class);
+                    if(track.getName().contains(query)){
+                        tracks.add(track);
+                    }
+                }
+                successListener.onSuccess(tracks);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                failureListener.onFailure(databaseError.toException());
             }
         });
     }
