@@ -17,10 +17,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapter.ViewHolder> {
-    private ArrayList<TrackPreviewModel> trackPreviewModels;
+    private List<TrackPreviewModel> trackPreviewModels;
     private Context context;
 
-    public TrackPreviewAdapter(ArrayList<TrackPreviewModel> trackPreviewModels, Context context) {
+    public TrackPreviewAdapter(List<TrackPreviewModel> trackPreviewModels, Context context) {
         this.trackPreviewModels = trackPreviewModels;
         this.context = context;
     }

@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
                 replaceFragment(new HomeActivity());
             }else if(itemID == R.id.search){
                 Bundle bundleNavigation = new Bundle();
-                bundleNavigation.putString("searchQuery", "");
+                bundleNavigation.putString("searchQuery", "Ngang");
                 Fragment searchActivityNavigation = new SearchActivity();
                 searchActivityNavigation.setArguments(bundleNavigation);
                 replaceFragment(searchActivityNavigation);

@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.TrackPreviewAdapter;
+import com.example.octatunes.TrackPreviewModel;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -112,7 +114,7 @@ public class TrackService {
         });
     }
     public void getImageForTrack(final TracksModel track, final OnImageLoadedListener listener) {
-        final int albumId = track.getAlbumID();
+        final int albumId = track.getAlubumID();
         Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -133,15 +135,29 @@ public class TrackService {
         });
     }
 
-    public void findTrackByName(String query, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+    public void findTrackByName(String query, OnSuccessListener<List<TrackPreviewModel>> successListener, OnFailureListener failureListener) {
         tracksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<TracksModel> tracks = new ArrayList<>();
+                List<TrackPreviewModel> tracks = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     TracksModel track = snapshot.getValue(TracksModel.class);
                     if(track.getName().contains(query)){
-                        tracks.add(track);
+                        albumsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                    if(snapshot.child("albumID").getValue(Integer.class) == track.getAlubumID()){
+                                        tracks.add(new TrackPreviewModel(snapshot.child("image").getValue(String.class), track.getName(), "Track", "Artist", 2021));
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError databaseError) {
+                                failureListener.onFailure(databaseError.toException());
+                            }
+                        });
                     }
                 }
                 successListener.onSuccess(tracks);
