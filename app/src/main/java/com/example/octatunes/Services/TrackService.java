@@ -24,12 +24,14 @@ public class TrackService {
     private DatabaseReference playlistTracksRef;
     private DatabaseReference tracksRef;
     private DatabaseReference albumsRef;
+    private DatabaseReference artistsRef;
 
     public TrackService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistTracksRef = database.getReference("playlist_track");
         tracksRef = database.getReference("tracks");
         albumsRef = database.getReference("albums");
+        artistsRef = database.getReference("artists");
     }
 
     // Method to add a new track
@@ -132,7 +134,51 @@ public class TrackService {
             }
         });
     }
+    public void getArtistNameByAlbumId(int albumId, final OnArtistNameLoadedListener listener) {
+        Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        int artistId = snapshot.child("artistID").getValue(int.class);
+                        getArtistNameById(artistId, listener);
+                        return;
+                    }
+                }
+                listener.onArtistNameLoaded(null); // No artist found
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+    private void getArtistNameById(int artistId, final OnArtistNameLoadedListener listener) {
+        Query query = artistsRef.orderByChild("artistID").equalTo(artistId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String artistName = snapshot.child("name").getValue(String.class);
+                        listener.onArtistNameLoaded(artistName);
+                        return;
+                    }
+                }
+                listener.onArtistNameLoaded(null); // No artist found
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors
+            }
+        });
+    }
+    public interface OnArtistNameLoadedListener {
+        void onArtistNameLoaded(String artistName);
+    }
     public interface OnTracksLoadedListener {
         void onTracksLoaded(List<TracksModel> tracks);
     }

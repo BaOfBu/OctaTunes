@@ -1,7 +1,7 @@
 <!-- layout_bottom_sheet.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="600dp"
+    android:layout_height="550dp"
     android:orientation="vertical"
     android:background="@drawable/radius_background"
     android:backgroundTint="#242424"
@@ -32,7 +32,7 @@
         android:gravity="center_vertical">
 
         <ImageView
-            android:id="@+id/item_image"
+            android:id="@+id/song_item_image_bottom_sheet"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="centerCrop"
@@ -46,7 +46,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/item_title"
+                android:id="@+id/song_bottom_sheet_item_title"
                 android:text="Buốn Hay Vui (feat. RPT MCK, Obito, Ronboogz and Boyzed)"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -56,7 +56,7 @@
                 android:ellipsize="end"/>
 
             <TextView
-                android:id="@+id/item_artist"
+                android:id="@+id/song_bottom_sheet_item_artist"
                 android:text="VSOUL . Buồn Hay Vui (feat. RPT MCK, Obito, Ronboogz and Boyzed)"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
