@@ -134,6 +134,7 @@
                     android:background="@drawable/baseline_shuffle_24"
                     />
                 <ImageView
+                    android:id="@+id/play_button_playlist_display"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:backgroundTint="#1ed760"

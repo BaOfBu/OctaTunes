@@ -9,15 +9,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -58,6 +62,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         public TextView music_name;
         public TextView song_count;
         public ImageView tbin_homepage_playlist_detail_menu_button;
+        public ImageView play_button_home_playlist_preview;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -70,6 +75,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             playlistDescription = itemView.findViewById(R.id.playlist).findViewById(R.id.description);
             song_count = itemView.findViewById(R.id.tbin_song_count);
             tbin_homepage_playlist_detail_menu_button=itemView.findViewById(R.id.tbin_homepage_playlist_detail_menu_button);
+            play_button_home_playlist_preview = itemView.findViewById(R.id.play_button_home_playlist_preview);
         }
     }
 
@@ -98,15 +104,6 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             Picasso.get().load(playlist.getImage()).into(holder.artistPlaylistImage);
         }
 
-        /* Image changw */
-        //holder.itemView.setOnClickListener(v -> {
-        //    if (playlist.getUserID()==1){
-        //        // Open PlayListSpotifyActivity on item click
-        //        Intent intent = new Intent(context, PlaylistSpotifyActivity.class);
-        //        intent.putExtra("playlistItem", new Gson().toJson(playlist));
-        //        context.startActivity(intent);
-        //    }
-        //});
         holder.itemView.setOnClickListener(v -> {
             if (playlist.getUserID() == 1) {
                 // Replace the current fragment with PlaylistSpotifyFragment
@@ -136,6 +133,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                             randomTrack = tracks.get(randomIndex);
                             // Set random track name
                             holder.music_name.setText(randomTrack.getName());
+                            holder.song_count.setText(String.valueOf(trackSize) + " Songs");
                         }
                         // Load image for random track using Picasso
                         trackService.getImageForTrack(randomTrack, new TrackService.OnImageLoadedListener() {
@@ -178,6 +176,32 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                 bottomSheetDialog.show();
             }
         });
+
+        holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // Create NowPlayingBarFragment instance
+                NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
+
+                // Get FragmentManager
+                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+
+                // Begin transaction
+                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                // Find the FrameLayout using the activity's findViewById()
+                FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
+                frameLayout.setVisibility(View.VISIBLE);
+
+                // Replace fragment_container with NowPlayingBarFragment
+                fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
+
+                // Commit transaction
+                fragmentTransaction.commit();
+            }
+        });
+
 
 
 

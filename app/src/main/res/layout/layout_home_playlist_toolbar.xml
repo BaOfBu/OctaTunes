@@ -30,7 +30,7 @@
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="15dp"
-        android:layout_toLeftOf="@+id/play_button"
+        android:layout_toLeftOf="@+id/play_button_home_playlist_preview"
         android:gravity="center"
         android:textAlignment="center"
         android:text="50 songs"
@@ -39,7 +39,7 @@
         tools:ignore="HardcodedText"/>
 
     <ImageButton
-        android:id="@+id/play_button"
+        android:id="@+id/play_button_home_playlist_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_play_circle"

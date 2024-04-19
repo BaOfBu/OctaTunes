@@ -4,12 +4,17 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
@@ -50,7 +55,24 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
 
         holder.itemView.setOnClickListener(v -> {
+            // Create NowPlayingBarFragment instance
+            NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
 
+            // Get FragmentManager
+            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
+
+            // Begin transaction
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            // Find the FrameLayout using the activity's findViewById()
+            FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
+            frameLayout.setVisibility(View.VISIBLE);
+
+            // Replace fragment_container with NowPlayingBarFragment
+            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
+
+            // Commit transaction
+            fragmentTransaction.commit();
         });
 
         holder.songMoreInfo.setOnClickListener(v -> {

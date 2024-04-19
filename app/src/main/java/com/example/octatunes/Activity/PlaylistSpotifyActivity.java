@@ -6,11 +6,14 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -36,6 +39,28 @@ public class PlaylistSpotifyActivity extends Fragment {
         View view = inflater.inflate(R.layout.layout_playlist_spotify, container, false);
 
         String playlistsModelJson = getArguments().getString("playlistItem");
+
+        ImageView play_button_playlist_display=view.findViewById(R.id.play_button_playlist_display);
+        play_button_playlist_display.setOnClickListener(v -> {
+            // Create NowPlayingBarFragment instance
+            NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
+
+            // Get FragmentManager
+            FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+
+            // Begin transaction
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+            // Find the FrameLayout using the activity's findViewById()
+            FrameLayout frameLayout = ((AppCompatActivity) getContext()).findViewById(R.id.frame_layout);
+            frameLayout.setVisibility(View.VISIBLE);
+
+            // Replace fragment_container with NowPlayingBarFragment
+            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
+
+            // Commit transaction
+            fragmentTransaction.commit();
+        });
 
         if (playlistsModelJson != null && getContext() != null) {
             PlaylistsModel playlistsModel = new Gson().fromJson(playlistsModelJson, PlaylistsModel.class);

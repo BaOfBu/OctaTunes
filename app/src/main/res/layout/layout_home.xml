@@ -18,8 +18,7 @@
         android:id="@+id/homeScroll"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/navigation_section"
-        android:layout_above="@id/tab_layout_container">
+        android:layout_below="@id/navigation_section">
 
         <!-- Linear layout to hold both RecyclerViews vertically -->
         <LinearLayout
