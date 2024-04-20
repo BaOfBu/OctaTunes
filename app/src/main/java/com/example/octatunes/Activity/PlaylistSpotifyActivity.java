@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -18,9 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.SongAdapter;
+import com.example.octatunes.Model.PlaylistLibrary_User;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.PlaylistLibraryUserService;
 import com.example.octatunes.Services.TrackService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -90,11 +93,11 @@ public class PlaylistSpotifyActivity extends Fragment {
                 }
             });
 
-            ImageView moreOptions = view.findViewById(R.id.more_info);
-
             ImageView backIcon = view.findViewById(R.id.back_icon);
             backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
 
+            /* More option */
+            ImageView moreOptions = view.findViewById(R.id.more_info);
             moreOptions.setOnClickListener(v -> {
                 // Creating the BottomSheetDialog
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
@@ -109,6 +112,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 bottomSheetDialog.show();
             });
 
+            /* Download option */
             ImageView download = view.findViewById(R.id.download_playlist_spotify);
             download.setOnClickListener(v ->{
                 // Creating the BottomSheetDialog
@@ -121,6 +125,40 @@ public class PlaylistSpotifyActivity extends Fragment {
                 tbin_playlist_bottom_sheet_title.setText("Want to download " + playlistsModel.getName());
 
                 bottomSheetDialog.show();
+            });
+
+            /* Add option */
+            ImageView add = view.findViewById(R.id.playlist_spotify_add_to_library);
+            PlaylistLibraryUserService playlistLibraryUserService = new PlaylistLibraryUserService();
+            playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlistsModel.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+                @Override
+                public void onCheckComplete(boolean exists) {
+                    if (exists) {
+                        add.setImageResource(R.drawable.baseline_check_circle_24);
+                    } else {
+                        add.setImageResource(R.drawable.add_to_library_button_a7a7a7);
+                    }
+                }
+            });
+            add.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlistsModel.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+                        @Override
+                        public void onCheckComplete(boolean exists) {
+                            if (exists) {
+                                add.setImageResource(R.drawable.add_to_library_button_a7a7a7);
+                                playlistLibraryUserService.removePlaylistLibraryUser(playlistsModel.getPlaylistID(), 2);
+                                Toast.makeText(getContext(), "Removed from your library", Toast.LENGTH_SHORT).show();
+                            } else {
+                                add.setImageResource(R.drawable.baseline_check_circle_24);
+                                PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlistsModel.getPlaylistID(), 2);
+                                playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
+                                Toast.makeText(getContext(), "Added to your library", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
+                }
             });
         }
         return view;
