@@ -45,7 +45,8 @@
         android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
-        android:background="@drawable/login_edit_border" />
+        android:background="@drawable/login_edit_border"
+        android:paddingHorizontal="20dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
@@ -42,6 +43,17 @@ public class SignUpPasswordFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 String pass = edtPass.getText().toString();
+                if(pass.equals("")) {
+                    Toast.makeText(context.getApplicationContext(), "Enter Password",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(pass.length() < 10){
+                    Toast.makeText(context.getApplicationContext(), "Invalid Password",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 args.putString("password", pass);
 
                 Fragment f = new SignUpBirthFragment();
@@ -53,6 +65,8 @@ public class SignUpPasswordFragment extends Fragment {
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String pass = edtPass.getText().toString();
+                args.putString("password", pass);
                 main.onBackPressed();
             }
         });

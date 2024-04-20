@@ -10,11 +10,15 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import androidx.fragment.app.Fragment;
 
 import com.example.octatunes.LoginActivity;
 import com.example.octatunes.R;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class SignUpEmailFragment extends Fragment {
     LoginActivity main; Context context; Bundle args;
@@ -38,11 +42,22 @@ public class SignUpEmailFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater , ViewGroup container, Bundle savedInstanceState ){
         layout = (LinearLayout) inflater.inflate(R.layout.layout_signup_email,null);
         edtEmail = layout.findViewById(R.id.edtEmail);
+
         btnNext = layout.findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String email = edtEmail.getText().toString();
+                if(email.equals("")) {
+                    Toast.makeText(context.getApplicationContext(), "Enter Email",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                if(!validateEmail(email)){
+                    Toast.makeText(context.getApplicationContext(), "Invalid Email",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
                 args.putString("email", email);
 
                 Fragment f = new SignUpPasswordFragment();
@@ -58,5 +73,13 @@ public class SignUpEmailFragment extends Fragment {
             }
         });
         return layout;
+    }
+    public boolean validateEmail(String email){
+        String EMAIL_PATTERN =
+                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
+                        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
