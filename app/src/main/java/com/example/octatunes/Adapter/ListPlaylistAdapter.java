@@ -71,28 +71,16 @@ public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapte
             Picasso.get().load(item.getImage()).into(holder.imageView);
         }
         // Set click listener
-        //holder.itemView.setOnClickListener(v -> {
-        //    if (item.getUserID()==1){
-        //        // Open PlayListSpotifyActivity on item click
-        //        Intent intent = new Intent(context, PlaylistSpotifyActivity.class);
-        //        intent.putExtra("playlistItem", new Gson().toJson(item)); // Pass entire PlaylistsModel object as JSON string
-        //        context.startActivity(intent);
-        //    }
-        //
-        //});
         holder.itemView.setOnClickListener(v -> {
-            if (item.getUserID() == 1) {
-                // Replace the current fragment with PlaylistSpotifyFragment
-                PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
-                Bundle bundle = new Bundle();
-                bundle.putString("playlistItem", new Gson().toJson(item)); // Pass entire PlaylistsModel object as JSON string
-                fragment.setArguments(bundle);
+            PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+            Bundle bundle = new Bundle();
+            bundle.putString("playlistItem", new Gson().toJson(item));
+            fragment.setArguments(bundle);
 
-                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null); // Add fragment to back stack so user can navigate back
-                transaction.commit();
-            }
+            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
 
 

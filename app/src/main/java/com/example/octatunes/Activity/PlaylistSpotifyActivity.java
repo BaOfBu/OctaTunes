@@ -3,6 +3,8 @@ package com.example.octatunes.Activity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.Html;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,6 +26,7 @@ import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.PlaylistLibraryUserService;
+import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.TrackService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -73,6 +76,7 @@ public class PlaylistSpotifyActivity extends Fragment {
 
             TextView description = view.findViewById(R.id.playlistDescriptionSpotify);
             ImageView imageView = view.findViewById(R.id.playlist_cover_image_spotify);
+            TextView creator = view.findViewById(R.id.creator_name);
 
             if (!playlistsModel.getImage().isEmpty()) {
                 Picasso.get().load(playlistsModel.getImage()).into(imageView);
@@ -80,8 +84,37 @@ public class PlaylistSpotifyActivity extends Fragment {
 
             description.setText(playlistsModel.getDescription());
 
-            TrackService trackService = new TrackService();
+            PlaylistService playlistService = new PlaylistService();
+            playlistService.getUsernameOfPlaylistCreator(playlistsModel)
+                    .thenAccept(username -> {
+                        if (username != null) {
+                            if (username.equals("Spotify")){
+                                int randomNumber = (int) (Math.random() * 100) + 1;
+                                if (randomNumber%2==0){
+                                    String madeByText = "<font color='#a7a7a7'>Made for </font>" + "Binh Le Tuan";
+                                    creator.setText(Html.fromHtml(madeByText));
+                                }
+                                else{
+                                    creator.setText(username);
+                                }
 
+                            }
+                            else{
+                                String madeByText = "<font color='#a7a7a7'>Made by </font>" + username;
+                                creator.setText(Html.fromHtml(madeByText));
+                            }
+                        } else {
+                            Log.e("Error", "Username is null");
+                        }
+                    })
+                    .exceptionally(throwable -> {
+                        // Handle exceptions here
+                        Log.e("Error", "Failed to get username", throwable);
+                        return null;
+                    });
+
+
+            TrackService trackService = new TrackService();
             // Get tracks by playlist ID
             int playlistId = playlistsModel.getPlaylistID();
             trackService.getTracksByPlaylistId(playlistId, new TrackService.OnTracksLoadedListener() {

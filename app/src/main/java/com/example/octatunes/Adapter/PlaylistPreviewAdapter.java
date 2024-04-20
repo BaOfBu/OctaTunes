@@ -118,18 +118,15 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         }
 
         holder.itemView.setOnClickListener(v -> {
-            if (playlist.getUserID() == 1) {
-                // Replace the current fragment with PlaylistSpotifyFragment
-                PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
-                Bundle bundle = new Bundle();
-                bundle.putString("playlistItem", new Gson().toJson(playlist)); // Pass entire PlaylistsModel object as JSON string
-                fragment.setArguments(bundle);
+            PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+            Bundle bundle = new Bundle();
+            bundle.putString("playlistItem", new Gson().toJson(playlist));
+            fragment.setArguments(bundle);
 
-                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-                transaction.replace(R.id.fragment_container, fragment);
-                transaction.addToBackStack(null); // Add fragment to back stack so user can navigate back
-                transaction.commit();
-            }
+            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+            transaction.replace(R.id.fragment_container, fragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         });
 
         TrackService trackService = new TrackService();
