@@ -113,7 +113,7 @@ public class PlaylistService {
         getAllPlaylists().thenAccept(playlists -> {
             List<PlaylistsModel> playlistsByName = new ArrayList<>();
             for (PlaylistsModel playlist : playlists) {
-                if (playlist.getName().equals(playlistName)) {
+                if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
                     playlistsByName.add(playlist);
                 }
             }

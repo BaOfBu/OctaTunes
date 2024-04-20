@@ -10,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.TracksModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSearchByBandNameAdapter.ViewHolder>{
     private UserProfileModel artistProfileModel;
@@ -57,7 +59,8 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
         AlbumPreviewAdapter albumPreviewAdapter = new AlbumPreviewAdapter(albumPreviewModels, context);
         holder.albumRecyclerView.setAdapter(albumPreviewAdapter);
 
-        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context);
+        List<TracksModel> temp = new ArrayList<>();
+        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(temp, context);
         holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
