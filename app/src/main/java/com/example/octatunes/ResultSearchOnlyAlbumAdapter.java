@@ -10,18 +10,31 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Services.TrackService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultSearchOnlyAlbumAdapter extends RecyclerView.Adapter<ResultSearchOnlyAlbumAdapter.ViewHolder>{
-    private ArrayList<TrackPreviewModel> albumPreviewModelsLeft;
-    private ArrayList<TrackPreviewModel> albumPreviewModelsRight;
+    private ArrayList<AlbumsModel> albumPreviewModelsLeft;
+    private ArrayList<AlbumsModel> albumPreviewModelsRight;
     private Context context;
 
-    public ResultSearchOnlyAlbumAdapter(ArrayList<TrackPreviewModel> albumPreviewModelsLeft, ArrayList<TrackPreviewModel>  albumPreviewModelsRight, Context context) {
-        this.albumPreviewModelsLeft = albumPreviewModelsLeft;
-        this.albumPreviewModelsRight = albumPreviewModelsRight;
+    private TrackService trackService = new TrackService();
+
+    public ResultSearchOnlyAlbumAdapter(List<AlbumsModel> array, Context context) {
+        albumPreviewModelsLeft = new ArrayList<>();
+        albumPreviewModelsRight = new ArrayList<>();
+        for(int i = 0; i < array.size(); i++) {
+            if (i % 2 == 0) {
+                albumPreviewModelsLeft.add(array.get(i));
+            } else {
+                albumPreviewModelsRight.add(array.get(i));
+            }
+        }
+
         this.context = context;
     }
 
@@ -51,19 +64,24 @@ public class ResultSearchOnlyAlbumAdapter extends RecyclerView.Adapter<ResultSea
     @Override
     public void onBindViewHolder(@NonNull ResultSearchOnlyAlbumAdapter.ViewHolder holder, int position) {
         if(albumPreviewModelsLeft.get(position) != null){
-            TrackPreviewModel trackPreviewModelLeft = albumPreviewModelsLeft.get(position);
-            Picasso.get().load(trackPreviewModelLeft.getTrackImageId()).into(holder.albumImageLeft);
-            holder.albumNameLeft.setText(trackPreviewModelLeft.getTrackName());
-            holder.albumArtistLeft.setText(trackPreviewModelLeft.getTrackArtist());
-            holder.publishedYearLeft.setText(Integer.toString(trackPreviewModelLeft.getPublishedYear()));
+            AlbumsModel trackPreviewModelLeft = albumPreviewModelsLeft.get(position);
+            Picasso.get().load(trackPreviewModelLeft.getImage()).into(holder.albumImageLeft);
+            holder.albumNameLeft.setText(trackPreviewModelLeft.getName());
+            trackService.getArtistNameByAlbumId(trackPreviewModelLeft.getAlbumID(), (TrackService.OnArtistNameLoadedListener) artistName -> holder.albumArtistLeft.setText(artistName));
+            holder.publishedYearLeft.setText(Integer.toString(trackPreviewModelLeft.getReleaseDate().getYear()));
+        }
+
+        if(albumPreviewModelsRight.size() <= position){
+            setupNullAlbumRight(holder);
+            return;
         }
 
         if(albumPreviewModelsRight.get(position) != null){
-            TrackPreviewModel trackPreviewModelRight = albumPreviewModelsRight.get(position);
-            Picasso.get().load(trackPreviewModelRight.getTrackImageId()).into(holder.albumImageRight);
-            holder.albumNameRight.setText(trackPreviewModelRight.getTrackName());
-            holder.albumArtistRight.setText(trackPreviewModelRight.getTrackArtist());
-            holder.publishedYearRight.setText(Integer.toString(trackPreviewModelRight.getPublishedYear()));
+            AlbumsModel trackPreviewModelRight = albumPreviewModelsRight.get(position);
+            Picasso.get().load(trackPreviewModelRight.getImage()).into(holder.albumImageRight);
+            holder.albumNameRight.setText(trackPreviewModelRight.getName());
+            trackService.getArtistNameByAlbumId(trackPreviewModelRight.getAlbumID(), (TrackService.OnArtistNameLoadedListener) artistName -> holder.albumArtistRight.setText(artistName));
+            holder.publishedYearRight.setText(Integer.toString(trackPreviewModelRight.getReleaseDate().getYear()));
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,5 +92,18 @@ public class ResultSearchOnlyAlbumAdapter extends RecyclerView.Adapter<ResultSea
     @Override
     public int getItemCount() {
         return Math.max(albumPreviewModelsLeft.size(), albumPreviewModelsRight.size());
+    }
+
+    private void setupNullAlbumLeft(ViewHolder holder) {
+        holder.albumImageLeft.setVisibility(View.INVISIBLE);
+        holder.albumNameLeft.setVisibility(View.INVISIBLE);
+        holder.albumArtistLeft.setVisibility(View.INVISIBLE);
+        holder.publishedYearLeft.setVisibility(View.INVISIBLE);
+    }
+    private void setupNullAlbumRight(ViewHolder holder) {
+        holder.albumImageRight.setVisibility(View.INVISIBLE);
+        holder.albumNameRight.setVisibility(View.INVISIBLE);
+        holder.albumArtistRight.setVisibility(View.INVISIBLE);
+        holder.publishedYearRight.setVisibility(View.INVISIBLE);
     }
 }

@@ -10,15 +10,19 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.ArtistsModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
 public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<ResearchSearchOnlyArtistAdapter.ViewHolder>{
-    private ArrayList<UserProfileModel> artistProfileModels;
+    private List<ArtistsModel> artistProfileModels;
     private Context context;
 
-    public ResearchSearchOnlyArtistAdapter(ArrayList<UserProfileModel> artistProfileModels, Context context) {
+    public ResearchSearchOnlyArtistAdapter(List<ArtistsModel> artistProfileModels, Context context) {
         this.artistProfileModels = artistProfileModels;
         this.context = context;
     }
@@ -40,9 +44,11 @@ public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<Resear
     }
     @Override
     public void onBindViewHolder(@NonNull ResearchSearchOnlyArtistAdapter.ViewHolder holder, int position) {
-        UserProfileModel userProfileModel = artistProfileModels.get(position);
-        Picasso.get().load(userProfileModel.getUserImageId()).into(holder.userImage);
-        holder.fullname.setText(userProfileModel.getFullName());
+        ArtistsModel artistsModel = null;
+        artistsModel = artistProfileModels.get(position);
+
+        Picasso.get().load(artistsModel.getImage()).into(holder.userImage);
+        holder.fullname.setText(artistsModel.getName());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -52,5 +58,6 @@ public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<Resear
     @Override
     public int getItemCount() {
         return artistProfileModels.size();
+
     }
 }

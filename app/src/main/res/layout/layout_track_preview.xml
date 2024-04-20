@@ -31,6 +31,7 @@
             android:layout_height="wrap_content"
             android:padding="4dp"
             android:text="Tên ca khúc"
+            android:maxLines="1"
             android:textColor="@color/white"
             android:textSize="17sp"
             android:fontFamily="@font/main_font"/>
