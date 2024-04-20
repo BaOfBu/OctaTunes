@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/background_color">
+    android:layout_height="wrap_content"
+    android:background="@color/red"
+    android:orientation="horizontal">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,17 +16,18 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp">
+            android:paddingStart="20dp"
+            android:paddingEnd="10dp">
 
             <ImageButton
                 android:id="@+id/track_minimize"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_centerVertical="true"
                 android:layout_alignParentStart="true"
                 android:src="@drawable/ic_down_white_30"
-                android:background="@null"/>
+                android:background="@null"
+                android:contentDescription="Minimize" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -52,11 +54,12 @@
 
             <ImageButton
                 android:id="@+id/show_options"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_more_white_30"
-                android:background="@null"/>
+                android:background="@null"
+                android:contentDescription="Options" />
 
         </RelativeLayout>
 
@@ -72,9 +75,10 @@
                 android:id="@+id/imageViewAlbumArt"
                 android:layout_width="350dp"
                 android:layout_height="350dp"
-                android:layout_marginTop="60dp"
+                android:layout_marginTop="40dp"
                 android:src="@drawable/ic_spotify"
-                android:scaleType="centerCrop"/>
+                android:scaleType="centerCrop"
+                android:contentDescription="Image" />
 
             <!-- Track Title -->
             <RelativeLayout
@@ -83,7 +87,7 @@
                 android:orientation="horizontal"
                 android:gravity="start"
                 android:paddingStart="30dp"
-                android:paddingTop="50dp"
+                android:paddingTop="40dp"
                 android:paddingEnd="30dp"
                 android:paddingBottom="30dp">
 
@@ -120,14 +124,13 @@
                     <ImageButton
                         android:id="@+id/imageButtonfavorite"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="50dp"
                         android:layout_alignParentEnd="true"
                         android:src="@drawable/ic_add_circle_outline_white_32"
                         android:background="@null"
                         android:layout_centerInParent="true"
-                        />
+                        android:contentDescription="AddLibrary" />
                 </RelativeLayout>
-
 
             </RelativeLayout>
         </LinearLayout>
@@ -137,8 +140,8 @@
             style="?android:attr/progressBarStyleHorizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginStart="17dp"
+            android:layout_marginEnd="16dp"
             android:background="@null"
             android:progressTint="@color/white"
             android:progressBackgroundTint="@color/gray"
@@ -148,10 +151,10 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="25dp">
+            android:layout_marginHorizontal="30dp">
 
             <TextView
-                android:id="@+id/playing_time"
+                android:id="@+id/elapsedTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textSize="16sp"
@@ -165,7 +168,7 @@
                 android:layout_weight="1"/>
 
             <TextView
-                android:id="@+id/playing_duration"
+                android:id="@+id/remainingTime"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="4:02"
@@ -185,30 +188,33 @@
             <RelativeLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingTop="5dp">
+                android:paddingTop="0dp">
                 <ImageButton
                     android:id="@+id/imageButtonShuffle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_shuffle_white_18"
-                    android:background="@null"/>
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_shuffle_white_24"
+                    android:background="@null"
+                    android:contentDescription="Shuffle" />
                 <View
+                    android:id="@+id/shuffle_dot"
                     android:layout_width="5.5dp"
                     android:layout_height="5.5dp"
+                    android:layout_marginTop="-15dp"
                     android:layout_below="@+id/imageButtonShuffle"
                     android:layout_centerHorizontal="true"
                     android:visibility="invisible"
                     android:background="@drawable/ic_dot_green_24" />
-
             </RelativeLayout>
 
             <ImageButton
                 android:id="@+id/imageButtonPrevious"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/ic_previous_white_30"
                 android:background="@null"
-                android:layout_marginStart="45dp"/>
+                android:layout_marginStart="30dp"
+                android:contentDescription="Previous" />
 
             <ImageButton
                 android:id="@+id/imageButtonPlayPause"
@@ -216,41 +222,39 @@
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_circle_pause_white_70"
                 android:background="@null"
-                android:layout_marginStart="45dp"
-                android:layout_marginEnd="45dp"/>
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:contentDescription="PlayPause" />
 
             <ImageButton
                 android:id="@+id/imageButtonNext"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
                 android:src="@drawable/ic_next_white_30"
                 android:background="@null"
-                android:layout_marginEnd="45dp"
-                />
+                android:layout_marginEnd="30dp"
+                android:contentDescription="Next" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:paddingTop="5dp"
-                android:gravity="bottom">
+                android:layout_height="wrap_content">
                 <ImageButton
                     android:id="@+id/imageButtonRepeat"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@null"
-                    android:src="@drawable/ic_repeat_white_18"
-                    />
+                    android:src="@drawable/ic_repeat_white_24"
+                    android:contentDescription="Repeat" />
                 <View
+                    android:id="@+id/repeat_dot"
+                    android:layout_marginTop="-15dp"
                     android:layout_width="5.5dp"
                     android:layout_height="5.5dp"
                     android:layout_below="@+id/imageButtonRepeat"
                     android:layout_centerHorizontal="true"
                     android:visibility="invisible"
-                    android:background="@drawable/ic_dot_green_24">
-
-                </View>
+                    android:background="@drawable/ic_dot_green_24" />
             </RelativeLayout>
-
 
         </LinearLayout>
 
@@ -258,21 +262,17 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:gravity="start"
-            android:paddingTop="10dp"
-            android:paddingStart="30dp"
-            android:paddingEnd="30dp"
+            android:gravity="center"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
             android:layout_marginTop="20dp">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-                <ImageButton
-                    android:id="@+id/imageButtonBluetooth"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_connect_device_24"
-                    android:background="@null"/>
-            </LinearLayout>
+            <ImageButton
+                android:id="@+id/imageButtonBluetooth"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_connect_device_24"
+                android:background="@null"
+                android:contentDescription="ConnectDevice" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -280,21 +280,23 @@
                 android:layout_alignParentEnd="true">
                 <ImageButton
                     android:id="@+id/imageButtonShare"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:src="@drawable/ic_share_white_24"
                     android:background="@null"
-                    android:layout_marginEnd="20dp"/>
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="Share" />
 
                 <ImageButton
                     android:id="@+id/imageButtonPlaylist"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:background="@null"
-                    android:src="@drawable/ic_queue_white_24" />
+                    android:src="@drawable/ic_queue_white_24"
+                    android:contentDescription="Queue" />
             </LinearLayout>
         </RelativeLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
