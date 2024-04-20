@@ -1,16 +1,16 @@
 package com.example.octatunes;
 
+import android.os.Bundle;
+import android.view.View;
+import android.widget.FrameLayout;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.FrameLayout;
-
 import com.example.octatunes.Activity.HomeActivity;
+import com.example.octatunes.Activity.LibraryFragment;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.databinding.ActivityMainBinding;
 
@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity {
                 searchActivityNavigation.setArguments(bundleNavigation);
                 replaceFragment(searchActivityNavigation);
             }else if(itemID == R.id.library){
-
+                replaceFragment(new LibraryFragment());
             }else if(itemID == R.id.Premium){
 
             }

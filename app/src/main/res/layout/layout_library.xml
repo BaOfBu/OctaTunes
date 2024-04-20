@@ -1,6 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:background="@color/background_color"
     android:layout_height="match_parent">
+    <!-- Tab  -->
+    <androidx.cardview.widget.CardView
+        android:id="@+id/tab_library"
+        android:orientation="vertical"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        app:cardElevation="8dp"
+        app:cardCornerRadius="8dp"
+        app:cardBackgroundColor="#000"
+        >
+        <LinearLayout
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="2dp"
+            android:background="@color/background_color"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="10dp"
+                android:layout_gravity="center"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="10dp"
+                    android:width="40dp"
+                    android:textAlignment="center"
+                    android:height="40dp"
+                    android:textColor="@color/black"
+                    android:textStyle="bold"
+                    android:text="B"
+                    android:background="@drawable/ic_circle_background_orange">
+                </TextView>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="20dp"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="20dp"
+                    android:text="Your Library"
+                    />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/baseline_search_24">
+                </ImageView>
+                <ImageView
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="10dp"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/baseline_add_24">
+                </ImageView>
+            </LinearLayout>
+            <LinearLayout
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <ToggleButton
+                    android:id="@+id/tab_playlist_library"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textOff="Playlists"
+                    android:textOn="Playlists"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/layout_home_navigation_background"
+                    android:gravity="center"
+                    android:textAllCaps="false" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+                <ToggleButton
+                    android:id="@+id/tab_albums_library"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textOff="Albums"
+                    android:textOn="Albums"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/layout_home_navigation_background"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:textAllCaps="false" />
+
+                <ToggleButton
+                    android:id="@+id/tab_artists_library"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textOff="Artists"
+                    android:textOn="Artists"
+                    android:textColor="@android:color/white"
+                    android:background="@drawable/layout_home_navigation_background"
+                    android:gravity="center"
+                    android:layout_marginStart="8dp"
+                    android:textAllCaps="false" />
+
+            </LinearLayout>
+        </LinearLayout>
+    <!-- Toolbar and tag    -->
+    </androidx.cardview.widget.CardView>
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/libraryScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@id/tab_library">
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <!-- Sort and Search   -->
+            <LinearLayout
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_marginTop="15dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="28dp"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/baseline_sort_24"
+                    android:layout_height="28dp"/>
+                <TextView
+                    android:layout_gravity="center"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="10dp"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/white"
+                    android:text="Recents"
+                    android:layout_height="wrap_content"/>
+                <View
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="0dp"/>
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:backgroundTint="@color/white"
+                    android:background="@drawable/baseline_grid_view_24"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+            <!--  List of playlist, album and artist  -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                tools:listitem="@layout/layout_library_item_playlist_album"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"/>
+            <!-- My Playlist  -->
+            <LinearLayout
+                android:layout_marginBottom="20dp"
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <RelativeLayout
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="#282828">
+
+                        <ImageView
+                            android:layout_width="40dp"
+                            android:layout_height="40dp"
+                            android:layout_centerInParent="true"
+                            android:backgroundTint="#a7a7a7"
+                            android:background="@drawable/baseline_music_note_24" />
+                    </RelativeLayout>
+                </FrameLayout>
+                <LinearLayout
+                    android:gravity="center_vertical"
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="10dp"
+                        android:text="My playlist # 1 "
+                        android:layout_gravity="center"
+                        android:textSize="18dp"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#fff"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:text="Playlist - Bình Lê Tuấn"
+                        android:layout_gravity="center"
+                        android:textSize="16dp"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#a0a0a0"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+            </LinearLayout>
+            <!-- Add Artists -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <RelativeLayout
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/circle_background_282828">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_centerInParent="true"
+                            android:backgroundTint="#a7a7a7"
+                            android:background="@drawable/baseline_add_24" />
+                    </RelativeLayout>
+                </FrameLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="Add artists"
+                    android:layout_gravity="center"
+                    android:textSize="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="#fff"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+</RelativeLayout>
