@@ -8,10 +8,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <ImageButton
-        android:id="@+id/add_button"
+        android:id="@+id/add_button_preview_playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_add_circle"
+        android:src="@drawable/add_to_library_button"
+        android:backgroundTint="#1ed75f"
         android:background="?android:selectableItemBackground"
         android:padding="10dp"/>
 
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_menu"
-        android:layout_toRightOf="@id/add_button"
+        android:layout_toRightOf="@id/add_button_preview_playlist"
         android:background="?android:selectableItemBackground"
         android:padding="10dp"/>
 
@@ -30,7 +31,7 @@
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:layout_marginRight="15dp"
-        android:layout_toLeftOf="@+id/play_button"
+        android:layout_toLeftOf="@+id/play_button_home_playlist_preview"
         android:gravity="center"
         android:textAlignment="center"
         android:text="50 songs"
@@ -39,7 +40,7 @@
         tools:ignore="HardcodedText"/>
 
     <ImageButton
-        android:id="@+id/play_button"
+        android:id="@+id/play_button_home_playlist_preview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/ic_play_circle"
