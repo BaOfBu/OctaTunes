@@ -28,6 +28,7 @@ public class TrackService {
     private DatabaseReference albumsRef;
     private DatabaseReference artistRef;
 
+
     public TrackService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistTracksRef = database.getReference("playlist_track");
@@ -136,7 +137,6 @@ public class TrackService {
             }
         });
     }
-
     public void getArtistNameByAlbumId(int albumId, final OnArtistNameLoadedListener listener) {
         Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -151,7 +151,6 @@ public class TrackService {
                 }
                 listener.onArtistNameLoaded(null); // No artist found
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors
@@ -179,6 +178,7 @@ public class TrackService {
             }
         });
     }
+
 
     public void findTrackByName(final String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");

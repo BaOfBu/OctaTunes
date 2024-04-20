@@ -1,17 +1,16 @@
-<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="24dp"
     android:height="24dp"
     android:viewportWidth="24"
     android:viewportHeight="24">
 
-    <!-- White filled circle -->
+    <!-- White fill for the outer shape -->
     <path
-        android:fillColor="#fff"
+        android:fillColor="@android:color/white"
         android:pathData="M12,0C18.627,0 24,5.373 24,12C24,18.627 18.627,24 12,24C5.373,24 0,18.627 0,12C0,5.373 5.373,0 12,0Z"/>
 
-    <!-- Black play triangle -->
+    <!-- Black fill for the center -->
     <path
-        android:fillColor="#000000"
-        android:pathData="M8,5v14l11,-7z"/>
+        android:fillColor="@android:color/black"
+        android:pathData="M11,16H8V7h3V16zM16,16h-3V7h3V16z"/>
 </vector>
