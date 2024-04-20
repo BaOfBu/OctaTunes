@@ -2,6 +2,8 @@ package com.example.octatunes.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,8 +12,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,9 +27,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
+import com.example.octatunes.Model.PlaylistLibrary_User;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.PlaylistLibraryUserService;
 import com.example.octatunes.Services.TrackService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
@@ -45,6 +51,8 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
     private Handler handler = new Handler();
     private int focusedPosition = RecyclerView.NO_POSITION;
 
+
+
     public PlaylistPreviewAdapter(Context context, List<String> playlistPreviews, List<PlaylistsModel> playlistsModels, List<Integer> iconResourceIds) {
         this.context = context;
         this.playlistPreviews = playlistPreviews;
@@ -62,6 +70,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         public TextView music_name;
         public TextView song_count;
         public ImageView tbin_homepage_playlist_detail_menu_button;
+        public ImageView add_button_preview_playlist;
         public ImageView play_button_home_playlist_preview;
 
         public ViewHolder(View itemView) {
@@ -76,6 +85,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             song_count = itemView.findViewById(R.id.tbin_song_count);
             tbin_homepage_playlist_detail_menu_button=itemView.findViewById(R.id.tbin_homepage_playlist_detail_menu_button);
             play_button_home_playlist_preview = itemView.findViewById(R.id.play_button_home_playlist_preview);
+            add_button_preview_playlist = itemView.findViewById(R.id.add_button_preview_playlist);
         }
     }
 
@@ -91,7 +101,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         String preview = playlistPreviews.get(position);
         PlaylistsModel playlist = playlistsModels.get(position);
         int iconResourceId = iconResourceIds.get(position);
-        boolean isFocused = position == focusedPosition;
+        PlaylistLibraryUserService playlistLibraryUserService = new PlaylistLibraryUserService();
 
         holder.playlistDetailIcon.setImageResource(iconResourceId);
         int color = ContextCompat.getColor(context, R.color.dark_gray);
@@ -177,33 +187,70 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             }
         });
 
+        /* Play button */
+        holder.play_button_home_playlist_preview.setTag(R.drawable.ic_play_circle);
         holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.d("ButtonClick", "Play button clicked");
 
-                // Create NowPlayingBarFragment instance
+                // Get the resource IDs of the drawables
+                int playDrawableId = R.drawable.ic_play_circle;
+                int pauseDrawableId = R.drawable.baseline_pause_circle_24;
+
+                // Get the current drawable resource ID of the button
+                int currentDrawableId = (Integer) holder.play_button_home_playlist_preview.getTag();
+
+                // Check if the current drawable is the play drawable
+                if (currentDrawableId == playDrawableId) {
+                    holder.play_button_home_playlist_preview.setImageResource(pauseDrawableId);
+                    holder.play_button_home_playlist_preview.setTag(pauseDrawableId);
+                } else {
+                    holder.play_button_home_playlist_preview.setImageResource(playDrawableId);
+                    holder.play_button_home_playlist_preview.setTag(playDrawableId);
+                }
+
                 NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
-
-                // Get FragmentManager
                 FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-
-                // Begin transaction
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                // Find the FrameLayout using the activity's findViewById()
                 FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
                 frameLayout.setVisibility(View.VISIBLE);
-
-                // Replace fragment_container with NowPlayingBarFragment
                 fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-
-                // Commit transaction
                 fragmentTransaction.commit();
             }
         });
 
-
-
+        /* Add button */
+        playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+            @Override
+            public void onCheckComplete(boolean exists) {
+                if (exists) {
+                    holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
+                } else {
+                    holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button);
+                }
+            }
+        });
+        holder.add_button_preview_playlist.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+                    @Override
+                    public void onCheckComplete(boolean exists) {
+                        if (exists) {
+                            holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button);
+                            playlistLibraryUserService.removePlaylistLibraryUser(playlist.getPlaylistID(), 2);
+                            Toast.makeText(context, "Removed from your library", Toast.LENGTH_SHORT).show();
+                        } else {
+                            holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
+                            PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlist.getPlaylistID(), 2);
+                            playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
+                            Toast.makeText(context, "Added to your library", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+            }
+        });
 
     }
 
