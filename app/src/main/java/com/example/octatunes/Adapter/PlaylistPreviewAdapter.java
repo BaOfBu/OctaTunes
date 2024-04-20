@@ -37,6 +37,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -49,8 +50,8 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
     private List<Integer> iconResourceIds;
     private Context context;
     private Handler handler = new Handler();
-    private int focusedPosition = RecyclerView.NO_POSITION;
 
+    private ImageView playPlaylist = null;
 
 
     public PlaylistPreviewAdapter(Context context, List<String> playlistPreviews, List<PlaylistsModel> playlistsModels, List<Integer> iconResourceIds) {
@@ -101,6 +102,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         String preview = playlistPreviews.get(position);
         PlaylistsModel playlist = playlistsModels.get(position);
         int iconResourceId = iconResourceIds.get(position);
+
         PlaylistLibraryUserService playlistLibraryUserService = new PlaylistLibraryUserService();
 
         holder.playlistDetailIcon.setImageResource(iconResourceId);
@@ -192,8 +194,6 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("ButtonClick", "Play button clicked");
-
                 // Get the resource IDs of the drawables
                 int playDrawableId = R.drawable.ic_play_circle;
                 int pauseDrawableId = R.drawable.baseline_pause_circle_24;
@@ -203,9 +203,15 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
 
                 // Check if the current drawable is the play drawable
                 if (currentDrawableId == playDrawableId) {
+                    if (playPlaylist!=null){
+                        playPlaylist.setImageResource(playDrawableId);
+                        playPlaylist.setTag(playDrawableId);
+                    }
                     holder.play_button_home_playlist_preview.setImageResource(pauseDrawableId);
                     holder.play_button_home_playlist_preview.setTag(pauseDrawableId);
+                    playPlaylist = holder.play_button_home_playlist_preview;
                 } else {
+                    playPlaylist = null;
                     holder.play_button_home_playlist_preview.setImageResource(playDrawableId);
                     holder.play_button_home_playlist_preview.setTag(playDrawableId);
                 }
@@ -251,7 +257,6 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                 });
             }
         });
-
     }
 
     @Override
