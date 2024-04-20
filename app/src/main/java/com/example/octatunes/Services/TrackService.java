@@ -20,6 +20,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TrackService {
@@ -187,7 +188,7 @@ public class TrackService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(snapshot.child("name").getValue(String.class).contains(trackName)){
+                    if(Objects.requireNonNull(snapshot.child("name").getValue(String.class)).toLowerCase().contains(trackName.toLowerCase())){
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                     }
                 }
@@ -199,7 +200,7 @@ public class TrackService {
                     Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
                     trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TracksModel track = snapshot.getValue(TracksModel.class);
                                 tracks.add(track);

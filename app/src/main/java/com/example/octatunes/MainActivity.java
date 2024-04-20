@@ -29,11 +29,7 @@ public class MainActivity extends AppCompatActivity {
             if(itemID == R.id.home){
                 replaceFragment(new HomeActivity());
             }else if(itemID == R.id.search){
-                Bundle bundleNavigation = new Bundle();
-                bundleNavigation.putString("searchQuery", "Ngang");
-                Fragment searchActivityNavigation = new SearchActivity();
-                searchActivityNavigation.setArguments(bundleNavigation);
-                replaceFragment(searchActivityNavigation);
+                replaceFragment(new SearchingActivity());
             }else if(itemID == R.id.library){
 
             }else if(itemID == R.id.Premium){

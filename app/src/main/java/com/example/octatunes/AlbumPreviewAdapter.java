@@ -10,15 +10,21 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Services.TrackService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AlbumPreviewAdapter extends RecyclerView.Adapter<AlbumPreviewAdapter.ViewHolder> {
-    private ArrayList<TrackPreviewModel> albumPreviewModels;
+    private List<AlbumsModel> albumPreviewModels;
     private Context context;
 
-    public AlbumPreviewAdapter(ArrayList<TrackPreviewModel> albumPreviewModels, Context context) {
+    private TrackService trackService = new TrackService();
+
+    public AlbumPreviewAdapter(List<AlbumsModel> albumPreviewModels, Context context) {
         this.albumPreviewModels = albumPreviewModels;
         this.context = context;
     }
@@ -41,9 +47,9 @@ public class AlbumPreviewAdapter extends RecyclerView.Adapter<AlbumPreviewAdapte
 
     @Override
     public void onBindViewHolder(@NonNull AlbumPreviewAdapter.ViewHolder holder, int position) {
-        TrackPreviewModel trackPreviewModel = albumPreviewModels.get(position);
-        Picasso.get().load(trackPreviewModel.getTrackImageId()).into(holder.albumImage);
-        holder.albumName.setText(trackPreviewModel.getTrackName());
+        AlbumsModel trackPreviewModel = albumPreviewModels.get(position);
+        Picasso.get().load(trackPreviewModel.getImage()).into(holder.albumImage);
+        trackService.getArtistNameByAlbumId(trackPreviewModel.getAlbumID(), (TrackService.OnArtistNameLoadedListener) artistName -> holder.albumName.setText(artistName));
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -1,15 +1,19 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.squareup.picasso.Picasso;
 
@@ -17,27 +21,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSearchByBandNameAdapter.ViewHolder>{
-    private UserProfileModel artistProfileModel;
-    private ArrayList<TrackPreviewModel> albumPreviewModels;
-    private ArrayList<TrackPreviewModel> trackPreviewModels;
+    private List<ArtistsModel> artistProfileModel;
+    private List<AlbumsModel> albumPreviewModels;
+    private List<TracksModel> trackPreviewModels;
     private Context context;
 
-    public ResultSearchByBandNameAdapter(UserProfileModel artistProfileModel, ArrayList<TrackPreviewModel> albumPreviewModels, ArrayList<TrackPreviewModel> trackPreviewModels, Context context) {
+    public ResultSearchByBandNameAdapter(List<ArtistsModel> artistProfileModel, List<AlbumsModel> albumModels, List<TracksModel> trackModels, Context context) {
         this.artistProfileModel = artistProfileModel;
-        this.albumPreviewModels = albumPreviewModels;
-        this.trackPreviewModels = trackPreviewModels;
+        this.albumPreviewModels = albumModels;
+        this.trackPreviewModels = trackModels;
         this.context = context;
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView artistImage;
         private TextView artistName;
+
+        private TextView cosuxuathien;
         private RecyclerView albumRecyclerView;
         private RecyclerView trackRecyclerView;
+        private RelativeLayout artistLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             artistImage = itemView.findViewById(R.id.artist_image);
             artistName = itemView.findViewById(R.id.artist_name);
+
+            artistLayout = itemView.findViewById(R.id.artist);
+            cosuxuathien = itemView.findViewById(R.id.textview_album);
 
             albumRecyclerView = itemView.findViewById(R.id.recyclerview_album_preview); // Initialize the new RecyclerView
             trackRecyclerView = itemView.findViewById(R.id.recyclerview_track_preview); // Initialize the new RecyclerView
@@ -53,15 +63,41 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
 
     @Override
     public void onBindViewHolder(@NonNull ResultSearchByBandNameAdapter.ViewHolder holder, int position) {
-        Picasso.get().load(artistProfileModel.getUserImageId()).into(holder.artistImage);
-        holder.artistName.setText(artistProfileModel.getFullName());
+        Log.e("ByBand","artist model:"+ artistProfileModel.size());
+        Log.e("ByBand","album model:"+ albumPreviewModels.size());
+        Log.e("ByBand","track model:"+ trackPreviewModels.size());
+        if(artistProfileModel.size() == 0){
+            holder.artistLayout.setVisibility(View.GONE);
+        }
+        else{
+            holder.artistName.setVisibility(View.VISIBLE);
+            holder.artistImage.setVisibility(View.VISIBLE);
+            Picasso.get().load(artistProfileModel.get(0).getImage()).into(holder.artistImage);
+            holder.artistName.setText(artistProfileModel.get(0).getName());
+        }
 
-        AlbumPreviewAdapter albumPreviewAdapter = new AlbumPreviewAdapter(albumPreviewModels, context);
-        holder.albumRecyclerView.setAdapter(albumPreviewAdapter);
+        if(albumPreviewModels.size() == 0){
+            holder.albumRecyclerView.setVisibility(View.GONE);
+            holder.cosuxuathien.setVisibility(View.GONE);
+        }
+        else{
+            holder.albumRecyclerView.setVisibility(View.VISIBLE);
+            holder.cosuxuathien.setVisibility(View.VISIBLE);
+            AlbumPreviewAdapter albumPreviewAdapter = new AlbumPreviewAdapter(albumPreviewModels, context);
+            holder.albumRecyclerView.setAdapter(albumPreviewAdapter);
+            albumPreviewAdapter.notifyDataSetChanged();
+        }
 
-        List<TracksModel> temp = new ArrayList<>();
-        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(temp, context);
-        holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
+        if(trackPreviewModels.size() == 0){
+            holder.trackRecyclerView.setVisibility(View.GONE);
+        }
+        else {
+            holder.trackRecyclerView.setVisibility(View.VISIBLE);
+            // Create a temporary list to pass to the adapter (to avoid modifying the original list
+            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context);
+            holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
+            trackPreviewAdapter.notifyDataSetChanged();
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
