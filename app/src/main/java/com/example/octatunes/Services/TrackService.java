@@ -6,6 +6,8 @@ import android.util.Log;
 
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.TrackPreviewAdapter;
+import com.example.octatunes.TrackPreviewModel;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -24,14 +26,15 @@ public class TrackService {
     private DatabaseReference playlistTracksRef;
     private DatabaseReference tracksRef;
     private DatabaseReference albumsRef;
-    private DatabaseReference artistsRef;
+    private DatabaseReference artistRef;
+
 
     public TrackService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistTracksRef = database.getReference("playlist_track");
         tracksRef = database.getReference("tracks");
         albumsRef = database.getReference("albums");
-        artistsRef = database.getReference("artists");
+        artistRef = database.getReference("artists");
     }
 
     // Method to add a new track
@@ -148,7 +151,6 @@ public class TrackService {
                 }
                 listener.onArtistNameLoaded(null); // No artist found
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors
@@ -156,7 +158,7 @@ public class TrackService {
         });
     }
     private void getArtistNameById(int artistId, final OnArtistNameLoadedListener listener) {
-        Query query = artistsRef.orderByChild("artistID").equalTo(artistId);
+        Query query = artistRef.orderByChild("artistID").equalTo(artistId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -173,6 +175,49 @@ public class TrackService {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors
+            }
+        });
+    }
+
+
+    public void findTrackByName(final String trackName, final OnTracksLoadedListener listener) {
+        Query trackQuery = tracksRef.orderByChild("name");
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if(snapshot.child("name").getValue(String.class).contains(trackName)){
+                        trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                    }
+                }
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<TracksModel> tracks = new ArrayList<>();
+                for (Integer trackId : trackIds) {
+                    Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TracksModel track = snapshot.getValue(TracksModel.class);
+                                tracks.add(track);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                listener.onTracksLoaded(tracks);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
             }
         });
     }

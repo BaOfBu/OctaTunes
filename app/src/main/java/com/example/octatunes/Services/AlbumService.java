@@ -12,6 +12,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
 public class AlbumService {
     private DatabaseReference albumsRef;
 
@@ -61,5 +65,46 @@ public class AlbumService {
 
             }
         });
+    }
+
+
+    public CompletableFuture<List<AlbumsModel>> getAllAlbums(){
+        CompletableFuture<List<AlbumsModel>> future = new CompletableFuture<>();
+        albumsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<AlbumsModel> albums = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    AlbumsModel album = snapshot.getValue(AlbumsModel.class);
+                    if (album != null) {
+                        albums.add(album);
+                    }
+                }
+                future.complete(albums);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                future.completeExceptionally(error.toException());
+            }
+        });
+        return future;
+    }
+
+    public CompletableFuture<List<AlbumsModel>> findAlbumByName(String albumName){
+        CompletableFuture<List<AlbumsModel>> future = new CompletableFuture<>();
+        getAllAlbums().thenAccept(albums -> {
+            List<AlbumsModel> foundAlbums = new ArrayList<>();
+            for (AlbumsModel album : albums) {
+                if (album.getName().toLowerCase().contains(albumName.toLowerCase())) {
+                    foundAlbums.add(album);
+                }
+            }
+            future.complete(foundAlbums);
+        }).exceptionally(throwable -> {
+            future.completeExceptionally(throwable);
+            return null;
+        });
+        return future;
     }
 }

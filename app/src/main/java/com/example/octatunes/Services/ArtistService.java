@@ -16,6 +16,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CompletableFuture;
 
 public class ArtistService {
 
@@ -118,6 +119,29 @@ public class ArtistService {
                             }
                         }
                         successListener.onSuccess(randomArtists);
+                    }
+                },
+                new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        failureListener.onFailure(e);
+                    }
+                }
+        );
+    }
+
+    public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
+        getAllArtists(
+                new OnSuccessListener<List<ArtistsModel>>() {
+                    @Override
+                    public void onSuccess(List<ArtistsModel> allArtists) {
+                        List<ArtistsModel> foundArtists = new ArrayList<>();
+                        for (ArtistsModel artist : allArtists) {
+                            if (artist.getName().toLowerCase().contains(query.toLowerCase())) {
+                                foundArtists.add(artist);
+                            }
+                        }
+                        successListener.onSuccess(foundArtists);
                     }
                 },
                 new OnFailureListener() {
