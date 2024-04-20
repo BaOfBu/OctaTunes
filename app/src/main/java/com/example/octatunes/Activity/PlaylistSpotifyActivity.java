@@ -28,8 +28,11 @@ import com.example.octatunes.Services.TrackService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+import java.time.LocalDateTime;
+
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class PlaylistSpotifyActivity extends Fragment {
@@ -152,7 +155,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                                 Toast.makeText(getContext(), "Removed from your library", Toast.LENGTH_SHORT).show();
                             } else {
                                 add.setImageResource(R.drawable.baseline_check_circle_24);
-                                PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlistsModel.getPlaylistID(), 2);
+                                PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlistsModel.getPlaylistID(), 2, new Date());
                                 playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
                                 Toast.makeText(getContext(), "Added to your library", Toast.LENGTH_SHORT).show();
                             }

@@ -38,6 +38,7 @@ import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -249,7 +250,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                             Toast.makeText(context, "Removed from your library", Toast.LENGTH_SHORT).show();
                         } else {
                             holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
-                            PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlist.getPlaylistID(), 2);
+                            PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlist.getPlaylistID(), 2,new Date());
                             playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
                             Toast.makeText(context, "Added to your library", Toast.LENGTH_SHORT).show();
                         }
