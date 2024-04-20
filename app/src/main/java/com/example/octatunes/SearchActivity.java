@@ -53,6 +53,8 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     private AlbumService albumService = new AlbumService();
 
     private static ToggleButton selectedButton = null;
+
+    private String selectedCategory = "Kết quả phù hợp nhất";
     private String searchType = "Track";
 
     public static ToggleButton getSelectedButton(){
@@ -98,15 +100,25 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 // This method is called when the text is changed
                 searchQuery = searchEditText.getText().toString();
-                if(selectedButton != null){
-                    searchType = selectedButton.getText().toString();
-                }
-                if(searchType.equals("Bài hát")){
-                    getTracks();
-                }else if(searchType.equals("Nghệ sĩ")){
-                    getListArtist();
-                }else if(searchType.equals("Playlist")){
-                    getPlaylists();
+                switch (selectedCategory) {
+                    case "Kết quả phù hợp nhất":
+                        getTracks();
+                        break;
+                    case "Bài hát":
+                        getTracks();
+                        break;
+                    case "Nghệ sĩ":
+                        getListArtist();
+                        break;
+                    case "Danh sách phát":
+                        getPlaylists();
+                        break;
+                    case "Albums":
+                        getAlbums();
+                        break;
+                    case "Hồ sơ":
+                        getListUserProfile(searchQuery);
+                        break;
                 }
             }
 
@@ -121,25 +133,34 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE || (event.getAction() == KeyEvent.ACTION_DOWN &&
                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+//                    if(selectedButton == null)
+//                        Log.e("SearchActivity", "button get text: " + selectedButton.getText().toString());
                     InputMethodManager imm = (InputMethodManager)
                             getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
                         imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
+                    //listSearchResultRecyclerView.setAdapter(null);
                     searchQuery = searchEditText.getText().toString();
-                    if(selectedButton != null){
-                        searchType = selectedButton.getText().toString();
-                    }
-                    if(searchType.equals("Bài hát")){
-                        getTracks();
-                    }else if(searchType.equals("Nghệ sĩ")){
-                        getListArtist();
-                    }else if(searchType.equals("Playlist")){
-                        getPlaylists();
-                    }else if(searchType.equals("Albums")){
-                        getAlbums();
-                    } else if (searchType.equals("Hồ sơ")) {
-                        getListUserProfile(searchQuery);
+                    switch (selectedCategory) {
+                        case "Kết quả phù hợp nhất":
+                            getTracks();
+                            break;
+                        case "Bài hát":
+                            getTracks();
+                            break;
+                        case "Nghệ sĩ":
+                            getListArtist();
+                            break;
+                        case "Danh sách phát":
+                            getPlaylists();
+                            break;
+                        case "Albums":
+                            getAlbums();
+                            break;
+                        case "Hồ sơ":
+                            getListUserProfile(searchQuery);
+                            break;
                     }
 
                     return true;
@@ -178,6 +199,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
 //        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
 //        trackPreviewAdapter.notifyDataSetChanged();
+        listSearchResultRecyclerView.setAdapter(null);
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
@@ -319,23 +341,28 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     @Override
     public void onCategorySelected(String category) {
         switch (category){
-//            case "Kết quả phù hợp nhất": {
-//                getBestMatchResults(searchQuery, searchType);
-//                break;
-//            }
+            case "Kết quả phù hợp nhất": {
+                selectedCategory = "Kết quả phù hợp nhất";
+                getBestMatchResults(searchQuery, searchType);
+                break;
+            }
             case "Bài hát": {
+                selectedCategory = "Bài hát";
                 getTracks();
                 break;
             }
             case "Nghệ sĩ": {
+                selectedCategory = "Nghệ sĩ";
                 getListArtist();
                 break;
             }
             case "Danh sách phát": {
+                selectedCategory = "Danh sách phát";
                 getPlaylists();
                 break;
             }
             case "Albums": {
+                selectedCategory = "Albums";
                 getAlbums();
                 break;
             }
