@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/background_color"
@@ -29,7 +30,8 @@
         android:layout_height="50dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
-        android:background="@drawable/login_edit_border" />
+        android:background="@drawable/login_edit_border"
+        android:paddingHorizontal="15dp"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -39,13 +41,21 @@
         android:textSize="32sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:passwordToggleEnabled="true"
+        app:passwordToggleTint="@color/white">
     <EditText
         android:id="@+id/edtPass"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="match_parent"
+        android:inputType="textPassword"
+        android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border" />
+    </com.google.android.material.textfield.TextInputLayout>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
         android:layout_width="wrap_content"

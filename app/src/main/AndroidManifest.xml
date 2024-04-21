@@ -24,11 +24,11 @@
             android:exported="false"
             android:label="TrackView"
             android:theme="@style/Theme.OctaTunes" />
-<!--        <activity-->
-<!--            android:name=".LoginActivity"-->
-<!--            android:exported="false"-->
-<!--            android:label="LoginActivity"-->
-<!--            android:theme="@style/Theme.OctaTunes" />-->
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="MainActivity"
+            android:theme="@style/Theme.OctaTunes" />
         <activity
             android:name=".SearchActivity"
             android:exported="false"

@@ -18,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import com.example.octatunes.LoginActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.R;
+import com.example.octatunes.SearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +28,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.auth.User;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -72,11 +74,9 @@ public class LoginFormFragment extends Fragment {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        // User signed in successfully
-//                                        Intent intent = new Intent(main.getApplicationContext(), HomeActivity.class);
-//                                        startActivity(intent);
-//                                        main.finish();
-                                        Toast.makeText(context.getApplicationContext(), "Login success", Toast.LENGTH_SHORT).show();
+                                        //User signed in successfully
+                                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                                        startActivity(intent);
                                     } else {
                                         // Authentication failed
                                         Toast.makeText(context.getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();

@@ -1,10 +1,12 @@
 package com.example.octatunes.Activity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.icu.text.SimpleDateFormat;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +22,18 @@ import androidx.fragment.app.Fragment;
 import com.example.octatunes.LoginActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.R;
+import com.example.octatunes.SearchActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -82,27 +90,42 @@ public class SignUpNameFragment extends Fragment {
                                             .getCurrentUser()).getUid();
                                     // Save additional user information to Firebase Realtime Database
                                     Map<String, Object> userData = new HashMap<>();
-                                    userData.put("email", email); // Store email
-                                    userData.put("password", pass); // Store hashed password
-                                    userData.put("name", name);
-                                    userData.put("dayOfBirth", birth);
-//                                    // Add more fields as needed
-                                    FirebaseDatabase.getInstance().getReference("users").child(userId)
-                                            .setValue(userData)
-                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                @Override
-                                                public void onComplete(@NonNull Task<Void> databaseTask) {
-                                                    if (databaseTask.isSuccessful()) {
-//                                                        Intent intent = new Intent(context.getApplicationContext(), HomeActivity.class);
-//                                                        startActivity(intent);
-//                                                        main.finish();
-                                                        Toast.makeText(context.getApplicationContext(), "Sign up success", Toast.LENGTH_SHORT).show();
-                                                    } else {
-                                                        Toast.makeText(context.getApplicationContext(), "Failed to save user data"
-                                                                , Toast.LENGTH_SHORT).show();
-                                                    }
-                                                }
-                                            });
+                                    //Set new userID
+                                    getHighestUserID(new HighestUserIDCallback() {
+                                        @Override
+                                        public void onHighestUserID(int highestUserID) {
+                                            if (highestUserID != -1) {
+                                                // Do something with the highestUserID
+                                                int newID = highestUserID + 1;
+                                                userData.put("userID", newID);
+                                                //Set other value
+                                                userData.put("email", email); // Store email
+                                                userData.put("password", pass); // Store hashed password but not hash
+                                                userData.put("name", name);
+                                                userData.put("dayOfBirth", birth);
+
+                                                // Add more fields as needed
+                                                FirebaseDatabase.getInstance().getReference("users").child(userId)
+                                                        .setValue(userData)
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> databaseTask) {
+                                                                if (databaseTask.isSuccessful()) {
+                                                                    Intent intent = new Intent(getActivity(), MainActivity.class);
+                                                                    startActivity(intent);
+                                                                } else {
+                                                                    Toast.makeText(context.getApplicationContext(), "Failed to save user data"
+                                                                            , Toast.LENGTH_SHORT).show();
+                                                                }
+                                                            }
+                                                        });
+                                            } else {
+                                                // Handle error
+                                                Toast.makeText(context.getApplicationContext(), "Failed to retrieve highest User ID"
+                                                        , Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    });
                                 } else {
                                     Toast.makeText(context.getApplicationContext(), "Sign up failed", Toast.LENGTH_SHORT).show();
                                 }
@@ -110,6 +133,7 @@ public class SignUpNameFragment extends Fragment {
                         });
             }
         });
+
         btnPrev = layout.findViewById(R.id.btnPrev);
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -121,20 +145,31 @@ public class SignUpNameFragment extends Fragment {
         });
         return layout;
     }
-    public boolean setChild(String userId, Map<String, Object> userData) {
-        final boolean[] result = {false};
-        FirebaseDatabase.getInstance().getReference("users").child(userId)
-                .setValue(userData)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> databaseTask) {
-                        if (databaseTask.isSuccessful()) {
-                            result[0] = true;
-                        } else {
-                            result[0] = false;
-                        }
+    private void getHighestUserID(HighestUserIDCallback callback) {
+        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+
+        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int maxID = Integer.MIN_VALUE;
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    // Retrieve the userID for each user
+                    Integer userID = userSnapshot.child("userID").getValue(Integer.class);
+                    if (userID != null && userID > maxID) {
+                        maxID = userID;
                     }
-                });
-        return result[0];
+                }
+                callback.onHighestUserID(maxID);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle database error
+                callback.onHighestUserID(-1);
+            }
+        });
+    }
+    public interface HighestUserIDCallback {
+        void onHighestUserID(int highestUserID);
     }
 }
