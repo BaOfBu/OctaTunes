@@ -15,6 +15,7 @@ import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -53,6 +54,9 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     private AlbumService albumService = new AlbumService();
 
     private static ToggleButton selectedButton = null;
+    private TextView cancelSearchButton;
+
+    private String selectedCategory = "Kết quả phù hợp nhất";
     private String searchType = "Track";
 
     public static ToggleButton getSelectedButton(){
@@ -75,6 +79,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listSearchResultRecyclerView = recyclerViewLayout.findViewById(R.id.recyclerview_track_preview_only_track);
         listCategoriesButtonRecyclerView = rootView.findViewById(R.id.recyclerview_categories_search);
         emptyTextView = rootView.findViewById(R.id.emptyListText);
+        cancelSearchButton = rootView.findViewById(R.id.HuyButton);
 
         if (listSearchResultRecyclerView.getParent() != null) {
             ((ViewGroup) listSearchResultRecyclerView.getParent()).removeView(listSearchResultRecyclerView);
@@ -88,58 +93,84 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         }
         searchEditText.setText(searchQuery);
 
-        searchEditText.addTextChangedListener(new TextWatcher() {
+        cancelSearchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-                // This method is called before the text is changed
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                // This method is called when the text is changed
-                searchQuery = searchEditText.getText().toString();
-                if(selectedButton != null){
-                    searchType = selectedButton.getText().toString();
-                }
-                if(searchType.equals("Bài hát")){
-                    getTracks();
-                }else if(searchType.equals("Nghệ sĩ")){
-                    getListArtist();
-                }else if(searchType.equals("Playlist")){
-                    getPlaylists();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                // This method is called after the text is changed
+            public void onClick(View v) {
+                getFragmentManager().popBackStackImmediate();
             }
         });
+        //uncomment this for instant search when type in search box
+//        searchEditText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//                // This method is called before the text is changed
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                // This method is called when the text is changed
+//                searchQuery = searchEditText.getText().toString();
+//                switch (selectedCategory) {
+//                    case "Kết quả phù hợp nhất":
+//                        getTracks();
+//                        break;
+//                    case "Bài hát":
+//                        getTracks();
+//                        break;
+//                    case "Nghệ sĩ":
+//                        getListArtist();
+//                        break;
+//                    case "Danh sách phát":
+//                        getPlaylists();
+//                        break;
+//                    case "Albums":
+//                        getAlbums();
+//                        break;
+//                    case "Hồ sơ":
+//                        getListUserProfile(searchQuery);
+//                        break;
+//                }
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//                // This method is called after the text is changed
+//            }
+//        });
 
         searchEditText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_DONE || (event.getAction() == KeyEvent.ACTION_DOWN &&
                         event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) {
+//                    if(selectedButton == null)
+//                        Log.e("SearchActivity", "button get text: " + selectedButton.getText().toString());
                     InputMethodManager imm = (InputMethodManager)
                             getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                     if (imm != null) {
                         imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
                     }
+                    //listSearchResultRecyclerView.setAdapter(null);
                     searchQuery = searchEditText.getText().toString();
-                    if(selectedButton != null){
-                        searchType = selectedButton.getText().toString();
-                    }
-                    if(searchType.equals("Bài hát")){
-                        getTracks();
-                    }else if(searchType.equals("Nghệ sĩ")){
-                        getListArtist();
-                    }else if(searchType.equals("Playlist")){
-                        getPlaylists();
-                    }else if(searchType.equals("Albums")){
-                        getAlbums();
-                    } else if (searchType.equals("Hồ sơ")) {
-                        getListUserProfile(searchQuery);
+                    switch (selectedCategory) {
+                        case "Kết quả phù hợp nhất":
+                            getBestMatchResults();
+                            break;
+                        case "Bài hát":
+                            getTracks();
+                            break;
+                        case "Nghệ sĩ":
+                            getListArtist();
+                            break;
+                        case "Danh sách phát":
+                            getPlaylists();
+                            break;
+                        case "Albums":
+                            getAlbums();
+                            break;
+                        case "Hồ sơ":
+                            getListUserProfile(searchQuery);
+                            break;
                     }
 
                     return true;
@@ -149,7 +180,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         });
 
         getListCategoriesButton();
-        getTracks();
+        getBestMatchResults();
         return rootView;
     }
 
@@ -178,6 +209,8 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
 //        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
 //        trackPreviewAdapter.notifyDataSetChanged();
+        listSearchResultRecyclerView.setAdapter(null);
+        List<TracksModel> tempTracks = new ArrayList<>();
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
@@ -195,6 +228,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 trackPreviewAdapter.notifyDataSetChanged();
             }
         });
+
     }
     private void getListUserProfile(String searchQuery) {
 //        ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
@@ -293,49 +327,72 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         });
     }
 
-    private void getBestMatchResults(String searchQuery, String category){
-        if(category.equals("Track")){
-            getTracks();
-        }else{
-//            UserProfileModel artistModel = new UserProfileModel(R.drawable.artist_sontungmtp, "Tên nhóm nhạc");
-//
-//            ArrayList<TrackPreviewModel> trackPreviewModels = getDataTracksFake();
-//
-//            if(category.equals("Band")){
-//                ArrayList<TrackPreviewModel> albumPreviewModels = getDataAlbumsFakeLeft();
-//                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artistModel, albumPreviewModels, trackPreviewModels, this);
-//                listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
-//                resultSearchByBandNameAdapter.notifyDataSetChanged();
-//            }else if(category.equals("Artist")){
-//                artistModel.setFullName("Sơn Tùng MTP");
-//                ResearchSearchByArtistAdapter researchSearchByArtistAdapter = new ResearchSearchByArtistAdapter(artistModel, trackPreviewModels, this);
-//                listSearchResultRecyclerView.setAdapter(researchSearchByArtistAdapter);
-//                researchSearchByArtistAdapter.notifyDataSetChanged();
-//            }
-            getTracks();
-        }
+    private void getBestMatchResults(){
+        List<AlbumsModel> listAlbums = new ArrayList<>();
+        List<ArtistsModel> artist = new ArrayList<>();
+        // Search for albums
+        albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
+            Log.e("SearchActivity", "ALbums: " + albums.size());
+            for(AlbumsModel album : albums){
+                listAlbums.add(album);
+            }
+        }).exceptionally(throwable -> {
+            Log.e("SearchActivity", "Error getting albums", throwable);
+            return null;
+        });
 
+        // Search for artists
+
+        artistService.findArtistByName(searchQuery, new OnSuccessListener<List<ArtistsModel>>() {
+            @Override
+            public void onSuccess(List<ArtistsModel> artists) {
+                Log.e("SearchActivity", "Artists: " + artists.size());
+                if(artists.size() == 0)
+                    return;
+                artist.addAll(artists);
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(Exception e) {
+                Log.e("SearchActivity", "Error getting artists", e);
+            }
+        });
+        // Search for tracks
+        trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
+            @Override
+            public void onTracksLoaded(List<TracksModel> tracks) {
+                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks, getContext());
+                listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
+                resultSearchByBandNameAdapter.notifyDataSetChanged();
+            }
+        });
     }
     @Override
     public void onCategorySelected(String category) {
         switch (category){
-//            case "Kết quả phù hợp nhất": {
-//                getBestMatchResults(searchQuery, searchType);
-//                break;
-//            }
+            case "Kết quả phù hợp nhất": {
+                selectedCategory = "Kết quả phù hợp nhất";
+                getBestMatchResults();
+                break;
+            }
             case "Bài hát": {
+                selectedCategory = "Bài hát";
                 getTracks();
                 break;
             }
             case "Nghệ sĩ": {
+                selectedCategory = "Nghệ sĩ";
                 getListArtist();
                 break;
             }
             case "Danh sách phát": {
+                selectedCategory = "Danh sách phát";
                 getPlaylists();
                 break;
             }
             case "Albums": {
+                selectedCategory = "Albums";
                 getAlbums();
                 break;
             }
@@ -344,7 +401,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 break;
             }
             default: {
-                getBestMatchResults(searchQuery, searchType);
+                getBestMatchResults();
             }
         }
     }
