@@ -42,47 +42,46 @@ public class AlbumActivity extends AppCompatActivity{
         _buttonSetting = findViewById(R.id.settingButton);
         _recyclerViewSongs = findViewById(R.id.songsRecyclerView);
         _recyclerViewYouMayLike = findViewById(R.id.youMayLikeRecyclerView);
-        createFakeData();
+        //createFakeData();
     }
 
-    private ArrayList<TrackPreviewModel> getDataTracksFake(){
-        int id_default_image = R.drawable.ic_spotify;
-
-        ArrayList<TrackPreviewModel> trackPreviewModels = new ArrayList<>();
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 1", "Bài hát", "Tên nghệ sĩ 1", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 2", "Bài hát", "Tên nghệ sĩ 2", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 3", "Bài hát", "Tên nghệ sĩ 3", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 4", "Bài hát", "Tên nghệ sĩ 4", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 5", "Bài hát", "Tên nghệ sĩ 5", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 6", "Bài hát", "Tên nghệ sĩ 6", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 7", "Bài hát", "Tên nghệ sĩ 7", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 8", "Bài hát", "Tên nghệ sĩ 8", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 9", "Bài hát", "Tên nghệ sĩ 9", 2024));
-        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 10", "Bài hát", "Tên nghệ sĩ 10", 2024));
-        return trackPreviewModels;
-    }
-    private ArrayList<PlaylistsModel> getDataPlaylistsFake(){
-        int id_default_image = R.drawable.ic_spotify;
-
-        ArrayList<PlaylistsModel> albumPreviewModels = new ArrayList<>();
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
-        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
-        return albumPreviewModels;
-    }
-    private void createFakeData() {
-        _textPlaylistName.setText("Chúng ta tương lai");
-        _textLikes.setText("Album");
-        _textUsername.setText("Username");
-        _textTotalTime.setText("2024");
-        ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
-        TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
-        _recyclerViewSongs.setAdapter(listSongsAdapter);
-
-        ArrayList<PlaylistsModel> listYouMayLike = getDataPlaylistsFake();
-        PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
-        _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
-
-    }
+//    private ArrayList<TrackPreviewModel> getDataTracksFake(){
+//        int id_default_image = R.drawable.ic_spotify;
+//
+//        ArrayList<TrackPreviewModel> trackPreviewModels = new ArrayList<>();
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 1", "Bài hát", "Tên nghệ sĩ 1", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 2", "Bài hát", "Tên nghệ sĩ 2", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 3", "Bài hát", "Tên nghệ sĩ 3", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 4", "Bài hát", "Tên nghệ sĩ 4", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 5", "Bài hát", "Tên nghệ sĩ 5", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 6", "Bài hát", "Tên nghệ sĩ 6", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 7", "Bài hát", "Tên nghệ sĩ 7", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 8", "Bài hát", "Tên nghệ sĩ 8", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 9", "Bài hát", "Tên nghệ sĩ 9", 2024));
+//        trackPreviewModels.add(new TrackPreviewModel(id_default_image, "Tên bài hát 10", "Bài hát", "Tên nghệ sĩ 10", 2024));
+//        return trackPreviewModels;
+//    }
+//    private ArrayList<PlaylistsModel> getDataPlaylistsFake(){
+//        int id_default_image = R.drawable.ic_spotify;
+//
+//        ArrayList<PlaylistsModel> albumPreviewModels = new ArrayList<>();
+//        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+//        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+//        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+//        albumPreviewModels.add(new PlaylistsModel(1,1,"Tên Playlist 1","",""));
+//        return albumPreviewModels;
+//    }
+//    private void createFakeData() {
+//        _textPlaylistName.setText("Chúng ta tương lai");
+//        _textLikes.setText("Album");
+//        _textUsername.setText("Username");
+//        _textTotalTime.setText("2024");
+//        ArrayList<TrackPreviewModel> listSongs = getDataTracksFake();
+//        TrackPreviewAdapter listSongsAdapter = new TrackPreviewAdapter(listSongs, this);
+//        _recyclerViewSongs.setAdapter(listSongsAdapter);
+//
+//        ArrayList<PlaylistsModel> listYouMayLike = getDataPlaylistsFake();
+//        PlaylistAdapter listYouMayLikeAdapter = new PlaylistAdapter(listYouMayLike);
+//        _recyclerViewYouMayLike.setAdapter(listYouMayLikeAdapter);
+//    }
 }

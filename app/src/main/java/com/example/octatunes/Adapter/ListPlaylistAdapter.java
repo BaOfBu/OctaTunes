@@ -39,7 +39,7 @@ public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapte
 
     public void setPlaylistItems(List<PlaylistsModel> playlistItems) {
         this.playlistItems = playlistItems;
-        notifyDataSetChanged(); // Notify adapter of data change
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

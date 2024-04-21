@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             if(itemID == R.id.home){
                 replaceFragment(new HomeActivity());
             }else if(itemID == R.id.search){
-
+                replaceFragment(new SearchingActivity());
             }else if(itemID == R.id.library){
 
             }else if(itemID == R.id.Premium){

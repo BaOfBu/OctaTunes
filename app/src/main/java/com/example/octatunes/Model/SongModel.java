@@ -4,21 +4,42 @@ import com.google.gson.Gson;
 
 public class SongModel {
 
+    public String getImage() {
+        return Image;
+    }
+
+    public void setImage(String image) {
+        Image = image;
+    }
+
+    public String getFile() {
+        return File;
+    }
+
+    public void setFile(String file) {
+        File = file;
+    }
+
     private int SongID;
     private String Title;
     private String Artist;
     private String Album;
     private String Genre;
+    private String Image;
 
-    public SongModel() {
-    }
-
-    public SongModel(int songID, String title, String artist, String album, String genre) {
+    public SongModel(int songID, String title, String artist, String album, String genre, String image, String file) {
         SongID = songID;
         Title = title;
         Artist = artist;
         Album = album;
         Genre = genre;
+        Image = image;
+        File = file;
+    }
+
+    private String File;
+
+    public SongModel() {
     }
 
     public int getSongID() {

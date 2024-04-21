@@ -50,8 +50,8 @@ public class ResearchSearchByArtistAdapter extends RecyclerView.Adapter<Research
         Picasso.get().load(artistProfileModel.getUserImageId()).into(holder.artistImage);
         holder.artistName.setText(artistProfileModel.getFullName());
 
-        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context);
-        holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
+//        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context);
+//        holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
