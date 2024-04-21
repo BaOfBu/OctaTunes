@@ -4,6 +4,9 @@ import android.os.Bundle;
 import android.widget.Button;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
+import com.example.octatunes.Activity.LoginHomeFragment;
 
 public class LoginActivity extends AppCompatActivity {
     Button btn_signup_free, btn_login_phone;
@@ -11,10 +14,17 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_login_home);
+        setContentView(R.layout.layout_login_container);
 
-        btn_signup_free = findViewById(R.id.btn_signup_free);
-        btn_login_phone = findViewById(R.id.btn_login_phone);
-        btn_login = findViewById(R.id.btn_login);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.login_container, new LoginHomeFragment())
+                .commit();
+    }
+
+    public void NavigateFragment(Fragment fragment) {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.login_container, fragment)
+                .addToBackStack(null)
+                .commit();
     }
 }
