@@ -14,7 +14,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal">
         <androidx.appcompat.widget.AppCompatImageButton
-            android:id="@+id/btnBack"
+            android:id="@+id/btnPrev"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@color/background_color"
@@ -41,19 +41,20 @@
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
-        android:id="@+id/name"
+        android:id="@+id/edtName"
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/tv1"
         android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
-        android:background="@drawable/login_edit_border" />
+        android:background="@drawable/login_edit_border"
+        android:paddingHorizontal="15dp"/>
     <TextView
         android:id="@+id/tv2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/name"
+        android:layout_below="@+id/edtName"
         android:fontFamily="@font/main_font"
         android:text="Thông tin này xuất hiện trên hồ sơ Spotify cuủa bạn."
         android:textColor="@color/white"

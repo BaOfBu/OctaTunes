@@ -125,7 +125,6 @@ public class HomeActivity extends Fragment {
                 new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        // Handle failure to fetch featured artists
                         Log.e("TAG", "Failed to fetch featured artists: " + e.getMessage());
                     }
                 }

@@ -10,18 +10,27 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.PlaylistsModel;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<ResultSearchOnlyPlaylistAdapter.ViewHolder>{
-    private ArrayList<TrackPreviewModel> playlistPreviewModelsLeft;
-    private ArrayList<TrackPreviewModel> playlistPreviewModelsRight;
+    private ArrayList<PlaylistsModel> playlistPreviewModelsLeft;
+    private ArrayList<PlaylistsModel> playlistPreviewModelsRight;
     private Context context;
 
-    public ResultSearchOnlyPlaylistAdapter(ArrayList<TrackPreviewModel> playlistPreviewModelsLeft, ArrayList<TrackPreviewModel>  playlistPreviewModelsRight, Context context) {
-        this.playlistPreviewModelsLeft = playlistPreviewModelsLeft;
-        this.playlistPreviewModelsRight = playlistPreviewModelsRight;
+    public ResultSearchOnlyPlaylistAdapter(List<PlaylistsModel> array, Context context) {
+        playlistPreviewModelsLeft = new ArrayList<>();
+        playlistPreviewModelsRight = new ArrayList<>();
+        for(int i = 0; i < array.size(); i++){
+            if(i % 2 == 0){
+                playlistPreviewModelsLeft.add(array.get(i));
+            } else {
+                playlistPreviewModelsRight.add(array.get(i));
+            }
+        }
         this.context = context;
     }
 
@@ -48,15 +57,20 @@ public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<Result
     @Override
     public void onBindViewHolder(@NonNull ResultSearchOnlyPlaylistAdapter.ViewHolder holder, int position) {
         if(playlistPreviewModelsLeft.get(position) != null){
-            TrackPreviewModel trackPreviewModelLeft = playlistPreviewModelsLeft.get(position);
-            Picasso.get().load(trackPreviewModelLeft.getTrackImageId()).into(holder.playlistImageLeft);
-            holder.playlistNameLeft.setText(trackPreviewModelLeft.getTrackName());
+            PlaylistsModel trackPreviewModelLeft = playlistPreviewModelsLeft.get(position);
+            Picasso.get().load(trackPreviewModelLeft.getImage()).into(holder.playlistImageLeft);
+            holder.playlistNameLeft.setText(trackPreviewModelLeft.getName());
+        }
+
+        if(playlistPreviewModelsRight.size() <= position){
+            setNullPlaylistRight(holder);
+            return;
         }
 
         if(playlistPreviewModelsRight.get(position) != null){
-            TrackPreviewModel trackPreviewModelRight = playlistPreviewModelsRight.get(position);
-            Picasso.get().load(trackPreviewModelRight.getTrackImageId()).into(holder.playlistImageRight);
-            holder.playlistNameRight.setText(trackPreviewModelRight.getTrackName());
+            PlaylistsModel trackPreviewModelRight = playlistPreviewModelsRight.get(position);
+            Picasso.get().load(trackPreviewModelRight.getImage()).into(holder.playlistImageRight);
+            holder.playlistNameRight.setText(trackPreviewModelRight.getName());
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,5 +82,10 @@ public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<Result
     @Override
     public int getItemCount() {
         return Math.max(playlistPreviewModelsLeft.size(), playlistPreviewModelsRight.size());
+    }
+
+    private void setNullPlaylistRight(ViewHolder holder){
+        holder.playlistImageRight.setVisibility(View.INVISIBLE);
+        holder.playlistNameRight.setVisibility(View.INVISIBLE);
     }
 }
