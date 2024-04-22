@@ -62,6 +62,77 @@ public class AlbumLibraryUserService {
         });
     }
 
+    // Method to get all albums of the current user
+    public void getAllAlbumsForCurrentUser(AlbumCallback callback) {
+        UserService userService = new UserService();
+        userService.getCurrentUserId(new UserService.UserIdCallback() {
+            @Override
+            public void onUserIdRetrieved(int userId) {
+                if (userId != -1) {
+                    // User ID retrieved successfully
+                    // Now fetch albums for this user ID
+                    fetchAlbumsForUser(userId, callback);
+                } else {
+                    // Failed to retrieve user ID
+                    callback.onAlbumsRetrieved(Collections.emptyList());
+                }
+            }
+        });
+    }
+
+    // Helper method to fetch albums for a user ID
+    private void fetchAlbumsForUser(int userId, AlbumCallback callback) {
+        albumLibraryUserRef.orderByChild("userID").equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Integer> albumIds = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            AlbumLibrary_User albumLibraryUser = snapshot.getValue(AlbumLibrary_User.class);
+                            if (albumLibraryUser != null) {
+                                albumIds.add(albumLibraryUser.getAlbumID());
+                            }
+                        }
+
+                        // Now we have a list of album IDs, let's fetch the corresponding albums
+                        fetchAlbums(albumIds, callback);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.onAlbumsRetrieved(Collections.emptyList());
+                    }
+                });
+    }
+
+    // Helper method to fetch albums based on their IDs
+    private void fetchAlbums(List<Integer> albumIds, AlbumCallback callback) {
+        DatabaseReference albumsRef = FirebaseDatabase.getInstance().getReference("albums");
+        albumsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<AlbumsModel> albums = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    AlbumsModel album = snapshot.getValue(AlbumsModel.class);
+                    if (album != null && albumIds.contains(album.getAlbumID())) {
+                        albums.add(album);
+                    }
+                }
+                callback.onAlbumsRetrieved(albums);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onAlbumsRetrieved(Collections.emptyList());
+            }
+        });
+    }
+
+    // Callback interface for returning the retrieved albums
+    public interface AlbumCallback {
+        void onAlbumsRetrieved(List<AlbumsModel> albums);
+    }
+
 
     public interface AllAlbumLibraryUsersCallback {
         void onAllAlbumLibraryUsersRetrieved(List<AlbumsModel> albumLibraryUsers);

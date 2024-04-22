@@ -165,7 +165,7 @@
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"/>
             <!-- My Playlist  -->
-            <LinearLayout
+            <!-- <LinearLayout
                 android:layout_marginBottom="20dp"
                 android:orientation="horizontal"
                 android:paddingLeft="15dp"
@@ -213,7 +213,7 @@
                         android:textColor="#a0a0a0"
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
-            </LinearLayout>
+            </LinearLayout> -->
             <!-- Add Artists -->
             <LinearLayout
                 android:orientation="horizontal"

@@ -13,6 +13,8 @@ import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.AlbumService;
+import com.example.octatunes.Services.PlaylistService;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -56,18 +58,43 @@ public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                         ((PlaylistsModel) item).getImage() : ((AlbumsModel) item).getImage();
                 String name = (item instanceof PlaylistsModel) ?
                         ((PlaylistsModel) item).getName() : ((AlbumsModel) item).getName();
-                ((PlaylistAlbumViewHolder) holder).name_library_title.setText(name);
-                // Load image using Picasso
+                ((PlaylistAlbumViewHolder) playlistAlbumViewHolder).name_library_title.setText(name);
+                if (item instanceof PlaylistsModel) {
+                    PlaylistsModel playlist = (PlaylistsModel) item;
+                    PlaylistService playlistService = new PlaylistService();
+                    playlistService.getUsernameOfPlaylistCreator(playlist).thenAccept(username -> {
+                        String description = "Playlist - " + username;
+                        ((PlaylistAlbumViewHolder) playlistAlbumViewHolder).artist_library_description.setText(description);
+                    }).exceptionally(ex -> {
+                        return null;
+                    });
+                } else if (item instanceof AlbumsModel) {
+                    AlbumsModel album = (AlbumsModel) item;
+                    AlbumService albumService = new AlbumService();
+                    albumService.getArtistNameForAlbum(album.getArtistID(), new AlbumService.ArtistNameCallback() {
+                        @Override
+                        public void onArtistNameRetrieved(String artistName) {
+                            if (artistName != null) {
+                                ((PlaylistAlbumViewHolder) playlistAlbumViewHolder).artist_library_description.setText("Album - " + artistName);
+                            } else {
+                                ((PlaylistAlbumViewHolder) playlistAlbumViewHolder).artist_library_description.setText("Album - Unknown Artist");
+                            }
+                        }
+                    });
+                }
                 Picasso.get()
                         .load(imageUrl)
-                        .into(((PlaylistAlbumViewHolder) holder).image_library_item);
+                        .into(((PlaylistAlbumViewHolder) playlistAlbumViewHolder).image_library_item);
                 break;
             case VIEW_TYPE_ARTIST:
                 ArtistViewHolder artistViewHolder = (ArtistViewHolder) holder;
                 String artistImageUrl = ((ArtistsModel)item).getImage();
                 String artistName = ((ArtistsModel)item).getName();
-                ((ArtistViewHolder) holder).name_library_title.setText(artistName);
-                ((ArtistViewHolder) holder).artist_library_description.setText("Artist");
+                ((ArtistViewHolder) artistViewHolder).name_library_title.setText(artistName);
+                ((ArtistViewHolder) artistViewHolder).artist_library_description.setText("Artist");
+                Picasso.get()
+                        .load(artistImageUrl)
+                        .into(((ArtistViewHolder) artistViewHolder).image_library_item);
                 break;
         }
     }

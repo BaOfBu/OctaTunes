@@ -16,9 +16,12 @@ public class PlaylistLibraryUserService {
 
     private DatabaseReference playlistLibraryUserRef;
 
+    private UserService userService;
+
     public PlaylistLibraryUserService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistLibraryUserRef = database.getReference("playlist_library_user");
+        userService = new UserService();
     }
 
     // Method to add a new PlaylistLibrary_User
@@ -129,7 +132,67 @@ public class PlaylistLibraryUserService {
         });
     }
 
+    // Method to get all playlists of the current user
+    public void getAllPlaylistsForCurrentUser(PlaylistCallback callback) {
+        userService.getCurrentUserId(new UserService.UserIdCallback() {
+            @Override
+            public void onUserIdRetrieved(int userId) {
+                if (userId != -1) {
+                    fetchPlaylistsForUser(userId, callback);
+                } else {
+                    // Failed to retrieve user ID
+                    callback.onPlaylistsRetrieved(Collections.emptyList());
+                }
+            }
+        });
+    }
+    private void fetchPlaylistsForUser(int userId, PlaylistCallback callback) {
+        playlistLibraryUserRef.orderByChild("userID").equalTo(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Integer> playlistIds = new ArrayList<>();
+                        for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                            PlaylistLibrary_User playlistLibraryUser = snapshot.getValue(PlaylistLibrary_User.class);
+                            if (playlistLibraryUser != null) {
+                                playlistIds.add(playlistLibraryUser.getPlaylistID());
+                            }
+                        }
 
+                        // Now we have a list of playlist IDs, let's fetch the corresponding playlists
+                        fetchPlaylists(playlistIds, callback);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        callback.onPlaylistsRetrieved(Collections.emptyList());
+                    }
+                });
+    }
+    private void fetchPlaylists(List<Integer> playlistIds, PlaylistCallback callback) {
+        DatabaseReference playlistsRef = FirebaseDatabase.getInstance().getReference("playlists");
+        playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<PlaylistsModel> playlists = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PlaylistsModel playlist = snapshot.getValue(PlaylistsModel.class);
+                    if (playlist != null && playlistIds.contains(playlist.getPlaylistID())) {
+                        playlists.add(playlist);
+                    }
+                }
+                callback.onPlaylistsRetrieved(playlists);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onPlaylistsRetrieved(Collections.emptyList());
+            }
+        });
+    }
+    public interface PlaylistCallback {
+        void onPlaylistsRetrieved(List<PlaylistsModel> playlists);
+    }
     public interface AllPlaylistLibraryUsersCallback {
         void onAllPlaylistLibraryUsersRetrieved(List<PlaylistsModel> playlistLibraryUsers);
     }
