@@ -36,6 +36,8 @@ import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -59,6 +61,17 @@ public class HomeActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_home, container, false);
+
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null) {
+            String userID = user.getUid();
+            Log.w("User", userID);
+        } else {
+            Log.w("User","Null");
+        }
 
         setupToggleButtons(rootView);
 
