@@ -160,10 +160,45 @@
                 android:id="@+id/recyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:nestedScrollingEnabled="false"
                 android:layout_marginTop="20dp"
                 tools:listitem="@layout/layout_library_item_playlist_album"
                 android:paddingLeft="15dp"
                 android:paddingRight="15dp"/>
+            <!-- Add Artists -->
+            <LinearLayout
+                android:orientation="horizontal"
+                android:paddingLeft="15dp"
+                android:paddingRight="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center">
+                    <RelativeLayout
+                        android:layout_width="60dp"
+                        android:layout_height="60dp"
+                        android:background="@drawable/circle_background_282828">
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:layout_centerInParent="true"
+                            android:backgroundTint="#a7a7a7"
+                            android:background="@drawable/baseline_add_24" />
+                    </RelativeLayout>
+                </FrameLayout>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:text="Add artists"
+                    android:layout_gravity="center"
+                    android:textSize="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:textColor="#fff"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+        </LinearLayout>
             <!-- My Playlist  -->
             <!-- <LinearLayout
                 android:layout_marginBottom="20dp"
@@ -214,40 +249,7 @@
                         android:layout_height="wrap_content"/>
                 </LinearLayout>
             </LinearLayout> -->
-            <!-- Add Artists -->
-            <LinearLayout
-                android:orientation="horizontal"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <FrameLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center">
-                    <RelativeLayout
-                        android:layout_width="60dp"
-                        android:layout_height="60dp"
-                        android:background="@drawable/circle_background_282828">
 
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:layout_centerInParent="true"
-                            android:backgroundTint="#a7a7a7"
-                            android:background="@drawable/baseline_add_24" />
-                    </RelativeLayout>
-                </FrameLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:text="Add artists"
-                    android:layout_gravity="center"
-                    android:textSize="16dp"
-                    android:layout_marginLeft="16dp"
-                    android:textColor="#fff"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-        </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
 

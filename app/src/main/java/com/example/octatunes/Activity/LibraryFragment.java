@@ -26,6 +26,7 @@ import com.example.octatunes.Services.UserService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class LibraryFragment extends Fragment {
 
@@ -72,49 +73,85 @@ public class LibraryFragment extends Fragment {
     }
 
     private void getAllPlaylists() {
-        items.clear();
+        clearAndReload();
         PlaylistLibraryUserService playlistLibraryUserService = new PlaylistLibraryUserService();
         playlistLibraryUserService.getAllPlaylistsForCurrentUser(new PlaylistLibraryUserService.PlaylistCallback() {
             @Override
             public void onPlaylistsRetrieved(List<PlaylistsModel> playlists) {
-                items.addAll(playlists);
+                Random random = new Random();
+
+                for (PlaylistsModel playlist : playlists) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, playlist);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
     }
 
     private void getAllAlbums() {
-        items.clear();
+        clearAndReload();
         AlbumLibraryUserService albumLibraryUserService = new AlbumLibraryUserService();
         albumLibraryUserService.getAllAlbumsForCurrentUser(new AlbumLibraryUserService.AlbumCallback() {
             @Override
             public void onAlbumsRetrieved(List<AlbumsModel> albums) {
-                items.addAll(albums);
+                Random random = new Random();
+
+                for (AlbumsModel album : albums) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, album);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
     }
 
     private void getAllArtist() {
-        items.clear();
+        clearAndReload();
         FollowerService followerService = new FollowerService();
         followerService.getAllArtistsFollowedByCurrentUser(new FollowerService.ArtistListCallback() {
             @Override
             public void onArtistsRetrieved(List<ArtistsModel> artists) {
-                items.addAll(artists);
+                Random random = new Random();
+
+                for (ArtistsModel artist : artists) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, artist);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
     }
 
     private void getAllItems() {
-        items.clear();
+        clearAndReload();
         // Get all playlists
         PlaylistLibraryUserService playlistLibraryUserService = new PlaylistLibraryUserService();
         playlistLibraryUserService.getAllPlaylistsForCurrentUser(new PlaylistLibraryUserService.PlaylistCallback() {
             @Override
             public void onPlaylistsRetrieved(List<PlaylistsModel> playlists) {
-                items.addAll(playlists);
+                Random random = new Random();
+
+                for (PlaylistsModel playlist : playlists) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, playlist);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
@@ -124,7 +161,16 @@ public class LibraryFragment extends Fragment {
         albumLibraryUserService.getAllAlbumsForCurrentUser(new AlbumLibraryUserService.AlbumCallback() {
             @Override
             public void onAlbumsRetrieved(List<AlbumsModel> albums) {
-                items.addAll(albums);
+                Random random = new Random();
+
+                for (AlbumsModel album : albums) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, album);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
@@ -134,7 +180,16 @@ public class LibraryFragment extends Fragment {
         followerService.getAllArtistsFollowedByCurrentUser(new FollowerService.ArtistListCallback() {
             @Override
             public void onArtistsRetrieved(List<ArtistsModel> artists) {
-                items.addAll(artists);
+                Random random = new Random();
+
+                for (ArtistsModel artist : artists) {
+                    // Generate a random index within the range of the list size
+                    int randomIndex = random.nextInt(items.size() + 1);
+
+                    // Insert the artist at the random index
+                    items.add(randomIndex, artist);
+                }
+
                 adapter.notifyDataSetChanged();
             }
         });
@@ -146,22 +201,32 @@ public class LibraryFragment extends Fragment {
         setupToggleButton(tabArtistsLibrary);
     }
 
+    private boolean anyToggleButtonChecked = false;
+
     private void setupToggleButton(ToggleButton toggleButton) {
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                boolean anyToggleButtonChecked = false; // Track if any toggle button is checked
+
                 if (isChecked) {
+                    anyToggleButtonChecked = true; // Set the flag if any button is checked
+                    clearAndReload();
                     handleToggleButtonSelection(toggleButton);
                 } else {
-                    clearAndReload();
-                    getAllItems();
+                    // Check if any toggle button is still checked
+                    if (tabPlaylistLibrary.isChecked() || tabAlbumsLibrary.isChecked() || tabArtistsLibrary.isChecked()) {
+                        anyToggleButtonChecked = true;
+                    }
+
+                    if (!anyToggleButtonChecked) {
+                        clearAndReload();
+                        getAllItems();
+                    }
                 }
             }
         });
     }
-
-
-
 
     private void handleToggleButtonSelection(ToggleButton selectedButton) {
         boolean anyButtonChecked = tabPlaylistLibrary.isChecked() || tabAlbumsLibrary.isChecked() || tabArtistsLibrary.isChecked();
