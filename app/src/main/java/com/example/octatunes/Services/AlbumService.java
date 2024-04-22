@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.ArtistsModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -19,10 +20,13 @@ import java.util.concurrent.CompletableFuture;
 public class AlbumService {
     private DatabaseReference albumsRef;
 
+    private DatabaseReference artistsRef;
+
     public AlbumService() {
         // Initialize Firebase database reference
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         albumsRef = database.getReference("albums");
+        artistsRef = database.getReference("artists");
     }
 
     // Method to add a new album
@@ -106,5 +110,30 @@ public class AlbumService {
             return null;
         });
         return future;
+    }
+
+    public void getArtistNameForAlbum(int artistId, ArtistNameCallback callback) {
+        artistsRef.child(String.valueOf(artistId)).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                ArtistsModel artist = dataSnapshot.getValue(ArtistsModel.class);
+                if (artist != null) {
+                    String artistName = artist.getName();
+                    callback.onArtistNameRetrieved(artistName);
+                } else {
+                    callback.onArtistNameRetrieved(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle onCancelled event
+                callback.onArtistNameRetrieved(null);
+            }
+        });
+    }
+
+    public interface ArtistNameCallback {
+        void onArtistNameRetrieved(String artistName);
     }
 }

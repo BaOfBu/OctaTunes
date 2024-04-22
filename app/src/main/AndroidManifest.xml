@@ -14,11 +14,6 @@
         android:theme="@style/Theme.OctaTunes"
         android:networkSecurityConfig="@xml/networksecurityconfig"
         tools:targetApi="31">
-<!--        <service-->
-<!--            android:name="BackgroundSoundService"-->
-<!--            android:enabled="true"-->
-<!--            />-->
-
         <activity
             android:name=".TrackView"
             android:exported="false"
