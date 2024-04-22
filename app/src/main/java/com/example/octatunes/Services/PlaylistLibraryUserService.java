@@ -1,11 +1,16 @@
 package com.example.octatunes.Services;
 
 import com.example.octatunes.Model.PlaylistLibrary_User;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class PlaylistLibraryUserService {
 
@@ -76,4 +81,57 @@ public class PlaylistLibraryUserService {
     public interface OnCheckCompleteListener {
         void onCheckComplete(boolean exists);
     }
+    public void getAllPlaylistLibraryUsers(AllPlaylistLibraryUsersCallback callback) {
+        playlistLibraryUserRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<PlaylistLibrary_User> playlistLibraryUsers = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    PlaylistLibrary_User playlistLibraryUser = snapshot.getValue(PlaylistLibrary_User.class);
+                    if (playlistLibraryUser != null) {
+                        playlistLibraryUsers.add(playlistLibraryUser);
+                    }
+                }
+
+                // Once all PlaylistLibrary_User objects are retrieved, fetch the corresponding PlaylistModel objects
+                List<PlaylistsModel> playlists = new ArrayList<>();
+                DatabaseReference playlistsRef = FirebaseDatabase.getInstance().getReference("playlists");
+                for (PlaylistLibrary_User user : playlistLibraryUsers) {
+                    playlistsRef.orderByChild("playlistID").equalTo(user.getPlaylistID()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot playlistSnapshot : dataSnapshot.getChildren()) {
+                                PlaylistsModel playlistModel = playlistSnapshot.getValue(PlaylistsModel.class);
+                                if (playlistModel != null) {
+                                    playlists.add(playlistModel);
+                                    break; // Stop loop after finding a match
+                                }
+                            }
+
+                            // Check if all PlaylistLibrary_User objects have been processed
+                            if (playlists.size() == playlistLibraryUsers.size()) {
+                                callback.onAllPlaylistLibraryUsersRetrieved(playlists);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            // Handle onCancelled event
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                callback.onAllPlaylistLibraryUsersRetrieved(Collections.emptyList());
+            }
+        });
+    }
+
+
+    public interface AllPlaylistLibraryUsersCallback {
+        void onAllPlaylistLibraryUsersRetrieved(List<PlaylistsModel> playlistLibraryUsers);
+    }
+
 }

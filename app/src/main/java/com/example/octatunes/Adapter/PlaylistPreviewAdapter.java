@@ -1,5 +1,7 @@
 package com.example.octatunes.Adapter;
 
+import static java.security.AccessController.getContext;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
@@ -33,6 +35,7 @@ import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.PlaylistLibraryUserService;
 import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Services.UserService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
@@ -223,34 +226,43 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                 fragmentTransaction.commit();
             }
         });
-
         /* Add button */
-        playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+        // Create an instance of the UserService
+        UserService userService = new UserService();
+        // Fetch the userId using the UserService
+        userService.getCurrentUserId(new UserService.UserIdCallback() {
             @Override
-            public void onCheckComplete(boolean exists) {
-                if (exists) {
-                    holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
-                } else {
-                    holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button);
-                }
-            }
-        });
-        holder.add_button_preview_playlist.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), 2, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+            public void onUserIdRetrieved(int userId) {
+                // Use the userId obtained here
+                playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), userId, new PlaylistLibraryUserService.OnCheckCompleteListener() {
                     @Override
                     public void onCheckComplete(boolean exists) {
                         if (exists) {
-                            holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button);
-                            playlistLibraryUserService.removePlaylistLibraryUser(playlist.getPlaylistID(), 2);
-                            Toast.makeText(context, "Removed from your library", Toast.LENGTH_SHORT).show();
-                        } else {
                             holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
-                            PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlist.getPlaylistID(), 2,new Date());
-                            playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
-                            Toast.makeText(context, "Added to your library", Toast.LENGTH_SHORT).show();
+                        } else {
+                            holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button_a7a7a7);
                         }
+                    }
+                });
+
+                holder.add_button_preview_playlist.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        playlistLibraryUserService.checkIfPlaylistExistsInLibrary(playlist.getPlaylistID(), userId, new PlaylistLibraryUserService.OnCheckCompleteListener() {
+                            @Override
+                            public void onCheckComplete(boolean exists) {
+                                if (exists) {
+                                    holder.add_button_preview_playlist.setImageResource(R.drawable.add_to_library_button_a7a7a7);
+                                    playlistLibraryUserService.removePlaylistLibraryUser(playlist.getPlaylistID(), userId);
+                                    Toast.makeText(context, "Removed from your library", Toast.LENGTH_SHORT).show();
+                                } else {
+                                    holder.add_button_preview_playlist.setImageResource(R.drawable.baseline_check_circle_24);
+                                    PlaylistLibrary_User playlistLibraryUser = new PlaylistLibrary_User(playlist.getPlaylistID(), userId, new Date());
+                                    playlistLibraryUserService.addPlaylistLibraryUser(playlistLibraryUser);
+                                    Toast.makeText(context, "Added to your library", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
                     }
                 });
             }

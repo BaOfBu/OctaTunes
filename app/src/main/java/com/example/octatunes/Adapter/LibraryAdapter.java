@@ -13,6 +13,7 @@ import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -56,6 +57,10 @@ public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 String name = (item instanceof PlaylistsModel) ?
                         ((PlaylistsModel) item).getName() : ((AlbumsModel) item).getName();
                 ((PlaylistAlbumViewHolder) holder).name_library_title.setText(name);
+                // Load image using Picasso
+                Picasso.get()
+                        .load(imageUrl)
+                        .into(((PlaylistAlbumViewHolder) holder).image_library_item);
                 break;
             case VIEW_TYPE_ARTIST:
                 ArtistViewHolder artistViewHolder = (ArtistViewHolder) holder;
