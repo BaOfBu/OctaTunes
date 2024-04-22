@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
         replaceFragment(new HomeActivity());
@@ -39,6 +40,11 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void searchActivity(String searchQuery) {
+        Intent i = new Intent(MainActivity.this, SearchActivity.class);
+        i.putExtra("searchQuery", searchQuery);
+        startActivity(i);
+    }
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

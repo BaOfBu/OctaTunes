@@ -24,7 +24,7 @@ public class SearchActivity extends AppCompatActivity implements ListCategoriesB
     RecyclerView listCategoriesButtonRecyclerView;
 
     private static ToggleButton selectedButton = null;
-    private String searchType = "Track";
+    private String searchType = "Artist";
 
     public static ToggleButton getSelectedButton(){
         return selectedButton;
