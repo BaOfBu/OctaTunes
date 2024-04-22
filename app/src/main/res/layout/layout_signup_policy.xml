@@ -35,7 +35,7 @@
         android:textColor="@color/white"
         android:textSize="15sp"/>
     <TextView
-        android:id="@+id/privatecy"
+        android:id="@+id/privacy"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/tv2"
@@ -49,7 +49,7 @@
         android:id="@+id/rbth1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/privatecy"
+        android:layout_below="@+id/privacy"
         android:layout_marginTop="10dp"
         android:fontFamily="@font/main_font"
         android:textColor="@color/white"
