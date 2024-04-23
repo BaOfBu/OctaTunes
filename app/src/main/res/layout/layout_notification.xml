@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:background="@drawable/notification_background"
+        android:clipToOutline="true"
+        >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:background="@drawable/album_mtp"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/blur">
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_spotify_white" />
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_marginStart="10dp">
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:layout_centerInParent="true"
+                    android:layout_alignParentStart="true">
+
+                    <TextView
+                        android:id="@+id/textView_trackTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Âm thầm bên em"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/main_font"
+                        android:textSize="24sp"
+                        />
+
+                    <TextView
+                        android:id="@+id/textView_artistName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Sơn Tùng M-TP"
+                        android:textColor="@color/white"
+                        android:fontFamily="@font/main_font"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <ImageButton
+                    android:id="@+id/imageButtonPlayPause"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/ic_circle_pause_white_70"
+                    android:background="@null"
+                    android:layout_marginStart="20dp"
+                    android:layout_marginEnd="20dp"
+                    android:contentDescription="PlayPause" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:layout_alignParentBottom="true"
+                android:layout_marginStart="10dp"
+                android:paddingBottom="15dp">
+
+                <ImageButton
+                    android:id="@+id/imageButtonPrevious"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:paddingTop="5dp"
+                    android:layout_alignParentStart="true"
+                    android:src="@drawable/ic_previous_white_30"
+                    android:background="@null"
+                    android:contentDescription="Previous" />
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="200dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:paddingBottom="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_toEndOf="@+id/imageButtonPrevious"
+                    android:background="@null"
+                    android:progressTint="@color/white"
+                    android:progressBackgroundTint="@color/gray"
+                    android:thumbTint="@color/gray"
+                    android:layout_gravity="center_horizontal"/>
+
+                <ImageButton
+                    android:id="@+id/imageButtonNext"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:paddingTop="5dp"
+                    android:layout_toEndOf="@+id/seekBar"
+                    android:src="@drawable/ic_next_white_30"
+                    android:background="@null"
+                    android:contentDescription="Next" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonShuffle"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:paddingTop="5dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/imageButtonNext"
+                    android:src="@drawable/ic_shuffle_white_24"
+                    android:background="@null"
+                    android:contentDescription="Shuffle" />
+
+                <ImageButton
+                    android:id="@+id/imageButtonfavorite"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:paddingBottom="10dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/imageButtonShuffle"
+                    android:src="@drawable/ic_add_circle_outline_white_32"
+                    android:background="@null"
+                    android:layout_centerInParent="true"
+                    android:contentDescription="AddLibrary" />
+            </RelativeLayout>
+        </RelativeLayout>
+
+    </LinearLayout>
+</LinearLayout>

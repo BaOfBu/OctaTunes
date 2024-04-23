@@ -16,4 +16,5 @@
     <color name="transparent_color">#00FFFFFF</color>
     <color name="red">#582024</color>
     <color name="track_artist">#CDBDBE</color>
+    <color name="blur">#20B3B3B3"</color>
 </resources>
