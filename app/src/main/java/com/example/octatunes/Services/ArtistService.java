@@ -5,15 +5,18 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.TracksModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -22,11 +25,16 @@ public class ArtistService {
 
     private static final String TAG = "ArtistService";
 
+    private DatabaseReference albumsRef;
+    private DatabaseReference tracksRef;
+
     private DatabaseReference artistsRef;
 
     public ArtistService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         artistsRef = database.getReference("artists");
+        albumsRef = database.getReference("albums");
+        tracksRef = database.getReference("tracks");
     }
 
     public void addArtist(ArtistsModel artist) {
@@ -129,7 +137,6 @@ public class ArtistService {
                 }
         );
     }
-
     public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
         getAllArtists(
                 new OnSuccessListener<List<ArtistsModel>>() {
@@ -152,4 +159,91 @@ public class ArtistService {
                 }
         );
     }
+    public void getTracksByArtistId(int artistId, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+        List<TracksModel> tracksList = new ArrayList<>();
+        Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot albumSnapshot : dataSnapshot.getChildren()) {
+                        int albumId = albumSnapshot.child("albumID").getValue(Integer.class);
+                        Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+                        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    for (DataSnapshot trackSnapshot : dataSnapshot.getChildren()) {
+                                        TracksModel track = trackSnapshot.getValue(TracksModel.class);
+                                        if (track != null) {
+                                            tracksList.add(track);
+                                        }
+                                    }
+                                    successListener.onSuccess(tracksList);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                failureListener.onFailure(databaseError.toException());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                failureListener.onFailure(databaseError.toException());
+            }
+        });
+    }
+
+    public void getRandomTracksByArtistId(int artistId, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+        List<TracksModel> tracksList = new ArrayList<>();
+        Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot albumSnapshot : dataSnapshot.getChildren()) {
+                        int albumId = albumSnapshot.child("albumID").getValue(Integer.class);
+                        Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+                        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    for (DataSnapshot trackSnapshot : dataSnapshot.getChildren()) {
+                                        TracksModel track = trackSnapshot.getValue(TracksModel.class);
+                                        if (track != null) {
+                                            tracksList.add(track);
+                                        }
+                                    }
+
+                                    // Shuffle the list of tracks
+                                    Collections.shuffle(tracksList);
+
+                                    // Select the first 5 tracks
+                                    List<TracksModel> randomTracks = tracksList.subList(0, Math.min(tracksList.size(), 5));
+
+                                    successListener.onSuccess(randomTracks);
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                failureListener.onFailure(databaseError.toException());
+                            }
+                        });
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                failureListener.onFailure(databaseError.toException());
+            }
+        });
+    }
+
 }

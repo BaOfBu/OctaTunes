@@ -62,17 +62,6 @@ public class HomeActivity extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_home, container, false);
 
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-
-        if (user != null) {
-            String userID = user.getUid();
-            Log.w("User", userID);
-        } else {
-            Log.w("User","Null");
-        }
-
         setupToggleButtons(rootView);
 
         setupUI(rootView);
