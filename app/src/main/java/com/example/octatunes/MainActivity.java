@@ -1,17 +1,18 @@
 package com.example.octatunes;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
+
 import com.example.octatunes.Activity.HomeActivity;
 import com.example.octatunes.Activity.ListenToMusicActivity;
+import com.example.octatunes.Activity.LibraryFragment;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -49,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
             }else if(itemID == R.id.search){
                 replaceFragment(new SearchingActivity());
             }else if(itemID == R.id.library){
-
+                replaceFragment(new LibraryFragment());
             }else if(itemID == R.id.Premium){
 
             }

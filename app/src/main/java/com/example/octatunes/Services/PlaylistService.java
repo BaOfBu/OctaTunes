@@ -5,6 +5,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 
 import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.UsersModel;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -22,9 +23,12 @@ public class PlaylistService {
 
     private DatabaseReference playlistsRef;
 
+    private DatabaseReference usersRef;
+
     public PlaylistService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistsRef = database.getReference("playlists");
+        usersRef = database.getReference("users");
     }
     public void addPlaylists(List<PlaylistsModel> playlists) {
         playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -122,6 +126,37 @@ public class PlaylistService {
             future.completeExceptionally(throwable);
             return null;
         });
+        return future;
+    }
+    // Method to get usernames of playlist creators
+    public CompletableFuture<String> getUsernameOfPlaylistCreator(PlaylistsModel playlist) {
+        CompletableFuture<String> future = new CompletableFuture<>();
+        int userId = playlist.getUserID();
+
+        usersRef.orderByChild("userID").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        UsersModel userModel = snapshot.getValue(UsersModel.class);
+                        if (userModel != null) {
+                            String username = userModel.getName();
+                            future.complete(username);
+                            return;
+                        }
+                    }
+                    future.completeExceptionally(new Exception("Username not found for userID: " + userId));
+                } else {
+                    future.completeExceptionally(new Exception("User with userID " + userId + " not found"));
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                future.completeExceptionally(error.toException()); // Complete the future exceptionally in case of error
+            }
+        });
+
         return future;
     }
 

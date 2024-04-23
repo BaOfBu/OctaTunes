@@ -3,7 +3,6 @@ package com.example.octatunes.Services;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -75,23 +74,6 @@ public class TrackService {
             }
         });
     }
-    public void findTrackById(final Integer trackId, final OnTrackLoadedListener listener){
-        Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
-        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    TracksModel track = snapshot.getValue(TracksModel.class);
-                    return;
-                }
-            }
-
-            @Override
-            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
-
-            }
-        });
-    }
     public void getTracksByPlaylistId(final Integer playlistId, final OnTracksLoadedListener listener) {
         Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
         Log.i("TrackService", "Query playlistTrackQuery success!");
@@ -146,7 +128,6 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String imageUrl = snapshot.child("image").getValue(String.class);
                         listener.onImageLoaded(imageUrl);
-                        return;
                     }
                 }
                 listener.onImageLoaded(null);
@@ -166,7 +147,6 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         int artistId = snapshot.child("artistID").getValue(int.class);
                         getArtistNameById(artistId, listener);
-                        return;
                     }
                 }
                 listener.onArtistNameLoaded(null); // No artist found
@@ -186,7 +166,6 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String artistName = snapshot.child("name").getValue(String.class);
                         listener.onArtistNameLoaded(artistName);
-                        return;
                     }
                 }
                 listener.onArtistNameLoaded(null); // No artist found
@@ -283,10 +262,6 @@ public class TrackService {
             }
         });
         return future;
-    }
-
-    public interface OnTrackLoadedListener{
-        void onTrackLoaded(TracksModel tracksModel);
     }
     public interface OnArtistNameLoadedListener {
         void onArtistNameLoaded(String artistName);
