@@ -33,6 +33,7 @@ import com.example.octatunes.databinding.ActivityMainBinding;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, FragmentListener {
@@ -130,14 +131,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.frameLayout.setOnClickListener(this);
         binding.trackPlayPause.setOnClickListener(this);
 
+        Search(26, 11, 4, "1", "2");
     }
 
     public void Search(int trackID, int playlistID, int albumID, String from, String belong){
         setFrom(from);
         setBelong(belong);
-        loadData(playlistID, trackID);
-    }
 
+        if(!Objects.equals(from, "PLAYING FROM ALBUM")){
+            loadData(playlistID, trackID);
+        }
+    }
     private void loadData(int playlistID, int trackID){
         trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
             int totalTracks = tracksModels.size();

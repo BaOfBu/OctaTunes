@@ -11,7 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -39,12 +41,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
     String from;
     String belong;
-    SongModel currentSong;
+    public static SongModel currentSong;
     TextView track_from;
     TextView track_belong;
-    private ImageView imageView;
-    private TextView songName;
-    private TextView singer;
+    @SuppressLint("StaticFieldLeak")
+    private static ImageView imageView;
+    @SuppressLint("StaticFieldLeak")
+    private static TextView songName;
+    @SuppressLint("StaticFieldLeak")
+    private static TextView singer;
     private ImageButton previous;
     private ImageButton play;
     private ImageButton next;
@@ -52,18 +57,28 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private MusicService.MusicBinder binder;
     private Thread myThread;
     private int pos = -1;
-    public SeekBar seekBar;
+    @SuppressLint("StaticFieldLeak")
+    public static SeekBar seekBar;
     private TextView playTime;
-    private TextView duration;
+    @SuppressLint("StaticFieldLeak")
+    private static TextView duration;
     private ImageButton show_options;
     private ImageButton track_minimize;
-    private View rootView;
+    @SuppressLint("StaticFieldLeak")
+    private static View rootView;
     private FragmentListener listener;
-
+    @SuppressLint("StaticFieldLeak")
+    public static ImageButton repeat;
+    private View repeat_dot;
+    private ImageButton shuffle;
+    private View shuffle_dot;
+    private boolean chosenSequence = false;
+    public static boolean chosenRepeatOneSong = false;
+    public static boolean chosenShuffle = false;
     public ListenToMusicActivity(String from, String belong, SongModel song){
         this.from = from;
         this.belong = belong;
-        this.currentSong = song;
+        currentSong = song;
     }
 
     @Nullable
@@ -90,6 +105,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         duration = rootView.findViewById(R.id.remainingTime);
         show_options = rootView.findViewById(R.id.show_options);
         track_minimize = rootView.findViewById(R.id.track_minimize);
+        repeat= rootView.findViewById(R.id.imageButtonRepeat);
+        repeat_dot= rootView.findViewById(R.id.repeat_dot);
+        shuffle= rootView.findViewById(R.id.imageButtonShuffle);
+        shuffle_dot= rootView.findViewById(R.id.shuffle_dot);
 
         track_from.setText(from);
         track_belong.setText(belong);
@@ -101,6 +120,8 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         previous.setOnClickListener(this);
         play.setOnClickListener(this);
         next.setOnClickListener(this);
+        shuffle.setOnClickListener(this);
+        repeat.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -133,6 +154,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         }
         return rootView;
     }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -147,6 +169,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong);
         }
     }
+
     private class MyThread implements Runnable{
         @Override
         public void run() {
@@ -244,6 +267,39 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             MainActivity mainActivity = (MainActivity) getActivity();
             mainActivity.binding.frameLayout.setVisibility(View.VISIBLE);
             mainActivity.binding.bottomNavigation.setVisibility(View.VISIBLE);
+        }else if(id == R.id.imageButtonRepeat){
+            if(repeat_dot.getVisibility() == View.INVISIBLE){
+                repeat.setImageResource(R.drawable.ic_repeat_clicked_one_green_24);
+                repeat_dot.setVisibility(View.VISIBLE);
+                chosenSequence = true;
+                binder.setSequencePlay();
+            }else if(repeat_dot.getVisibility() == View.VISIBLE){
+                if(!chosenRepeatOneSong){
+                    repeat.setImageResource(R.drawable.ic_repeat_clicked_two_green_24);
+                    chosenRepeatOneSong = true;
+                    binder.setSinglePlay();
+                }else{
+                    repeat.setImageResource(R.drawable.ic_repeat_white_24);
+                    repeat_dot.setVisibility(View.INVISIBLE);
+                    if(chosenShuffle){
+                        binder.setRandomPlay();
+                    }else{
+                        binder.setSequencePlay();
+                    }
+                }
+            }
+        }else if(id == R.id.imageButtonShuffle){
+            if(shuffle_dot.getVisibility() == View.INVISIBLE){
+                shuffle.setImageResource(R.drawable.ic_shuffle_clicked_green_24);
+                shuffle_dot.setVisibility(View.VISIBLE);
+                chosenShuffle = true;
+                if(!chosenSequence && !chosenRepeatOneSong){
+                    binder.setRandomPlay();
+                }
+            }else{
+                shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
+                shuffle_dot.setVisibility(View.INVISIBLE);
+            }
         }
     }
     private void replaceLastFragment(){
@@ -253,7 +309,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         fragmentTransaction.commit();
     }
 
-    private void initMediaPlayer(){
+    public static void initMediaPlayer(){
         Glide.with(rootView).load(currentSong.getImage()).into(imageView);
         songName.setText(currentSong.getTitle());
         singer.setText(currentSong.getArtist());
