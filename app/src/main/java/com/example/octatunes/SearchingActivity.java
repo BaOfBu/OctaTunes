@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.MutableLiveData;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Model.AlbumsModel;
@@ -31,6 +33,12 @@ import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.UserInfo;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.ktx.Firebase;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -51,7 +59,8 @@ public class SearchingActivity extends Fragment {
     private TrackService trackService = new TrackService();
     private UserSongService userSongService = new UserSongService();
     private UserService userService = new UserService();
-    private UsersModel currentUser;
+    //public static Integer currentUserID;
+
 
     RecyclerView searchResultsRecyclerView;
     TextView text;
@@ -72,7 +81,7 @@ public class SearchingActivity extends Fragment {
                 handler.removeCallbacks(searchRunnable); // Remove pending searchRunnable if any
                 // check if the search box is empty
                 if (searchBox.getText().toString().isEmpty()) {
-                    getHistory();
+                    getCurrentUserID();
                     return;
                 }
                 // Create a new searchRunnable
@@ -115,15 +124,7 @@ public class SearchingActivity extends Fragment {
                 return false;
             }
         });
-
-        userService.getCurrentUserModel(new UserService.UserModelCallback() {
-            @Override
-            public void onUserModelRetrieved(UsersModel userModel) {
-                currentUser = userModel;
-            }
-        });
-
-        getHistory();
+        getCurrentUserID();
         return rootView;
     }
 
@@ -142,13 +143,13 @@ public class SearchingActivity extends Fragment {
         });
     }
 
-    public void getHistory() {
+    public void getHistory(Integer userID) {
         // Get the search history from the database
         // Display the search history in the search box
         text.setVisibility(View.VISIBLE);
-        Log.e("SearchingActivity", "current user: " + currentUser);
+        //Log.e("SearchingActivity", "current user: " + currentUser.getDisplayName());
         List<UserSongModel> userSongs = new ArrayList<>();
-        userSongService.getHistory(10).thenAccept(userSongs1 -> {
+        userSongService.getHistory(userID).thenAccept(userSongs1 -> {
             Log.e("SearchingActivity", "UserSongs: " + userSongs1.size());
             userSongs.addAll(userSongs1);
         });
@@ -162,5 +163,34 @@ public class SearchingActivity extends Fragment {
                 trackPreviewAdapter.notifyDataSetChanged();
             }
         });
+    }
+
+    private void getCurrentUserID(){
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        FirebaseUser user = auth.getCurrentUser();
+
+        if (user != null) {
+            String uid = user.getUid();
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+            usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@androidx.annotation.NonNull DataSnapshot snapshot) {
+                    if (snapshot.exists()) {
+                        UsersModel userModel = snapshot.getValue(UsersModel.class);
+                        if (userModel != null) {
+                            Integer currentUserID = userModel.getUserID();
+                            getHistory(currentUserID);
+                        }
+                    }
+                }
+
+                @Override
+                public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+                }
+            });
+        } else {
+
+        }
     }
 }
