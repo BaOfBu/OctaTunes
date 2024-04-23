@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/bottomSheetContainer"
     android:layout_width="match_parent"
     android:layout_height="600dp"
@@ -118,7 +119,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/round_add_circle_outline_24"
-            app:tint="@color/gray"/>
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
         <TextView
             android:id="@+id/add_to_liked_song"
             android:layout_width="match_parent"
@@ -142,7 +144,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_remove_circle_outline_24"
-            app:tint="@color/gray"/>
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/hide_this_song"
@@ -168,7 +171,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_diamond_24"
-            app:tint="@color/gray"/>
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/music_ad_free"
@@ -192,7 +196,9 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:src="@drawable/ic_addtoqueue_24" />
+            android:src="@drawable/ic_add_to_queue_24"
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/add_to_queue"
@@ -217,7 +223,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/outline_album_24"
-            app:tint="@color/gray"/>
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
         <TextView
             android:id="@+id/view_album"
             android:textSize="16sp"
@@ -241,7 +248,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_perm_identity_24"
-            app:tint="@color/gray" />
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/view_artist"
@@ -266,7 +274,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/baseline_share_24"
-            app:tint="@color/gray" />
+            android:tint="@color/gray"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:id="@+id/share"

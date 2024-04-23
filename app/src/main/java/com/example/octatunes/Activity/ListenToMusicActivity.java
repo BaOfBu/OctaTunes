@@ -9,9 +9,11 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -29,6 +31,7 @@ import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Utils.MusicUtils;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,6 +62,7 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
     public SeekBar seekBar;
     private TextView playTime;
     private TextView duration;
+    private ImageButton show_options;
     private static boolean isServiceBound = false;
     public static boolean isServiceBound(){
         return isServiceBound;
@@ -91,6 +95,7 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         seekBar = findViewById(R.id.seekBar);
         playTime= findViewById(R.id.elapsedTime);
         duration = findViewById(R.id.remainingTime);
+        show_options = findViewById(R.id.show_options);
 
         trackService = new TrackService();
         songService = new SongService();
@@ -121,6 +126,7 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         previous.setOnClickListener(this);
         play.setOnClickListener(this);
         next.setOnClickListener(this);
+        show_options.setOnClickListener(this);
 
         loadData();
     }
@@ -191,6 +197,27 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         }else if(id == R.id.imageButtonNext){
             binder.nextMusic();
             play.setImageResource(R.drawable.ic_circle_pause_white_70);
+        }else if (id == R.id.show_options){
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ListenToMusicActivity.this);
+            View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
+                    R.layout.bottom_sheet_track_view,
+                    (LinearLayout)findViewById(R.id.bottomSheetContainer)
+            );
+            bottomSheetDialog.setContentView(bottomSheetView);
+            bottomSheetDialog.show();
+
+            ImageView item_image = bottomSheetDialog.findViewById(R.id.item_image);
+            Glide.with(bottomSheetView).load(songList.get(pos).getImage()).into(item_image);
+
+            TextView item_title = bottomSheetView.findViewById(R.id.item_title);
+            item_title.setText(songName.getText());
+
+            TextView item_artist = bottomSheetView.findViewById(R.id.item_artist);
+            item_artist.setText(singer.getText());
+
+            TextView item_belong = bottomSheetView.findViewById(R.id.item_belong);
+            item_belong.setText(track_belong.getText());
+
         }
     }
     private void loadData(){
