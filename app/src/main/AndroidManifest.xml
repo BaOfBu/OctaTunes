@@ -14,10 +14,16 @@
         android:theme="@style/Theme.OctaTunes"
         android:networkSecurityConfig="@xml/networksecurityconfig"
         tools:targetApi="31">
-<!--        <service-->
-<!--            android:name="BackgroundSoundService"-->
-<!--            android:enabled="true"-->
-<!--            />-->
+        <service
+            android:name=".Services.MusicService"
+            android:enabled="true"
+            />
+
+        <activity
+            android:name=".Activity.ListenToMusicActivity"
+            android:exported="false"
+            android:label="ListenToMusicActivity"
+            android:theme="@style/Theme.OctaTunes" />
 
         <activity
             android:name=".TrackView"

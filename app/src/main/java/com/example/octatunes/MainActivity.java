@@ -11,11 +11,25 @@ import android.view.View;
 import android.widget.FrameLayout;
 
 import com.example.octatunes.Activity.HomeActivity;
+import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
+import com.example.octatunes.Model.Playlist_TracksModel;
+import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.SongModel;
+import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Services.PlaylistService;
+import com.example.octatunes.Services.PlaylistTrackService;
 import com.example.octatunes.databinding.ActivityMainBinding;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     ActivityMainBinding binding;
+    public static List<SongModel> songList;
+    public static List<SongModel> getSongList(){
+        return songList;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,6 +37,9 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        songList = new ArrayList<>();
+
         replaceFragment(new HomeActivity());
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
@@ -38,13 +55,16 @@ public class MainActivity extends AppCompatActivity {
             }
             return true;
         });
+
+        Intent intent = new Intent(MainActivity.this, ListenToMusicActivity.class);
+        intent.putExtra("trackID", 24);
+        intent.putExtra("playlistID", 11);
+        intent.putExtra("albumID", 4);
+        intent.putExtra("from", "PLAYING FROM SEARCH");
+        intent.putExtra("belong", "\"Như+ngày+hôm+qua\" in Search");
+        startActivity(intent);
     }
 
-    private void searchActivity(String searchQuery) {
-        Intent i = new Intent(MainActivity.this, SearchActivity.class);
-        i.putExtra("searchQuery", searchQuery);
-        startActivity(i);
-    }
     private void replaceFragment(Fragment fragment){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();

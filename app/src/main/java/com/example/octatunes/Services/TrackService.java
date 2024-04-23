@@ -1,14 +1,11 @@
 package com.example.octatunes.Services;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
-import com.example.octatunes.TrackPreviewAdapter;
-import com.example.octatunes.TrackPreviewModel;
-import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -21,6 +18,8 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class TrackService {
@@ -76,11 +75,30 @@ public class TrackService {
             }
         });
     }
+    public void findTrackById(final Integer trackId, final OnTrackLoadedListener listener){
+        Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    TracksModel track = snapshot.getValue(TracksModel.class);
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+            }
+        });
+    }
     public void getTracksByPlaylistId(final Integer playlistId, final OnTracksLoadedListener listener) {
         Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
+        Log.i("TrackService", "Query playlistTrackQuery success!");
         playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("TrackService", "OnDataChange success");
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Playlist_TracksModel playlistTrack = snapshot.getValue(Playlist_TracksModel.class);
@@ -98,6 +116,7 @@ public class TrackService {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TracksModel track = snapshot.getValue(TracksModel.class);
+                                Log.i("ONDATA CHANGE", track.toString());
                                 tracks.add(track);
                             }
                             if (count.decrementAndGet() == 0) {
@@ -179,8 +198,6 @@ public class TrackService {
             }
         });
     }
-
-
     public void findTrackByName(final String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -221,6 +238,55 @@ public class TrackService {
             public void onCancelled(DatabaseError databaseError) {
             }
         });
+    }
+    public CompletableFuture<List<TracksModel>> getTracksByPlaylistId(int playlistId){
+        CompletableFuture<List<TracksModel>> future = new CompletableFuture<>();
+
+        Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
+        playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("TrackService", "OnDataChange success");
+                final List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    Playlist_TracksModel playlistTrack = snapshot.getValue(Playlist_TracksModel.class);
+                    // Add each TrackID associated with the playlistId to the list
+                    trackIds.add(playlistTrack.getTrackID());
+                }
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<TracksModel> tracks = new ArrayList<>();
+                for (Integer trackId : trackIds) {
+                    Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TracksModel track = snapshot.getValue(TracksModel.class);
+                                tracks.add(track);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                future.complete(tracks);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+        return future;
+    }
+
+    public interface OnTrackLoadedListener{
+        void onTrackLoaded(TracksModel tracksModel);
     }
     public interface OnArtistNameLoadedListener {
         void onArtistNameLoaded(String artistName);
