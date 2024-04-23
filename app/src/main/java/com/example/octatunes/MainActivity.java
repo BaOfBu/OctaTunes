@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.frameLayout.setOnClickListener(this);
         binding.trackPlayPause.setOnClickListener(this);
 
-        Search(26, 11, 4, "1", "2");
+        Search(26, 11, 4, "PLAYING FROM ALBUM", "m-tp M-TP");
     }
 
     public void Search(int trackID, int playlistID, int albumID, String from, String belong){
@@ -140,7 +140,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         if(!Objects.equals(from, "PLAYING FROM ALBUM")){
             loadData(playlistID, trackID);
+        }else{
+            loadDataFromAlbum(albumID, trackID);
         }
+    }
+
+    private void loadDataFromAlbum(int albumID, int trackID){
+        trackService.getTracksByAlbumId(albumID).thenAccept(tracksModels -> {
+            albumService.findAlbumById(albumID).thenAccept(albumsModel ->{
+               artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
+                   if(songList != null) songList.clear();
+                   for(int i = 0; i < tracksModels.size(); i++){
+                       TracksModel track = tracksModels.get(i);
+                       Log.i("TRACK SERVICE IN MAIN", track.toString());
+                       if(track.getTrackID() == trackID) pos = i;
+                       SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
+                       songList.add(songModel);
+                   }
+                   myThread=new Thread(new MainActivity.MyThread());
+                   myThread.start();
+
+                   if(intent == null) {
+                       intent = new Intent(MainActivity.this, MusicService.class);
+                       bindService(intent, connection, BIND_AUTO_CREATE);
+                   }else{
+                       connection = new ServiceConnection() {
+                           @Override
+                           public void onServiceConnected(ComponentName name, IBinder service) {
+                               binder=(MusicService.MusicBinder) service;
+                               isServiceBound = true;
+                           }
+
+                           @Override
+                           public void onServiceDisconnected(ComponentName name) {
+                               isServiceBound = false;
+                           }
+                       };
+                       bindService(intent, connection, BIND_AUTO_CREATE);
+                   }
+
+                   MusicService.setPos(pos);
+                   initNowPlayingBar();
+               }) ;
+            });
+        });
     }
     private void loadData(int playlistID, int trackID){
         trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {

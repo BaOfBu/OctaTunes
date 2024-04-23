@@ -263,6 +263,31 @@ public class TrackService {
         });
         return future;
     }
+    public CompletableFuture<List<TracksModel>> getTracksByAlbumId(int albumId){
+        CompletableFuture<List<TracksModel>> future = new CompletableFuture<>();
+
+        Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Log.i("TrackService", "OnDataChange success");
+                final List<TracksModel> tracks = new ArrayList<>();
+                final AtomicInteger count = new AtomicInteger((int) dataSnapshot.getChildrenCount());
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    TracksModel track = snapshot.getValue(TracksModel.class);
+                    tracks.add(track);
+                    if (count.decrementAndGet() == 0) {
+                        future.complete(tracks);
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                future.complete(null);
+            }
+        });
+        return future;
+    }
     public interface OnArtistNameLoadedListener {
         void onArtistNameLoaded(String artistName);
     }
