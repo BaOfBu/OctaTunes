@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.TrackService;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
@@ -23,6 +24,7 @@ public class NowPlayingBarFragment extends Fragment {
     private TracksModel trackModel;
 
     private String trackImg;
+
 
     public NowPlayingBarFragment() {
     }
@@ -49,19 +51,43 @@ public class NowPlayingBarFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_now_playing_bar, container, false);
         TextView trackNameTextView = rootView.findViewById(R.id.nowplaying_track_name);
         ImageView trackImageView = rootView.findViewById(R.id.nowplaying_track_img);
+        TextView trackArtist = rootView.findViewById(R.id.nowplaying_track_artist);
 
         if (trackModel != null) {
-            trackNameTextView.setText(trackModel.getName());
-            Log.w("ferf",trackImg + "ferf");
-            if (trackImg != null && trackImg!="") {
-                Picasso.get().load(trackImg).into(trackImageView);
-            } else {
-
-            }
+            setTrackName(trackModel, trackNameTextView);
+            loadArtistName(trackModel, trackArtist);
+            loadTrackImage(trackImg, trackImageView);
         }
 
         return rootView;
     }
+
+    private void setTrackName(TracksModel trackModel, TextView trackNameTextView) {
+        if (trackModel != null) {
+            trackNameTextView.setText(trackModel.getName());
+        }
+    }
+
+    private void loadArtistName(TracksModel trackModel, TextView trackArtist) {
+        if (trackModel != null) {
+            TrackService trackService = new TrackService();
+            trackService.getArtistNameByAlbumId(trackModel.getAlubumID(), new TrackService.OnArtistNameLoadedListener() {
+                @Override
+                public void onArtistNameLoaded(String artistName) {
+                    trackArtist.setText(artistName != null ? artistName : "Unknown Artist");
+                }
+            });
+        }
+    }
+
+    private void loadTrackImage(String trackImg, ImageView trackImageView) {
+        if (trackImg != null && !trackImg.isEmpty()) {
+            Picasso.get().load(trackImg).into(trackImageView);
+        } else {
+            // Set a placeholder image if the image URL is not available
+        }
+    }
+
 
 
     public static NowPlayingBarFragment newInstance(String param1, String param2, TracksModel trackModel,String trackImg) {
