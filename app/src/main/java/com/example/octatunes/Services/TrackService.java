@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.TrackPreviewAdapter;
 import com.example.octatunes.TrackPreviewModel;
 import com.google.android.gms.common.images.ImageManager;
@@ -190,6 +191,50 @@ public class TrackService {
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if(Objects.requireNonNull(snapshot.child("name").getValue(String.class)).toLowerCase().contains(trackName.toLowerCase())){
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                    }
+                }
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<TracksModel> tracks = new ArrayList<>();
+                for (Integer trackId : trackIds) {
+                    Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TracksModel track = snapshot.getValue(TracksModel.class);
+                                tracks.add(track);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                listener.onTracksLoaded(tracks);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void findTrackByID(final List<UserSongModel> trackIDs, final OnTracksLoadedListener listener) {
+        Query trackQuery = tracksRef.orderByChild("trackID");
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for (UserSongModel trackID : trackIDs) {
+                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getSongID())) {
+                            trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                            break;
+                        }
                     }
                 }
 

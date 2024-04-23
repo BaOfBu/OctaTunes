@@ -22,11 +22,18 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Model.UserSongModel;
+import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.Services.AlbumService;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Services.UserService;
+import com.example.octatunes.Services.UserSongService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.ktx.Firebase;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -42,14 +49,19 @@ public class SearchingActivity extends Fragment {
     private AlbumService albumService = new AlbumService();
     private ArtistService artistService = new ArtistService();
     private TrackService trackService = new TrackService();
+    private UserSongService userSongService = new UserSongService();
+    private UserService userService = new UserService();
+    private UsersModel currentUser;
 
     RecyclerView searchResultsRecyclerView;
+    TextView text;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.layout_search, container, false);
         searchBox = rootView.findViewById(R.id.search_bar_edit_text);
+        text = rootView.findViewById(R.id.BrowseAllText);
         searchResultsRecyclerView = rootView.findViewById(R.id.recyclerview_recent_search);
 
         searchBox.addTextChangedListener(new TextWatcher() {
@@ -58,17 +70,22 @@ public class SearchingActivity extends Fragment {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 handler.removeCallbacks(searchRunnable); // Remove pending searchRunnable if any
+                // check if the search box is empty
+                if (searchBox.getText().toString().isEmpty()) {
+                    getHistory();
+                    return;
+                }
                 // Create a new searchRunnable
                 searchRunnable = new Runnable() {
                     @Override
                     public void run() {
                         // Call the search method after the delay
                         String queryString = searchBox.getText().toString(); // Get the current text from the search box
-                try {
-                    search(queryString); // Call the search method with the current text
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
+                        try {
+                            search(queryString); // Call the search method with the current text
+                        } catch (InterruptedException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 };
                 // Post the searchRunnable with a delay
@@ -98,6 +115,15 @@ public class SearchingActivity extends Fragment {
                 return false;
             }
         });
+
+        userService.getCurrentUserModel(new UserService.UserModelCallback() {
+            @Override
+            public void onUserModelRetrieved(UsersModel userModel) {
+                currentUser = userModel;
+            }
+        });
+
+        getHistory();
         return rootView;
     }
 
@@ -108,11 +134,33 @@ public class SearchingActivity extends Fragment {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());
+                text.setVisibility(View.GONE);
                 TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext());
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }
         });
+    }
 
+    public void getHistory() {
+        // Get the search history from the database
+        // Display the search history in the search box
+        text.setVisibility(View.VISIBLE);
+        Log.e("SearchingActivity", "current user: " + currentUser);
+        List<UserSongModel> userSongs = new ArrayList<>();
+        userSongService.getHistory(10).thenAccept(userSongs1 -> {
+            Log.e("SearchingActivity", "UserSongs: " + userSongs1.size());
+            userSongs.addAll(userSongs1);
+        });
+
+        trackService.findTrackByID(userSongs, new TrackService.OnTracksLoadedListener() {
+            @Override
+            public void onTracksLoaded(List<TracksModel> tracks) {
+                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext());
+                searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
+                trackPreviewAdapter.notifyDataSetChanged();
+            }
+        });
     }
 }
