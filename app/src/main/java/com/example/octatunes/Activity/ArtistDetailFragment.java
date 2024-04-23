@@ -14,10 +14,12 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Adapter.PlaylistSmallAdapter;
 import com.example.octatunes.Adapter.PopularReleaseAlbumArtistAdapter;
 import com.example.octatunes.Adapter.SongAdapter;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
@@ -52,6 +54,9 @@ public class ArtistDetailFragment extends Fragment {
                 Picasso.get().load(artistModel.getImage()).into(imageView);
             }
 
+            TextView featuring_titlte=rootView.findViewById(R.id.featuring_titlte);
+            featuring_titlte.setText("Featuring "+artistModel.getName());
+
             ImageView backIcon = rootView.findViewById(R.id.back_icon);
             backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
 
@@ -59,6 +64,8 @@ public class ArtistDetailFragment extends Fragment {
             setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
 
             setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
+
+            setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
         }
 
         return rootView;
@@ -88,7 +95,6 @@ public class ArtistDetailFragment extends Fragment {
             }
         });
     }
-
     private void setupRecyclerViewPopularRelease(View rootView, int artistId) {
         ArtistService artistService = new ArtistService();
         artistService.getRandomAlbumByArtistId(artistId, new OnSuccessListener<List<AlbumsModel>>() {
@@ -112,8 +118,37 @@ public class ArtistDetailFragment extends Fragment {
             }
         });
     }
+    private void setupRecyclerViewFeaturing(View rootView, int artistId) {
+        ArtistService artistService = new ArtistService();
+        artistService.getPlaylistsByArtistId(artistId, new OnSuccessListener<List<PlaylistsModel>>() {
+            @Override
+            public void onSuccess(List<PlaylistsModel> playlists) {
+                if (playlists.isEmpty()) {
+                    TextView noDataTextView = rootView.findViewById(R.id.no_music_text);
+                    noDataTextView.setVisibility(View.VISIBLE);
+                    return;
+                }
+                // If the list is not empty, set up the RecyclerView
+                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongFeaturing);
+                PlaylistSmallAdapter adapter = new PlaylistSmallAdapter(getContext(), playlists);
+                recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                recyclerView.setAdapter(adapter);
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle failure, such as displaying an error message
+            }
+        });
+    }
 
     private void showNoMusicMessage(View rootView) {
+        TextView popular_song_title=rootView.findViewById(R.id.popular_song_title);
+        popular_song_title.setVisibility(View.GONE);
+        TextView featuring_title=rootView.findViewById(R.id.featuring_titlte);
+        featuring_title.setVisibility(View.GONE);
+        TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
+        popular_release_title.setVisibility(View.GONE);
         TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
         noMusicTextView.setVisibility(View.VISIBLE);
     }

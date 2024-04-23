@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -19,9 +20,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArtistService {
 
@@ -32,11 +36,17 @@ public class ArtistService {
 
     private DatabaseReference artistsRef;
 
+   private DatabaseReference playlistRef;
+
+   private DatabaseReference playlistTrackRef;
+
     public ArtistService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         artistsRef = database.getReference("artists");
         albumsRef = database.getReference("albums");
         tracksRef = database.getReference("tracks");
+        playlistRef=database.getReference("playlists");
+        playlistTrackRef=database.getReference("playlist_track");
     }
 
     public void addArtist(ArtistsModel artist) {
@@ -200,7 +210,6 @@ public class ArtistService {
             }
         });
     }
-
     public void getRandomTracksByArtistId(int artistId, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
         List<TracksModel> tracksList = new ArrayList<>();
         Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
@@ -247,7 +256,6 @@ public class ArtistService {
             }
         });
     }
-
     public void getRandomAlbumByArtistId(int artistId, OnSuccessListener<List<AlbumsModel>> successListener, OnFailureListener failureListener) {
         List<AlbumsModel> albumsList = new ArrayList<>();
         Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
@@ -285,6 +293,107 @@ public class ArtistService {
                 failureListener.onFailure(databaseError.toException());
             }
         });
+    }
+    public void getPlaylistsByArtistId(int artistId, OnSuccessListener<List<PlaylistsModel>> successListener, OnFailureListener failureListener) {
+        Set<PlaylistsModel> playlistSet = new HashSet<>();
+
+        Set<Integer> playlistIdSet = new HashSet<>();
+
+        // Step 1: Find albums associated with the artistId
+        Query albumQuery = albumsRef.orderByChild("artistID").equalTo(artistId);
+        albumQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot albumSnapshot) {
+                if (!albumSnapshot.exists()) {
+                    // No albums found for the artist
+                    successListener.onSuccess(new ArrayList<>(playlistSet));
+                    return;
+                }
+
+                // Iterate through albums
+                for (DataSnapshot albumDataSnapshot : albumSnapshot.getChildren()) {
+                    int albumId = albumDataSnapshot.child("albumID").getValue(Integer.class);
+                    Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot trackSnapshot) {
+                            if (!trackSnapshot.exists()) {
+                                // No tracks found for the album
+                                checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                return;
+                            }
+
+                            // Iterate through tracks
+                            for (DataSnapshot trackDataSnapshot : trackSnapshot.getChildren()) {
+                                int trackId = trackDataSnapshot.child("trackID").getValue(Integer.class);
+                                Query playlistTrackQuery = playlistTrackRef.orderByChild("trackID").equalTo(trackId);
+                                playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot playlistTrackSnapshot) {
+                                        if (!playlistTrackSnapshot.exists()) {
+                                            // No playlist tracks found for the track
+                                            checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                            return;
+                                        }
+
+                                        // Iterate through playlist tracks
+                                        for (DataSnapshot playlistTrackDataSnapshot : playlistTrackSnapshot.getChildren()) {
+                                            int playlistId = playlistTrackDataSnapshot.child("playlistID").getValue(Integer.class);
+                                            Query playlistQuery = playlistRef.orderByChild("playlistID").equalTo(playlistId);
+                                            playlistQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(DataSnapshot playlistSnapshot) {
+                                                    if (playlistSnapshot.exists()) {
+                                                        // Iterate through playlists
+                                                        for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
+                                                            int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
+                                                            if (!playlistIdSet.contains(playlistId)) {
+                                                                playlistIdSet.add(playlistId);
+                                                                PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);
+                                                                if (playlist != null) {
+                                                                    playlistSet.add(playlist);
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                    // Check if all data has been retrieved
+                                                    checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                                }
+
+                                                @Override
+                                                public void onCancelled(DatabaseError databaseError) {
+                                                    failureListener.onFailure(databaseError.toException());
+                                                }
+                                            });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+                                        failureListener.onFailure(databaseError.toException());
+                                    }
+                                });
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            failureListener.onFailure(databaseError.toException());
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                failureListener.onFailure(databaseError.toException());
+            }
+        });
+    }
+
+
+    private void checkAllDataRetrieved(OnSuccessListener<List<PlaylistsModel>> successListener, List<PlaylistsModel> playlistList) {
+        successListener.onSuccess(playlistList);
     }
 
 

@@ -180,6 +180,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
                 <androidx.recyclerview.widget.RecyclerView
+                    android:nestedScrollingEnabled="false"
                     android:id="@+id/recyclerViewSongPopularRelease"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -187,6 +188,7 @@
             </RelativeLayout>
             <!--  Featuring Artist    -->
             <TextView
+                android:id="@+id/featuring_titlte"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
@@ -214,8 +216,9 @@
                     android:layout_height="match_parent"
                     tools:listitem="@layout/layout_playlist_item_artist_small" />
             </RelativeLayout>
-            <!--  Featuring Artist    -->
+            <!--  Fan also like    -->
             <TextView
+                android:id="@+id/fan_also_like"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
