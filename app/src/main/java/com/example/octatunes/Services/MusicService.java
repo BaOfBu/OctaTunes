@@ -73,6 +73,26 @@ public class MusicService extends Service {
                 }
             }
         }
+        public void previousMusic(){
+            if(mediaPlayer!=null) {
+                if (pos == 0) {
+                    pos = songList.size() - 1;
+                } else {
+                    pos--;
+                }
+                setMediaPlayer(pos);
+            }
+        }
+        public void nextMusic(){
+            if(mediaPlayer!=null) {
+                if (pos == songList.size() - 1) {
+                    pos = 0;
+                } else {
+                    pos++;
+                }
+                setMediaPlayer(pos);
+            }
+        }
     }
     @Override
     public IBinder onBind(Intent intent) {

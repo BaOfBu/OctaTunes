@@ -44,7 +44,9 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
     private ImageView imageView;
     private TextView songName;
     private TextView singer;
+    private ImageButton previous;
     private ImageButton play;
+    private ImageButton next;
     private List<SongModel> songList = new ArrayList<>();
     private static final int UPDATE = 0;
     private MusicService.MusicBinder binder;
@@ -83,10 +85,12 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         imageView = findViewById(R.id.imageViewAlbumArt);
         songName = findViewById(R.id.textViewTrackTitle);
         singer = findViewById(R.id.textViewArtistName);
+        previous= findViewById(R.id.imageButtonPrevious);
         play = findViewById(R.id.imageButtonPlayPause);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-        playTime=(TextView) findViewById(R.id.elapsedTime);
-        duration = (TextView) findViewById(R.id.remainingTime);
+        next=(ImageButton) findViewById(R.id.imageButtonNext);
+        seekBar = findViewById(R.id.seekBar);
+        playTime= findViewById(R.id.elapsedTime);
+        duration = findViewById(R.id.remainingTime);
 
         trackService = new TrackService();
         songService = new SongService();
@@ -114,7 +118,9 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         track_from.setText(from);
         track_belong.setText(belong);
 
+        previous.setOnClickListener(this);
         play.setOnClickListener(this);
+        next.setOnClickListener(this);
 
         loadData();
     }
@@ -179,6 +185,12 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
             }else {
                 play.setImageResource(R.drawable.ic_circle_play_white_70);
             }
+        }else if(id == R.id.imageButtonPrevious){
+            binder.previousMusic();
+            play.setImageResource(R.drawable.ic_circle_pause_white_70);
+        }else if(id == R.id.imageButtonNext){
+            binder.nextMusic();
+            play.setImageResource(R.drawable.ic_circle_pause_white_70);
         }
     }
     private void loadData(){
