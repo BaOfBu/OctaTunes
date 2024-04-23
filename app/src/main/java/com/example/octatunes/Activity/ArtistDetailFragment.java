@@ -14,7 +14,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Adapter.PopularReleaseAlbumArtistAdapter;
 import com.example.octatunes.Adapter.SongAdapter;
+import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
@@ -50,8 +52,13 @@ public class ArtistDetailFragment extends Fragment {
                 Picasso.get().load(artistModel.getImage()).into(imageView);
             }
 
+            ImageView backIcon = rootView.findViewById(R.id.back_icon);
+            backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
+
             // Set up RecyclerView for popular songs
             setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
+
+            setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
         }
 
         return rootView;
@@ -63,16 +70,58 @@ public class ArtistDetailFragment extends Fragment {
             @Override
             public void onSuccess(List<TracksModel> tracks) {
                 RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopular);
-                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                recyclerView.setLayoutManager(layoutManager);
-                SongAdapter adapter = new SongAdapter(getActivity(), tracks);
-                recyclerView.setAdapter(adapter);
+                if (!tracks.isEmpty()) {
+                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                    recyclerView.setLayoutManager(layoutManager);
+                    SongAdapter adapter = new SongAdapter(getActivity(), tracks);
+                    recyclerView.setAdapter(adapter);
+                    hideNoMusicMessage(rootView);
+                } else {
+                    showNoMusicMessage(rootView);
+                }
             }
         }, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
+                // Handle failure, such as displaying an error message
+                Log.e("ArtistDetailFragment", "Error fetching tracks: " + e.getMessage());
             }
         });
     }
+
+    private void setupRecyclerViewPopularRelease(View rootView, int artistId) {
+        ArtistService artistService = new ArtistService();
+        artistService.getRandomAlbumByArtistId(artistId, new OnSuccessListener<List<AlbumsModel>>() {
+            @Override
+            public void onSuccess(List<AlbumsModel> albumList) {
+                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopularRelease);
+                if (!albumList.isEmpty()) {
+                    PopularReleaseAlbumArtistAdapter adapter = new PopularReleaseAlbumArtistAdapter(getContext(), albumList);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+                    recyclerView.setAdapter(adapter);
+                    hideNoMusicMessage(rootView);
+                } else {
+                    showNoMusicMessage(rootView);
+                }
+            }
+        }, new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                // Handle failure, such as displaying an error message
+                Log.e("ArtistDetailFragment", "Error fetching albums: " + e.getMessage());
+            }
+        });
+    }
+
+    private void showNoMusicMessage(View rootView) {
+        TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+        noMusicTextView.setVisibility(View.VISIBLE);
+    }
+
+    private void hideNoMusicMessage(View rootView) {
+        TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+        noMusicTextView.setVisibility(View.GONE);
+    }
+
 
 }

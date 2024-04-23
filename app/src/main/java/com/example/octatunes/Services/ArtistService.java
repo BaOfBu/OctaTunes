@@ -4,6 +4,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -17,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
@@ -245,5 +247,45 @@ public class ArtistService {
             }
         });
     }
+
+    public void getRandomAlbumByArtistId(int artistId, OnSuccessListener<List<AlbumsModel>> successListener, OnFailureListener failureListener) {
+        List<AlbumsModel> albumsList = new ArrayList<>();
+        Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot albumSnapshot : dataSnapshot.getChildren()) {
+                        AlbumsModel album = albumSnapshot.getValue(AlbumsModel.class);
+                        if (album != null) {
+                            albumsList.add(album);
+                        }
+                    }
+
+                    // Sort albums by release date
+                    Collections.sort(albumsList, new Comparator<AlbumsModel>() {
+                        @Override
+                        public int compare(AlbumsModel album1, AlbumsModel album2) {
+                            // Compare release dates in reverse order (newest to oldest)
+                            return album2.getReleaseDate().compareTo(album1.getReleaseDate());
+                        }
+                    });
+
+                    // Select the first 5 albums or fewer if the list is shorter
+                    List<AlbumsModel> firstFiveAlbums = albumsList.subList(0, Math.min(albumsList.size(), 5));
+
+                    successListener.onSuccess(firstFiveAlbums);
+                } else {
+                    successListener.onSuccess(albumsList); // Return empty list if no albums found
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                failureListener.onFailure(databaseError.toException());
+            }
+        });
+    }
+
 
 }

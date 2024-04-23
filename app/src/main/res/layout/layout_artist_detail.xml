@@ -16,6 +16,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
+
+                <!-- Image View for the background image -->
                 <ImageView
                     android:id="@+id/artist_detail_image"
                     android:layout_width="match_parent"
@@ -29,6 +31,7 @@
                     android:layout_height="250dp"
                     android:background="#80000000" /> <!-- Adjust opacity by changing the alpha value (80 in this case) -->
 
+                <!-- TextView for the artist name -->
                 <TextView
                     android:id="@+id/artist_detail_name"
                     android:layout_width="match_parent"
@@ -41,7 +44,20 @@
                     android:text="RPT MCK"
                     android:textColor="#FFFFFF"
                     android:textSize="45sp" />
+
+                <!-- ImageView for the back icon -->
+                <ImageView
+                    android:id="@+id/back_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+                    android:src="@drawable/ic_back_arrow"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
             </FrameLayout>
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -99,8 +115,23 @@
                     />
             </LinearLayout>
 
+            <!-- No Music -->
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/no_music_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="An artist does not have any music"
+                android:textColor="#a7a7a7"
+                android:textSize="18sp"
+                android:layout_gravity="left"
+                android:visibility="gone" />
+
+
             <!--  Popular    -->
             <TextView
+                android:id="@+id/popular_song_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"
@@ -128,6 +159,7 @@
             </RelativeLayout>
             <!--  Popular Release Album    -->
             <TextView
+                android:id="@+id/popular_release_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textColor="@color/white"

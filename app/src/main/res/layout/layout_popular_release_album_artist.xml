@@ -5,6 +5,7 @@
     android:layout_marginBottom="10dp"
     android:layout_height="wrap_content">
     <ImageView
+        android:id="@+id/album_image_view_popular_release_artist_detail"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginRight="15dp"
@@ -17,6 +18,7 @@
         android:layout_gravity="center"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/album_name_text_popular_release_artist_detail"
             android:layout_width="match_parent"
             android:textColor="#fff"
             android:layout_marginBottom="10dp"
@@ -27,6 +29,7 @@
             android:text="Đìu Anh Luôn Giữ Kín Trong Tym"
             android:layout_height="wrap_content"/>
         <TextView
+            android:id="@+id/album_release_date_popular_release_artist_detail"
             android:layout_width="match_parent"
             android:textColor="#a7a7a7"
             android:textSize="14dp"
