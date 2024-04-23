@@ -52,7 +52,8 @@ public class NowPlayingBarFragment extends Fragment {
 
         if (trackModel != null) {
             trackNameTextView.setText(trackModel.getName());
-            if (trackImg != null) {
+            Log.w("ferf",trackImg + "ferf");
+            if (trackImg != null && trackImg!="") {
                 Picasso.get().load(trackImg).into(trackImageView);
             } else {
 

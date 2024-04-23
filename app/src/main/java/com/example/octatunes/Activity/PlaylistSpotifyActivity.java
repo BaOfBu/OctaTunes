@@ -50,28 +50,6 @@ public class PlaylistSpotifyActivity extends Fragment {
 
         String playlistsModelJson = getArguments().getString("playlistItem");
 
-        ImageView play_button_playlist_display=view.findViewById(R.id.play_button_playlist_display);
-        play_button_playlist_display.setOnClickListener(v -> {
-            // Create NowPlayingBarFragment instance
-            NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
-
-            // Get FragmentManager
-            FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-
-            // Begin transaction
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            // Find the FrameLayout using the activity's findViewById()
-            FrameLayout frameLayout = ((AppCompatActivity) getContext()).findViewById(R.id.frame_layout);
-            frameLayout.setVisibility(View.VISIBLE);
-
-            // Replace fragment_container with NowPlayingBarFragment
-            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-
-            // Commit transaction
-            fragmentTransaction.commit();
-        });
-
         if (playlistsModelJson != null && getContext() != null) {
             PlaylistsModel playlistsModel = new Gson().fromJson(playlistsModelJson, PlaylistsModel.class);
 
@@ -89,18 +67,16 @@ public class PlaylistSpotifyActivity extends Fragment {
             playlistService.getUsernameOfPlaylistCreator(playlistsModel)
                     .thenAccept(username -> {
                         if (username != null) {
-                            if (username.equals("Spotify")){
+                            if (username.equals("Spotify")) {
                                 int randomNumber = (int) (Math.random() * 100) + 1;
-                                if (randomNumber%2==0){
+                                if (randomNumber % 2 == 0) {
                                     String madeByText = "<font color='#a7a7a7'>Made for </font>" + "Binh Le Tuan";
                                     creator.setText(Html.fromHtml(madeByText));
-                                }
-                                else{
+                                } else {
                                     creator.setText(username);
                                 }
 
-                            }
-                            else{
+                            } else {
                                 String madeByText = "<font color='#a7a7a7'>Made by </font>" + username;
                                 creator.setText(Html.fromHtml(madeByText));
                             }
@@ -116,11 +92,14 @@ public class PlaylistSpotifyActivity extends Fragment {
 
 
             TrackService trackService = new TrackService();
+            List<TracksModel> allTracks = new ArrayList<>();
+
             // Get tracks by playlist ID
             int playlistId = playlistsModel.getPlaylistID();
             trackService.getTracksByPlaylistId(playlistId, new TrackService.OnTracksLoadedListener() {
                 @Override
                 public void onTracksLoaded(List<TracksModel> tracks) {
+                    allTracks.addAll(tracks);
                     if (getContext() != null) {
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
                         recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
@@ -140,7 +119,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
                 bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_playlist_spotify);
 
-                ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
+                ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
                 TextView tbin_playlist_bottom_sheet_title = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_title);
 
                 tbin_playlist_bottom_sheet_image.setImageDrawable(imageView.getDrawable());
@@ -151,11 +130,11 @@ public class PlaylistSpotifyActivity extends Fragment {
 
             /* Download option */
             ImageView download = view.findViewById(R.id.download_playlist_spotify);
-            download.setOnClickListener(v ->{
+            download.setOnClickListener(v -> {
                 // Creating the BottomSheetDialog
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
                 bottomSheetDialog.setContentView(R.layout.bottom_sheet_playlist_spotify_download);
-                ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.download_bottom_sheet_image);
+                ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.download_bottom_sheet_image);
                 TextView tbin_playlist_bottom_sheet_title = bottomSheetDialog.findViewById(R.id.download_bottom_sheet_title);
 
                 tbin_playlist_bottom_sheet_image.setImageDrawable(imageView.getDrawable());
@@ -210,6 +189,40 @@ public class PlaylistSpotifyActivity extends Fragment {
                 }
             });
 
+            /* Play button */
+            ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
+            playButton.setOnClickListener(v -> {
+                // Check if there are tracks available
+                if (!allTracks.isEmpty()) {
+                    // Get the image for the first track
+                    trackService.getImageForTrack(allTracks.get(0), new TrackService.OnImageLoadedListener() {
+                        @Override
+                        public void onImageLoaded(String imageUrl) {
+                            // Create NowPlayingBarFragment instance with the first track and its image URL
+                            NowPlayingBarFragment nowPlayingBarFragment = NowPlayingBarFragment.newInstance("Param 1", "Param 2", allTracks.get(0), imageUrl);
+
+                            // Get FragmentManager
+                            FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+
+                            // Begin transaction
+                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+
+                            // Find the FrameLayout using the activity's findViewById()
+                            FrameLayout frameLayout = ((AppCompatActivity) getContext()).findViewById(R.id.frame_layout);
+                            frameLayout.setVisibility(View.VISIBLE);
+
+                            // Replace fragment_container with NowPlayingBarFragment
+                            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
+
+                            // Commit transaction
+                            fragmentTransaction.commit();
+                        }
+                    });
+                } else {
+                    // Handle the case where there are no tracks available
+                    // You can show a message to the user or handle it based on your requirements
+                }
+            });
         }
         return view;
     }
