@@ -2,6 +2,7 @@ package com.example.octatunes;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -10,7 +11,7 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-public class AdminDashboardFragment extends AppCompatActivity {
+public class AdminDashboardActivity extends AppCompatActivity {
 
     ImageButton _btn_more;
     TextView _textTitleAdmin;
@@ -63,7 +64,7 @@ public class AdminDashboardFragment extends AppCompatActivity {
         userManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(AdminDashboardActivity.this, AdminUserManagerActivity.class);
             }
         });
 

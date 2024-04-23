@@ -23,6 +23,12 @@
         android:theme="@style/Theme.OctaTunes"
         tools:targetApi="31">
         <activity
+            android:name=".AdminDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminUserManagerActivity"
+            android:exported="false" />
+        <activity
             android:name=".AdminDashboardFragment"
             android:exported="false" />
         <activity
@@ -51,7 +57,7 @@
         </activity>
         <activity
             android:name=".Activity.PlaylistSpotifyActivity"
-            android:label="PlaylistSpotifyActivity"></activity>
+            android:label="PlaylistSpotifyActivity" />
     </application>
 
 </manifest>
