@@ -63,9 +63,9 @@ public class ArtistDetailFragment extends Fragment {
             // Set up RecyclerView for popular songs
             setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
 
-            setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
-
-            setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
+            //setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
+            //
+            //setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
         }
 
         return rootView;
@@ -82,32 +82,51 @@ public class ArtistDetailFragment extends Fragment {
                     recyclerView.setLayoutManager(layoutManager);
                     SongAdapter adapter = new SongAdapter(getActivity(), tracks);
                     recyclerView.setAdapter(adapter);
-                    hideNoMusicMessage(rootView);
+                    setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
+                    setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
                 } else {
-                    showNoMusicMessage(rootView);
+                    TextView popular_song_title=rootView.findViewById(R.id.popular_song_title);
+                    popular_song_title.setVisibility(View.GONE);
+                    TextView featuring_title=rootView.findViewById(R.id.featuring_titlte);
+                    featuring_title.setVisibility(View.GONE);
+                    TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
+                    popular_release_title.setVisibility(View.GONE);
+                    TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
+                    fan_also_like.setVisibility(View.GONE);
+                    noMusicTextView.setVisibility(View.VISIBLE);
                 }
             }
         }, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                // Handle failure, such as displaying an error message
                 Log.e("ArtistDetailFragment", "Error fetching tracks: " + e.getMessage());
             }
         });
     }
+
+
     private void setupRecyclerViewPopularRelease(View rootView, int artistId) {
         ArtistService artistService = new ArtistService();
         artistService.getRandomAlbumByArtistId(artistId, new OnSuccessListener<List<AlbumsModel>>() {
             @Override
             public void onSuccess(List<AlbumsModel> albumList) {
                 RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopularRelease);
-                if (!albumList.isEmpty()) {
+                if (!albumList.isEmpty()&&albumList!=null) {
                     PopularReleaseAlbumArtistAdapter adapter = new PopularReleaseAlbumArtistAdapter(getContext(), albumList);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
                     recyclerView.setAdapter(adapter);
-                    hideNoMusicMessage(rootView);
                 } else {
-                    showNoMusicMessage(rootView);
+                    TextView popular_song_title=rootView.findViewById(R.id.popular_song_title);
+                    popular_song_title.setVisibility(View.GONE);
+                    TextView featuring_title=rootView.findViewById(R.id.featuring_titlte);
+                    featuring_title.setVisibility(View.GONE);
+                    TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
+                    popular_release_title.setVisibility(View.GONE);
+                    TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
+                    fan_also_like.setVisibility(View.GONE);
+                    noMusicTextView.setVisibility(View.VISIBLE);
                 }
             }
         }, new OnFailureListener() {
@@ -123,16 +142,25 @@ public class ArtistDetailFragment extends Fragment {
         artistService.getPlaylistsByArtistId(artistId, new OnSuccessListener<List<PlaylistsModel>>() {
             @Override
             public void onSuccess(List<PlaylistsModel> playlists) {
-                if (playlists.isEmpty()) {
-                    TextView noDataTextView = rootView.findViewById(R.id.no_music_text);
-                    noDataTextView.setVisibility(View.VISIBLE);
-                    return;
+                if (!playlists.isEmpty()&&playlists!=null) {
+                    RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongFeaturing);
+                    PlaylistSmallAdapter adapter = new PlaylistSmallAdapter(getContext(), playlists);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+                    recyclerView.setAdapter(adapter);
                 }
-                // If the list is not empty, set up the RecyclerView
-                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongFeaturing);
-                PlaylistSmallAdapter adapter = new PlaylistSmallAdapter(getContext(), playlists);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-                recyclerView.setAdapter(adapter);
+                else{
+                    TextView popular_song_title=rootView.findViewById(R.id.popular_song_title);
+                    popular_song_title.setVisibility(View.GONE);
+                    TextView featuring_title=rootView.findViewById(R.id.featuring_titlte);
+                    featuring_title.setVisibility(View.GONE);
+                    TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
+                    popular_release_title.setVisibility(View.GONE);
+                    TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
+                    fan_also_like.setVisibility(View.GONE);
+                    noMusicTextView.setVisibility(View.VISIBLE);
+                }
+
             }
         }, new OnFailureListener() {
             @Override

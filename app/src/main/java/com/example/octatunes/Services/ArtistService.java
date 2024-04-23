@@ -1,4 +1,5 @@
 package com.example.octatunes.Services;
+import java.util.concurrent.CountDownLatch;
 
 import android.util.Log;
 
@@ -25,6 +26,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class ArtistService {
@@ -239,6 +241,9 @@ public class ArtistService {
 
                                     successListener.onSuccess(randomTracks);
                                 }
+                                else {
+                                    successListener.onSuccess(tracksList); // Return empty list if no albums found
+                                }
                             }
 
                             @Override
@@ -247,6 +252,9 @@ public class ArtistService {
                             }
                         });
                     }
+                }
+                else {
+                    successListener.onSuccess(tracksList); // Return empty list if no albums found
                 }
             }
 
@@ -294,10 +302,14 @@ public class ArtistService {
             }
         });
     }
+
+
     public void getPlaylistsByArtistId(int artistId, OnSuccessListener<List<PlaylistsModel>> successListener, OnFailureListener failureListener) {
         Set<PlaylistsModel> playlistSet = new HashSet<>();
-
         Set<Integer> playlistIdSet = new HashSet<>();
+
+        // Initialize latch with the initial count
+        int initialCount = 1; // We'll increment it before each asynchronous call
 
         // Step 1: Find albums associated with the artistId
         Query albumQuery = albumsRef.orderByChild("artistID").equalTo(artistId);
@@ -305,46 +317,52 @@ public class ArtistService {
             @Override
             public void onDataChange(DataSnapshot albumSnapshot) {
                 if (!albumSnapshot.exists()) {
-                    // No albums found for the artist
                     successListener.onSuccess(new ArrayList<>(playlistSet));
                     return;
                 }
 
-                // Iterate through albums
+                // Create a latch for each album
+                CountDownLatch albumLatch = new CountDownLatch((int) albumSnapshot.getChildrenCount());
+
                 for (DataSnapshot albumDataSnapshot : albumSnapshot.getChildren()) {
                     int albumId = albumDataSnapshot.child("albumID").getValue(Integer.class);
                     Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+                    albumLatch.countDown(); // Decrement the latch count for each album
                     trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot trackSnapshot) {
                             if (!trackSnapshot.exists()) {
-                                // No tracks found for the album
-                                checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                albumLatch.countDown(); // Decrement the latch count if no tracks exist
                                 return;
                             }
 
-                            // Iterate through tracks
+                            // Create a latch for each track
+                            CountDownLatch trackLatch = new CountDownLatch((int) trackSnapshot.getChildrenCount());
+
                             for (DataSnapshot trackDataSnapshot : trackSnapshot.getChildren()) {
                                 int trackId = trackDataSnapshot.child("trackID").getValue(Integer.class);
                                 Query playlistTrackQuery = playlistTrackRef.orderByChild("trackID").equalTo(trackId);
+                                trackLatch.countDown(); // Decrement the latch count for each track
                                 playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot playlistTrackSnapshot) {
                                         if (!playlistTrackSnapshot.exists()) {
-                                            // No playlist tracks found for the track
-                                            checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                            trackLatch.countDown(); // Decrement the latch count if no playlist tracks exist
                                             return;
                                         }
 
-                                        // Iterate through playlist tracks
+                                        // Create a latch for each playlist track
+                                        CountDownLatch playlistLatch = new CountDownLatch((int) playlistTrackSnapshot.getChildrenCount());
+
                                         for (DataSnapshot playlistTrackDataSnapshot : playlistTrackSnapshot.getChildren()) {
                                             int playlistId = playlistTrackDataSnapshot.child("playlistID").getValue(Integer.class);
                                             Query playlistQuery = playlistRef.orderByChild("playlistID").equalTo(playlistId);
+                                            playlistLatch.countDown(); // Decrement the latch count for each playlist track
                                             playlistQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override
                                                 public void onDataChange(DataSnapshot playlistSnapshot) {
+                                                    playlistLatch.countDown(); // Decrement the latch count after playlist data retrieval
                                                     if (playlistSnapshot.exists()) {
-                                                        // Iterate through playlists
                                                         for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
                                                             int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
                                                             if (!playlistIdSet.contains(playlistId)) {
@@ -356,13 +374,13 @@ public class ArtistService {
                                                             }
                                                         }
                                                     }
-                                                    // Check if all data has been retrieved
-                                                    checkAllDataRetrieved(successListener, new ArrayList<>(playlistSet));
+                                                    checkAllDataRetrieved(albumLatch, successListener, playlistSet);
                                                 }
 
                                                 @Override
                                                 public void onCancelled(DatabaseError databaseError) {
                                                     failureListener.onFailure(databaseError.toException());
+                                                    playlistLatch.countDown(); // Decrement the latch count if onCancelled is triggered
                                                 }
                                             });
                                         }
@@ -371,6 +389,7 @@ public class ArtistService {
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
                                         failureListener.onFailure(databaseError.toException());
+                                        trackLatch.countDown(); // Decrement the latch count if onCancelled is triggered
                                     }
                                 });
                             }
@@ -379,6 +398,7 @@ public class ArtistService {
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                             failureListener.onFailure(databaseError.toException());
+                            albumLatch.countDown(); // Decrement the latch count if onCancelled is triggered
                         }
                     });
                 }
@@ -390,6 +410,17 @@ public class ArtistService {
             }
         });
     }
+
+    private void checkAllDataRetrieved(CountDownLatch latch, OnSuccessListener<List<PlaylistsModel>> successListener, Set<PlaylistsModel> playlistSet) {
+        try {
+            latch.await(); // Wait for all asynchronous tasks to complete
+            successListener.onSuccess(new ArrayList<>(playlistSet)); // Once all tasks complete, call successListener
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
 
     private void checkAllDataRetrieved(OnSuccessListener<List<PlaylistsModel>> successListener, List<PlaylistsModel> playlistList) {
