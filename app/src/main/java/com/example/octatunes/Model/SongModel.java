@@ -2,7 +2,9 @@ package com.example.octatunes.Model;
 
 import com.google.gson.Gson;
 
-public class SongModel {
+import java.io.Serializable;
+
+public class SongModel implements Serializable {
 
     public String getImage() {
         return Image;

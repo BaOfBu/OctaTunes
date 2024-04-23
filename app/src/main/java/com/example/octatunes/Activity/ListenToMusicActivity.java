@@ -1,47 +1,45 @@
 package com.example.octatunes.Activity;
 
+import static android.content.Context.BIND_AUTO_CREATE;
+
 import android.annotation.SuppressLint;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.bumptech.glide.Glide;
+import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
-import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
-import com.example.octatunes.Services.AlbumService;
-import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.MusicService;
-import com.example.octatunes.Services.SongService;
-import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-public class ListenToMusicActivity extends AppCompatActivity implements View.OnClickListener {
-    int trackID;
-    int playlistID;
-    int albumID;
+public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
     String from;
     String belong;
+    SongModel currentSong;
     TextView track_from;
     TextView track_belong;
     private ImageView imageView;
@@ -50,57 +48,59 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
     private ImageButton previous;
     private ImageButton play;
     private ImageButton next;
-    private List<SongModel> songList = new ArrayList<>();
     private static final int UPDATE = 0;
     private MusicService.MusicBinder binder;
     private Thread myThread;
     private int pos = -1;
-    TrackService trackService;
-    AlbumService albumService;
-    ArtistService artistService;
-    SongService songService;
     public SeekBar seekBar;
     private TextView playTime;
     private TextView duration;
     private ImageButton show_options;
-    private static boolean isServiceBound = false;
-    public static boolean isServiceBound(){
-        return isServiceBound;
-    }
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.layout_track_view);
+    private ImageButton track_minimize;
+    private View rootView;
+    private FragmentListener listener;
 
-        Intent i = getIntent();
-        if (i != null) {
-            Bundle extras = i.getExtras();
-            if (extras != null) {
-                trackID = extras.getInt("trackID");
-                playlistID = extras.getInt("playlistID");
-                albumID = extras.getInt("albumID");
-                from = extras.getString("from");
-                belong = extras.getString("belong");
-            }
+    public ListenToMusicActivity(String from, String belong, SongModel song){
+        this.from = from;
+        this.belong = belong;
+        this.currentSong = song;
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        rootView = inflater.inflate(R.layout.layout_track_view, container, false);
+
+        if (getArguments() != null) {
+            from = getArguments().getString("from");
+            belong = getArguments().getString("belong");
+            currentSong = (SongModel) getArguments().getSerializable("current_song");
         }
 
-        track_from = findViewById(R.id.track_from);
-        track_belong = findViewById(R.id.track_belong);
-        imageView = findViewById(R.id.imageViewAlbumArt);
-        songName = findViewById(R.id.textViewTrackTitle);
-        singer = findViewById(R.id.textViewArtistName);
-        previous= findViewById(R.id.imageButtonPrevious);
-        play = findViewById(R.id.imageButtonPlayPause);
-        next=(ImageButton) findViewById(R.id.imageButtonNext);
-        seekBar = findViewById(R.id.seekBar);
-        playTime= findViewById(R.id.elapsedTime);
-        duration = findViewById(R.id.remainingTime);
-        show_options = findViewById(R.id.show_options);
+        track_from = rootView.findViewById(R.id.track_from);
+        track_belong = rootView.findViewById(R.id.track_belong);
+        imageView = rootView.findViewById(R.id.imageViewAlbumArt);
+        songName = rootView.findViewById(R.id.textViewTrackTitle);
+        singer = rootView.findViewById(R.id.textViewArtistName);
+        previous = rootView.findViewById(R.id.imageButtonPrevious);
+        play = rootView.findViewById(R.id.imageButtonPlayPause);
+        next = rootView.findViewById(R.id.imageButtonNext);
+        seekBar = rootView.findViewById(R.id.seekBar);
+        playTime = rootView.findViewById(R.id.elapsedTime);
+        duration = rootView.findViewById(R.id.remainingTime);
+        show_options = rootView.findViewById(R.id.show_options);
+        track_minimize = rootView.findViewById(R.id.track_minimize);
 
-        trackService = new TrackService();
-        songService = new SongService();
-        artistService = new ArtistService();
-        albumService = new AlbumService();
+        track_from.setText(from);
+        track_belong.setText(belong);
+
+        initMediaPlayer();
+
+        track_minimize.setOnClickListener(this);
+        show_options.setOnClickListener(this);
+        previous.setOnClickListener(this);
+        play.setOnClickListener(this);
+        next.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -120,15 +120,32 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
             }
         });
 
-        track_from.setText(from);
-        track_belong.setText(belong);
+        myThread=new Thread(new MyThread());
+        myThread.start();
 
-        previous.setOnClickListener(this);
-        play.setOnClickListener(this);
-        next.setOnClickListener(this);
-        show_options.setOnClickListener(this);
+        Intent intent = new Intent(getActivity(), MusicService.class);
+        getActivity().bindService(intent, connection, BIND_AUTO_CREATE);
 
-        loadData();
+        if(MusicService.mediaPlayer.isPlaying()){
+            play.setImageResource(R.drawable.ic_circle_pause_white_70);
+        }else {
+            play.setImageResource(R.drawable.ic_circle_play_white_70);
+        }
+        return rootView;
+    }
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong);
+        }
     }
     private class MyThread implements Runnable{
         @Override
@@ -148,7 +165,6 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
             }
         }
     }
-
     @SuppressLint("HandlerLeak")
     private Handler handler=new Handler(){
         @Override
@@ -160,6 +176,11 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
                         pos=msg.arg1;
                         initMediaPlayer();
                     }
+                    if(MusicService.mediaPlayer.isPlaying()){
+                        play.setImageResource(R.drawable.ic_circle_pause_white_70);
+                    }else{
+                        play.setImageResource(R.drawable.ic_circle_play_white_70);
+                    }
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
                     break;
@@ -168,19 +189,17 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         }
     };
 
-    private ServiceConnection connection=new ServiceConnection() {
+    public ServiceConnection connection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
-            binder=(MusicService.MusicBinder) service;
-            isServiceBound = true;
+            binder = (MusicService.MusicBinder) service;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            isServiceBound = false;
+
         }
     };
-
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -194,99 +213,55 @@ public class ListenToMusicActivity extends AppCompatActivity implements View.OnC
         }else if(id == R.id.imageButtonPrevious){
             binder.previousMusic();
             play.setImageResource(R.drawable.ic_circle_pause_white_70);
+            pos = MusicService.getPos();
+            currentSong = MusicService.getSongList().get(MusicService.getPos());
+            initMediaPlayer();
         }else if(id == R.id.imageButtonNext){
             binder.nextMusic();
             play.setImageResource(R.drawable.ic_circle_pause_white_70);
+            pos = MusicService.getPos();
+            currentSong = MusicService.getSongList().get(MusicService.getPos());
+            initMediaPlayer();
         }else if (id == R.id.show_options){
-            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(ListenToMusicActivity.this);
-            View bottomSheetView = LayoutInflater.from(getApplicationContext()).inflate(
-                    R.layout.bottom_sheet_track_view,
-                    (LinearLayout)findViewById(R.id.bottomSheetContainer)
-            );
-            bottomSheetDialog.setContentView(bottomSheetView);
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+            bottomSheetDialog.setContentView(R.layout.bottom_sheet_track_view);
             bottomSheetDialog.show();
 
             ImageView item_image = bottomSheetDialog.findViewById(R.id.item_image);
-            Glide.with(bottomSheetView).load(songList.get(pos).getImage()).into(item_image);
+            Glide.with(bottomSheetDialog.getContext()).load(currentSong.getImage()).into(item_image);
 
-            TextView item_title = bottomSheetView.findViewById(R.id.item_title);
+            TextView item_title = bottomSheetDialog.findViewById(R.id.item_title);
             item_title.setText(songName.getText());
 
-            TextView item_artist = bottomSheetView.findViewById(R.id.item_artist);
+            TextView item_artist = bottomSheetDialog.findViewById(R.id.item_artist);
             item_artist.setText(singer.getText());
 
-            TextView item_belong = bottomSheetView.findViewById(R.id.item_belong);
-            item_belong.setText(track_belong.getText());
-
+            TextView item_belong = bottomSheetDialog.findViewById(R.id.item_belong);
+            item_belong.setText(belong);
+        }else if (id == R.id.track_minimize) {
+            MusicService.setPos(MusicService.getPos());
+            replaceLastFragment();
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.binding.frameLayout.setVisibility(View.VISIBLE);
+            mainActivity.binding.bottomNavigation.setVisibility(View.VISIBLE);
         }
     }
-    private void loadData(){
-        trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
-            int totalTracks = tracksModels.size();
-            AtomicInteger processedTracks = new AtomicInteger(0);
-            for (int i = 0; i < tracksModels.size(); i++) {
-                TracksModel track = tracksModels.get(i);
-                Log.i("TRACK SERVICE", track.toString());
-
-                if(track.getTrackID() == trackID) pos = i;
-
-                SongModel songModel = new SongModel();
-                songModel.setTitle(track.getName());
-                songModel.setFile(track.getFile());
-                songModel.setDuration(track.getDuration());
-
-                // Fetch album asynchronously and set properties of songModel
-                albumService.findAlbumById(track.getAlubumID()).thenAccept(albumsModel -> {
-                    songModel.setAlbum(albumsModel.getName());
-                    songModel.setImage(albumsModel.getImage());
-
-                    Log.i("ALBUM SERVICE", "Fetch album asynchronously and set properties of songModel");
-                    // Fetch artist asynchronously and set properties of songModel
-                    artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
-                        songModel.setArtist(artistsModel.getName());
-                        songModel.setGenre(artistsModel.getGenre());
-
-                        // Add songModel to MainActivity.songList after all data is loaded
-                        MainActivity.songList.add(songModel);
-                        int processed = processedTracks.incrementAndGet();
-                        if (processed == totalTracks) {
-                            // All tracks have been processed
-                            Log.i("MAIN", MainActivity.songList.toString());
-
-                            myThread=new Thread(new MyThread());
-                            myThread.start();
-
-                            songList = MainActivity.getSongList();
-
-                            Intent intent=new Intent(ListenToMusicActivity.this, MusicService.class);
-                            bindService(intent,connection,BIND_AUTO_CREATE);
-
-                            MusicService.setPos(pos);
-
-                            initMediaPlayer();
-                        }
-                    });
-                });
-            }
-        });
+    private void replaceLastFragment(){
+        FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container, MainActivity.lastFrag);
+        fragmentTransaction.commit();
     }
 
     private void initMediaPlayer(){
-        Glide.with(ListenToMusicActivity.this).load(songList.get(pos).getImage()).into(imageView);
-        songName.setText(songList.get(pos).getTitle());
-        singer.setText(songList.get(pos).getArtist());
-        int totalTime = songList.get(pos).getDuration() * 1000; //miliseconds
+        Glide.with(rootView).load(currentSong.getImage()).into(imageView);
+        songName.setText(currentSong.getTitle());
+        singer.setText(currentSong.getArtist());
+        int totalTime = currentSong.getDuration() * 1000; //miliseconds
 
         String time = MusicUtils.formatTime(totalTime);
         duration.setText(time);
 
         seekBar.setMax(totalTime);
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbindService(connection);
-        myThread.interrupt();
     }
 }

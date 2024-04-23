@@ -12,24 +12,21 @@ import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 import androidx.annotation.RequiresApi;
 
-import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 public class MusicService extends Service {
     private static final String TAG = "MusicService";
     public  static MediaPlayer mediaPlayer;
     private MusicBinder musicBinder = new MusicBinder();
-    private List<SongModel> songList = new ArrayList<>();
+    private static List<SongModel> songList = new ArrayList<>();
     private static int pos;
     public static int getPos() {
         return pos;
@@ -38,6 +35,10 @@ public class MusicService extends Service {
     public static void setPos(int currentPos) {
         pos = currentPos;
     }
+    public static List<SongModel> getSongList(){
+        return songList;
+    }
+    private BroadcastReceiver musicReceiver;
 
     public class MusicBinder extends Binder {
 
@@ -102,11 +103,11 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer=new MediaPlayer();
+        mediaPlayer = new MediaPlayer();
 
         this.songList= MainActivity.getSongList();
 
-        if(!ListenToMusicActivity.isServiceBound()){
+        if(!MainActivity.isServiceBound()){
             musicBinder.setMediaPlayer(pos);
         }
     }
@@ -114,7 +115,32 @@ public class MusicService extends Service {
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
+        Intent clickIntent=new Intent(this,MainActivity.class);
+        PendingIntent pi=PendingIntent.getActivity(this,0,clickIntent, PendingIntent.FLAG_IMMUTABLE);
 
+        musicReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                Log.i(TAG, "Received broadcast with action: " + action);
+                if(action.equals("previousMusic")){
+                    musicBinder.previousMusic();
+                }else if(action.equals("playMusic")){
+                    musicBinder.playMusic();
+                }else if(action.equals("nextMusic")){
+                    musicBinder.nextMusic();
+                }else if (action.equals("quit")) {
+                    stopForeground(true);
+                    stopSelf();
+                }
+            }
+        };
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("previousMusic");
+        intentFilter.addAction("playMusic");
+        intentFilter.addAction("nextMusic");
+        intentFilter.addAction("quit");
+        registerReceiver(musicReceiver,intentFilter, Context.RECEIVER_NOT_EXPORTED);
         return super.onStartCommand(intent, flags, startId);
     }
     @Override
