@@ -133,6 +133,8 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         });
 
         TrackService trackService = new TrackService();
+        final TracksModel[] tracksModel = {new TracksModel()};
+        final String[] trackImg = new String[1];
         Runnable updateTrackRunnable = new Runnable() {
             @Override
             public void run() {
@@ -144,7 +146,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                         if (trackSize > 0) {
                             int randomIndex = new Random().nextInt(trackSize);
                             randomTrack = tracks.get(randomIndex);
-                            // Set random track name
+                            tracksModel[0] = randomTrack;
                             holder.music_name.setText(randomTrack.getName());
                             holder.song_count.setText(String.valueOf(trackSize) + " Songs");
                         }
@@ -153,6 +155,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                             @Override
                             public void onImageLoaded(String imageUrl) {
                                 if (imageUrl != null) {
+                                    trackImg[0] = imageUrl;
                                     Picasso.get().load(imageUrl).into(holder.playlistImage);
                                 }
                             }
@@ -167,28 +170,6 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
 
         // Initial execution
         handler.post(updateTrackRunnable);
-
-        /* More Info button */
-        holder.tbin_homepage_playlist_detail_menu_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-                bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_playlist_spotify);
-                ImageView bottomSheetImage = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
-                TextView bottomSheetTitle = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_title);
-                if (!Objects.equals(playlist.getImage(), "")){
-                    Picasso.get().load(playlist.getImage()).into(bottomSheetImage);
-                }
-                bottomSheetTitle.setText(playlist.getName());
-                View listenAdFreeView = bottomSheetDialog.findViewById(R.id.action_listen_ad_free);
-                listenAdFreeView.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                    }
-                });
-                bottomSheetDialog.show();
-            }
-        });
 
         /* Play button */
         holder.play_button_home_playlist_preview.setTag(R.drawable.ic_play_circle);
@@ -217,13 +198,35 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                     holder.play_button_home_playlist_preview.setTag(playDrawableId);
                 }
 
-                NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
+                NowPlayingBarFragment nowPlayingBarFragment = NowPlayingBarFragment.newInstance("param1", "param2", tracksModel[0],trackImg[0]);
                 FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
                 FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
                 FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
                 frameLayout.setVisibility(View.VISIBLE);
                 fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
                 fragmentTransaction.commit();
+            }
+        });
+
+        /* More Info button */
+        holder.tbin_homepage_playlist_detail_menu_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_playlist_spotify);
+                ImageView bottomSheetImage = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
+                TextView bottomSheetTitle = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_title);
+                if (!Objects.equals(playlist.getImage(), "")){
+                    Picasso.get().load(playlist.getImage()).into(bottomSheetImage);
+                }
+                bottomSheetTitle.setText(playlist.getName());
+                View listenAdFreeView = bottomSheetDialog.findViewById(R.id.action_listen_ad_free);
+                listenAdFreeView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                    }
+                });
+                bottomSheetDialog.show();
             }
         });
         /* Add button */
