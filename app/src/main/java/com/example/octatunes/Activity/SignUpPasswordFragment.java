@@ -37,7 +37,11 @@ public class SignUpPasswordFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater , ViewGroup container, Bundle savedInstanceState ){
         layout = (LinearLayout) inflater.inflate(R.layout.layout_signup_password,null);
+
         edtPass = layout.findViewById(R.id.edtPass);
+        String argsPass = args.getString("password");
+        edtPass.setText(argsPass);
+
         btnNext = layout.findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener() {
             @Override

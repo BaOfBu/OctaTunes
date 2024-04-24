@@ -41,7 +41,10 @@ public class SignUpEmailFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater , ViewGroup container, Bundle savedInstanceState ){
         layout = (LinearLayout) inflater.inflate(R.layout.layout_signup_email,null);
+
+        String argsEmail = args.getString("email");
         edtEmail = layout.findViewById(R.id.edtEmail);
+        edtEmail.setText(argsEmail);
 
         btnNext = layout.findViewById(R.id.btnNext);
         btnNext.setOnClickListener(new View.OnClickListener() {
@@ -53,7 +56,7 @@ public class SignUpEmailFragment extends Fragment {
                             Toast.LENGTH_LONG).show();
                     return;
                 }
-                if(!validateEmail(email)){
+                if(!main.validateEmail(email)){
                     Toast.makeText(context.getApplicationContext(), "Invalid Email",
                             Toast.LENGTH_LONG).show();
                     return;
@@ -73,13 +76,5 @@ public class SignUpEmailFragment extends Fragment {
             }
         });
         return layout;
-    }
-    public boolean validateEmail(String email){
-        String EMAIL_PATTERN =
-                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-                        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
     }
 }
