@@ -2,6 +2,7 @@ package com.example.octatunes.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,8 +10,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistDetailFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -61,6 +64,22 @@ public class ListArtistAdapter extends RecyclerView.Adapter<ListArtistAdapter.Vi
         if (!Objects.equals(item.getImage(), "")){
             Picasso.get().load(item.getImage()).into(holder.imageView);
         }
+
+        // Set click listener for each item
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArtistDetailFragment fragment = new ArtistDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("artist", item);
+                fragment.setArguments(bundle);
+
+                ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
+            }
+        });
     }
 
     @Override

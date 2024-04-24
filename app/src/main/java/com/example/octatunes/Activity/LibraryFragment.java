@@ -201,8 +201,6 @@ public class LibraryFragment extends Fragment {
         setupToggleButton(tabArtistsLibrary);
     }
 
-    private boolean anyToggleButtonChecked = false;
-
     private void setupToggleButton(ToggleButton toggleButton) {
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
