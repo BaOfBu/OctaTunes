@@ -34,6 +34,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
+import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 
 import java.io.IOException;
@@ -65,6 +66,7 @@ public class MusicService extends Service {
     private NotificationManager notificationManager;
     private BroadcastReceiver musicReceiver;
     final private int notificationId = 88;
+    private SongService songService;
     public class MusicBinder extends Binder {
         public void setSinglePlay(){
             singlePlay = true;
@@ -92,11 +94,14 @@ public class MusicService extends Service {
         public boolean isSequencePlay(){
             return sequencePlay;
         }
-
         public void setMediaPlayer(int position){
             if (songList != null && !songList.isEmpty() && position >= 0 && position < songList.size()) {
                 try {
                     pos = position;
+
+                    SongModel songCurrent = songList.get(pos);
+                    songService.addSong(songCurrent);
+
                     mediaPlayer.reset();
                     mediaPlayer.setDataSource(songList.get(pos).getFile());
                     mediaPlayer.prepareAsync();
@@ -207,6 +212,7 @@ public class MusicService extends Service {
             Log.e(TAG, "Song list is null");
         } else {
             if (!MainActivity.isServiceBound()) {
+                songService = new SongService();
                 musicBinder.setMediaPlayer(pos);
                 Log.i(TAG, "ONCREATE");
             }
