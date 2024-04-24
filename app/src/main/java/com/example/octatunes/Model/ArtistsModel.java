@@ -2,7 +2,9 @@ package com.example.octatunes.Model;
 
 import com.google.gson.Gson;
 
-public class ArtistsModel {
+import java.io.Serializable;
+
+public class ArtistsModel implements Serializable {
     private int ArtistID;
     private String Name;
     private String Genre;
