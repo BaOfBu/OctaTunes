@@ -10,19 +10,27 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
@@ -193,16 +201,14 @@ public class MusicService extends Service {
         super.onCreate();
         mediaPlayer = new MediaPlayer();
 
-        this.songList= MainActivity.getSongList();
+        songList = MainActivity.getSongList();
 
         if (songList == null) {
-            // Xử lý khi songList là null
             Log.e(TAG, "Song list is null");
-            // Có thể thoát khỏi service hoặc thực hiện các hành động phù hợp
         } else {
-            // Tiếp tục thực hiện các hành động khác
             if (!MainActivity.isServiceBound()) {
                 musicBinder.setMediaPlayer(pos);
+                Log.i(TAG, "ONCREATE");
             }
         }
     }
@@ -312,8 +318,23 @@ public class MusicService extends Service {
                 if(songList != null && !songList.isEmpty() && pos >= 0 && pos < songList.size()){
                     views.setTextViewText(R.id.textView_trackTitle,songList.get(pos).getTitle());
                     views.setTextViewText(R.id.textView_artistName,songList.get(pos).getArtist());
+
+                    Glide.with(this)
+                            .asBitmap()
+                            .load(songList.get(pos).getImage())
+                            .into(new CustomTarget<Bitmap>() {
+                                @Override
+                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                                    // Đặt Bitmap vào ImageView trong RemoteViews
+                                    views.setImageViewBitmap(R.id.imageAlbum, resource);
+                                }
+
+                                @Override
+                                public void onLoadCleared(@Nullable Drawable placeholder) {
+                                    // Handle case where Glide clears the Bitmap
+                                }
+                            });
                 }
-//            views.setImageViewBitmap(R.id.image,songList.get(pos).getImage());
             }
             notificationManager.notify(notificationId, notification);
         }else {
@@ -331,6 +352,9 @@ public class MusicService extends Service {
         stopForeground(true);
         if(notificationManager!=null){
             notificationManager.cancel(notificationId);
+        }
+        if(musicReceiver!=null) {
+            unregisterReceiver(musicReceiver);
         }
     }
 }

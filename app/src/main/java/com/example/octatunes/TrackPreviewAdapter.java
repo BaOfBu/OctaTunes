@@ -1,6 +1,7 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,7 +25,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     private String mode = "sequencePlay";
     private FragmentListener fragmentListener;
 
-    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener) {
+    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener, String belong) {
         this.trackPreviewModels = trackPreviewModels;
         this.context = context;
         this.fragmentListener = fragmentListener;
@@ -60,10 +61,15 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
         loadArtistName(tracksModel.getAlubumID(), holder.trackArtist);
         loadImageForTrack(tracksModel, holder.trackImage);
         holder.trackName.setText(tracksModel.getName());
-
+        if(fragmentListener == null) {
+            fragmentListener = (FragmentListener) context;
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getTrackID()));
+                Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
                 sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
             }
         });

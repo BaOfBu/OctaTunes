@@ -79,6 +79,11 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -225,23 +230,21 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listSearchResultRecyclerView.setAdapter(null);
         List<TracksModel> tempTracks = new ArrayList<>();
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
-            @Override
-            public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
-                if(tracks.size() == 0){
-                    emptyTextView.setVisibility(View.VISIBLE);
-                    listSearchResultRecyclerView.setVisibility(View.GONE);
-                    return;
-                }else{
-                    emptyTextView.setVisibility(View.GONE);
-                    listSearchResultRecyclerView.setVisibility(View.VISIBLE);
-                }
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(),listener);
-                listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-                trackPreviewAdapter.notifyDataSetChanged();
-            }
-        });
-
+                    @Override
+                    public void onTracksLoaded(List<TracksModel> tracks) {
+                        Log.e("SearchActivity", "Tracks: " + tracks.size());
+                        if (tracks.size() == 0) {
+                            emptyTextView.setVisibility(View.VISIBLE);
+                            listSearchResultRecyclerView.setVisibility(View.GONE);
+                        } else {
+                            emptyTextView.setVisibility(View.GONE);
+                            listSearchResultRecyclerView.setVisibility(View.VISIBLE);
+                            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(), listener, null);
+                            listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+                            trackPreviewAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
     private void getListUserProfile(String searchQuery) {
 //        ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
