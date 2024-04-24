@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
 
     <application
         android:allowBackup="true"
@@ -19,7 +21,8 @@
         <service
             android:name=".Services.MusicService"
             android:enabled="true"
-            />
+            android:foregroundServiceType="mediaPlayback"
+            tools:ignore="ForegroundServicePermission" />
 
         <activity
             android:name=".Activity.ListenToMusicActivity"
@@ -56,6 +59,8 @@
         </activity>
     </application>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ManifestOrder" />
     <uses-permission android:name="android.permission.WAKE_LOCK"
         tools:ignore="ManifestOrder" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"

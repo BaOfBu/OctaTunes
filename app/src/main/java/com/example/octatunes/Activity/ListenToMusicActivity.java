@@ -112,7 +112,13 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         track_from.setText(from);
         track_belong.setText(belong);
-
+        if(binder != null && binder.isRandomPlay()){
+            shuffle.setImageResource(R.drawable.ic_shuffle_clicked_green_24);
+            shuffle_dot.setVisibility(View.VISIBLE);
+        }else{
+            shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
+            shuffle_dot.setVisibility(View.INVISIBLE);
+        }
         initMediaPlayer();
 
         track_minimize.setOnClickListener(this);
@@ -164,9 +170,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong) {
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong);
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
         }
     }
 

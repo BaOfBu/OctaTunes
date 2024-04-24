@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -15,6 +16,7 @@
             android:background="@drawable/album_mtp"
             >
             <RelativeLayout
+                android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@color/blur">
@@ -97,27 +99,24 @@
                     android:background="@null"
                     android:contentDescription="Previous" />
 
-                <SeekBar
-                    android:id="@+id/seekBar"
-                    style="?android:attr/progressBarStyleHorizontal"
-                    android:layout_width="200dp"
-                    android:layout_height="wrap_content"
+                <ImageView
+                    android:id="@+id/imageViewProgressBar"
+                    android:layout_width="120dp"
+                    android:layout_height="15dp"
+                    android:src="@drawable/progress_bar"
                     android:layout_centerVertical="true"
+                    app:tint="@color/white"
                     android:paddingBottom="10dp"
-                    android:layout_marginStart="15dp"
+                    android:scaleType="fitStart"
                     android:layout_toEndOf="@+id/imageButtonPrevious"
-                    android:background="@null"
-                    android:progressTint="@color/white"
-                    android:progressBackgroundTint="@color/gray"
-                    android:thumbTint="@color/gray"
-                    android:layout_gravity="center_horizontal"/>
+                    android:adjustViewBounds="true"/>
 
                 <ImageButton
                     android:id="@+id/imageButtonNext"
                     android:layout_width="40dp"
                     android:layout_height="40dp"
                     android:paddingTop="5dp"
-                    android:layout_toEndOf="@+id/seekBar"
+                    android:layout_toEndOf="@+id/imageViewProgressBar"
                     android:src="@drawable/ic_next_white_30"
                     android:background="@null"
                     android:contentDescription="Next" />

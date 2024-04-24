@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isServiceBound = false;
         }
     };
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -131,12 +130,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.frameLayout.setOnClickListener(this);
         binding.trackPlayPause.setOnClickListener(this);
 
-        Search(26, 11, 4, "PLAYING FROM ALBUM", "m-tp M-TP");
+        Search(26, 11, 4, "PLAYING FROM SEARCH", "\"Như+ngày+hôm+qua\" in Search", null);
     }
 
-    public void Search(int trackID, int playlistID, int albumID, String from, String belong){
+    public void Search(int trackID, int playlistID, int albumID, String from, String belong, String mode){
         setFrom(from);
         setBelong(belong);
+
+//        if (mode != null && mode.equals("shuffle")){
+//            binder.setRandomPlay();
+//        }
 
         if(!Objects.equals(from, "PLAYING FROM ALBUM")){
             loadData(playlistID, trackID);
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                isServiceBound = false;
                            }
                        };
+                       startService(intent);
                        bindService(intent, connection, BIND_AUTO_CREATE);
                    }
 
@@ -224,6 +228,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             if(intent == null) {
                                 intent = new Intent(MainActivity.this, MusicService.class);
+                                startService(intent);
                                 bindService(intent, connection, BIND_AUTO_CREATE);
                             }else{
                                 connection = new ServiceConnection() {
@@ -242,6 +247,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             }
 
                             MusicService.setPos(pos);
+
                             initNowPlayingBar();
                         }
                     });
@@ -270,7 +276,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSignalReceived(int trackID, int playlistID, int albumID, String from, String belong) {
+    public void onSignalReceived(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         Log.i("SIGNAL RECEIVED IN MAIN", "SUCCESS");
         if (myThread != null) {
             myThread.interrupt();
@@ -280,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(trackID, playlistID, albumID, from, belong);
+        Search(trackID, playlistID, albumID, from, belong, mode);
     }
 
     private class MyThread implements Runnable{

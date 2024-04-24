@@ -1,11 +1,28 @@
 package com.example.octatunes.Services;
 
+import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ServiceInfo;
 import android.media.MediaPlayer;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
+import android.util.Log;
+import android.widget.RemoteViews;
+
+import androidx.annotation.RequiresApi;
+import androidx.core.app.NotificationCompat;
+
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.Resource;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
@@ -14,6 +31,7 @@ import com.example.octatunes.R;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class MusicService extends Service {
@@ -34,6 +52,11 @@ public class MusicService extends Service {
     private boolean singlePlay = false;
     private boolean randomPlay = false;
     private boolean sequencePlay = false;
+    private RemoteViews views;
+    private Notification notification;
+    private NotificationManager notificationManager;
+    private BroadcastReceiver musicReceiver;
+    final private int notificationId = 88;
     public class MusicBinder extends Binder {
         public void setSinglePlay(){
             singlePlay = true;
@@ -52,38 +75,51 @@ public class MusicService extends Service {
             randomPlay = false;
             sequencePlay = true;
         }
+        public boolean isSinglePlay(){
+            return singlePlay;
+        }
+        public boolean isRandomPlay(){
+            return randomPlay;
+        }
+        public boolean isSequencePlay(){
+            return sequencePlay;
+        }
 
         public void setMediaPlayer(int position){
-            try {
-                pos = position;
-                mediaPlayer.reset();
-                mediaPlayer.setDataSource(songList.get(pos).getFile());
-                mediaPlayer.prepareAsync();
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @Override
-                    public void onPrepared(MediaPlayer mp) {
-                        mediaPlayer.start();
-                    }
-                });
-                mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                    @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        if(sequencePlay) {
-                            nextMusic();
-                        }else if(singlePlay){
-                            setMediaPlayer(pos);
-                        }else if(randomPlay){
-                            Random random = new Random();
-                            int i = random.nextInt(songList.size());
-                            setMediaPlayer(i);
-                        }else {
-                            nextMusic();
+            if (songList != null && !songList.isEmpty() && position >= 0 && position < songList.size()) {
+                try {
+                    pos = position;
+                    mediaPlayer.reset();
+                    mediaPlayer.setDataSource(songList.get(pos).getFile());
+                    mediaPlayer.prepareAsync();
+                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @Override
+                        public void onPrepared(MediaPlayer mp) {
+                            mediaPlayer.start();
                         }
-                        updateTrackView();
-                    }
-                });
-            } catch (IOException e) {
-                e.printStackTrace();
+                    });
+                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            if(sequencePlay) {
+                                nextMusic();
+                            }else if(singlePlay){
+                                setMediaPlayer(pos);
+                            }else if(randomPlay){
+                                Random random = new Random();
+                                int i = random.nextInt(songList.size());
+                                setMediaPlayer(i);
+                            }else {
+                                nextMusic();
+                            }
+                            updateTrackView();
+                        }
+                    });
+
+                    updateNotification();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
 
@@ -94,6 +130,8 @@ public class MusicService extends Service {
                 } else {
                     mediaPlayer.start();
                 }
+                updateNotification();
+
             }
         }
         public void previousMusic(){
@@ -110,6 +148,8 @@ public class MusicService extends Service {
                     }
                 }
                 setMediaPlayer(pos);
+                updateNotification();
+
             }
         }
         public void nextMusic(){
@@ -134,6 +174,8 @@ public class MusicService extends Service {
                     }
                     setMediaPlayer(pos);
                 }
+                updateNotification();
+
             }
         }
 
@@ -153,14 +195,131 @@ public class MusicService extends Service {
 
         this.songList= MainActivity.getSongList();
 
-        if(!MainActivity.isServiceBound()){
-            musicBinder.setMediaPlayer(pos);
+        if (songList == null) {
+            // Xử lý khi songList là null
+            Log.e(TAG, "Song list is null");
+            // Có thể thoát khỏi service hoặc thực hiện các hành động phù hợp
+        } else {
+            // Tiếp tục thực hiện các hành động khác
+            if (!MainActivity.isServiceBound()) {
+                musicBinder.setMediaPlayer(pos);
+            }
         }
     }
+    @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
+    @SuppressLint({"RemoteViewLayout", "ForegroundServiceType"})
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
+        Intent clickIntent = new Intent(this, MainActivity.class);
+        PendingIntent pi = PendingIntent.getActivity(this,0, clickIntent, PendingIntent.FLAG_IMMUTABLE);
 
+        views = new RemoteViews(this.getPackageName(), R.layout.layout_notification);
+        Intent intentPrevious = new Intent("previousMusic");
+        PendingIntent previousPi = PendingIntent.getBroadcast(this,1, intentPrevious, PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.imageButtonPrevious,previousPi);
+
+        Intent intentPlay = new Intent("playMusic");
+        PendingIntent playPi = PendingIntent.getBroadcast(this,2, intentPlay, PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.imageButtonPlayPause,playPi);
+
+        Intent intentNext = new Intent("nextMusic");
+        PendingIntent nextPi = PendingIntent.getBroadcast(this,3, intentNext, PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.imageButtonNext,nextPi);
+
+        Intent intentShuffle = new Intent("shuffleMusic");
+        PendingIntent shufflePi = PendingIntent.getBroadcast(this,4, intentShuffle, PendingIntent.FLAG_IMMUTABLE);
+        views.setOnClickPendingIntent(R.id.imageButtonShuffle, shufflePi);
+
+        notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+            String CHANNEL_ID = "MusicPlayer";
+            String CHANNEL_NAME = "OctaTunes";
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,CHANNEL_NAME,NotificationManager.IMPORTANCE_LOW);
+            notificationManager.createNotificationChannel(channel);
+
+            notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setSmallIcon(R.drawable.ic_spotify_white)
+                    .setCustomBigContentView(views)
+                    .setCustomContentView(views)
+                    .setContentIntent(pi)
+                    .setWhen(System.currentTimeMillis())
+                    .setAutoCancel(true)
+                    .build();
+
+            Log.i("MUSIC SERVICE", "SUCCESS CREATE NOTIFICATION");
+            updateNotification();
+            views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
+        }
+
+        musicReceiver=new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                Log.i(TAG, "Received: " + intent.getAction());
+                switch (Objects.requireNonNull(intent.getAction())){
+                    case "previousMusic":
+                        views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        musicBinder.previousMusic();
+                        break;
+                    case "playMusic":
+                        if(mediaPlayer.isPlaying()){
+                            views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_play_white_70);
+                        }else {
+                            views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        }
+                        musicBinder.playMusic();
+                        break;
+                    case "nextMusic":
+                        views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        musicBinder.nextMusic();
+                        break;
+                    case "shuffleMusic":
+
+                        if(!musicBinder.isRandomPlay()){
+                            musicBinder.setRandomPlay();
+                        }else {
+                            musicBinder.setSequencePlay();
+                        }
+                        if(musicBinder.isRandomPlay()){
+                            views.setImageViewResource(R.id.imageButtonShuffle, R.drawable.ic_shuffle_white_24);
+                        }else{
+                            views.setImageViewResource(R.id.imageButtonShuffle, R.drawable.ic_shuffle_clicked_green_24);
+                        }
+
+                        break;
+                    default:
+                }
+            }
+        };
+        IntentFilter intentFilter=new IntentFilter();
+        intentFilter.addAction("previousMusic");
+        intentFilter.addAction("playMusic");
+        intentFilter.addAction("nextMusic");
+        intentFilter.addAction("shuffleMusic");
+        registerReceiver(musicReceiver,intentFilter, Context.RECEIVER_EXPORTED);
         return super.onStartCommand(intent, flags, startId);
+    }
+    private void updateNotification(){
+        if (notificationManager == null) {
+            notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        }
+
+        if(notification != null){
+            if(views!=null){
+                if(songList != null && !songList.isEmpty() && pos >= 0 && pos < songList.size()){
+                    views.setTextViewText(R.id.textView_trackTitle,songList.get(pos).getTitle());
+                    views.setTextViewText(R.id.textView_artistName,songList.get(pos).getArtist());
+                }
+//            views.setImageViewBitmap(R.id.image,songList.get(pos).getImage());
+            }
+            notificationManager.notify(notificationId, notification);
+        }else {
+            // Handle the case where notification is null
+            Log.e(TAG, "Notification is null");
+        }
     }
     @Override
     public void onDestroy() {
@@ -168,6 +327,10 @@ public class MusicService extends Service {
         if (mediaPlayer != null) {
             mediaPlayer.stop();
             mediaPlayer.release();
+        }
+        stopForeground(true);
+        if(notificationManager!=null){
+            notificationManager.cancel(notificationId);
         }
     }
 }
