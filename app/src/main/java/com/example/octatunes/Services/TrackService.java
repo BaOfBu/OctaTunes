@@ -25,6 +25,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.text.Normalizer;
+import java.util.regex.Pattern;
 
 public class TrackService {
     private DatabaseReference playlistTracksRef;
@@ -184,14 +186,22 @@ public class TrackService {
             }
         });
     }
-    public void findTrackByName(final String trackName, final OnTracksLoadedListener listener) {
+    public void findTrackByName(String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");
+        String regex = "\\p{InCombiningDiacriticalMarks}+";
+        trackName = Normalizer.normalize(trackName, Normalizer.Form.NFD);
+        trackName.replaceAll(regex, "");
+        String finalTrackName = trackName;
+        Log.e("TrackService", "TrackName normalizer: " + finalTrackName);
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(Objects.requireNonNull(snapshot.child("name").getValue(String.class)).toLowerCase().contains(trackName.toLowerCase())){
+                    String input = Objects.requireNonNull(snapshot.child("name").getValue(String.class));
+                    String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
+                    temp.replaceAll(regex, "");
+                    if(temp.toLowerCase().contains(finalTrackName.toLowerCase())){
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                     }
                 }

@@ -68,9 +68,21 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     public static void setSelectedButton(ToggleButton button){
         selectedButton = button;
     }
+
+    private FragmentListener listener;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.lastFrag = this;
         View rootView = inflater.inflate(R.layout.layout_result_search, container, false);
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
@@ -224,7 +236,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                     emptyTextView.setVisibility(View.GONE);
                     listSearchResultRecyclerView.setVisibility(View.VISIBLE);
                 }
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext());
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(),listener);
                 listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }

@@ -94,7 +94,7 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
         else {
             holder.trackRecyclerView.setVisibility(View.VISIBLE);
             // Create a temporary list to pass to the adapter (to avoid modifying the original list
-            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context);
+            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context, null);
             holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
             trackPreviewAdapter.notifyDataSetChanged();
         }

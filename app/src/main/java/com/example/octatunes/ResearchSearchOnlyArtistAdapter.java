@@ -13,7 +13,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.octatunes.Activity.ArtistSpotifyActivity;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.ArtistsModel;
 import com.google.gson.Gson;

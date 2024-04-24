@@ -1,4 +1,6 @@
 package com.example.octatunes.Services;
+import java.text.Normalizer;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import android.util.Log;
@@ -175,13 +177,21 @@ public class ArtistService {
         return future;
     }
     public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
+        String regex = "\\p{InCombiningDiacriticalMarks}+";
+        query = Normalizer.normalize(query, Normalizer.Form.NFD);
+        query.replaceAll(regex, "");
+        String finalArtistName = query;
+        Log.d(TAG, "Searching for artist: " + finalArtistName);
         getAllArtists(
                 new OnSuccessListener<List<ArtistsModel>>() {
                     @Override
                     public void onSuccess(List<ArtistsModel> allArtists) {
                         List<ArtistsModel> foundArtists = new ArrayList<>();
                         for (ArtistsModel artist : allArtists) {
-                            if (artist.getName().toLowerCase().contains(query.toLowerCase())) {
+                            String input = artist.getName();
+                            String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
+                            temp = temp.replaceAll(regex, "");
+                            if (temp.toLowerCase().contains(finalArtistName.toLowerCase())) {
                                 foundArtists.add(artist);
                             }
                         }
