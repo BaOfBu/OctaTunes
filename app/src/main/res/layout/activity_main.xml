@@ -11,13 +11,115 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <FrameLayout
+    <RelativeLayout
         android:id="@+id/frame_layout"
-        android:layout_width="match_parent"
-        android:layout_gravity="top"
-        android:layout_height="70dp"
-        android:visibility="gone">
-    </FrameLayout>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigationView"
+        >
+        <androidx.cardview.widget.CardView
+            android:id="@+id/card_view"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            app:cardCornerRadius="8dp"
+            app:cardBackgroundColor="@color/red">
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <LinearLayout
+                    android:id="@+id/info_track"
+                    android:layout_width="match_parent"
+                    android:layout_height="67dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp"
+                    android:layout_gravity="center_vertical">
+
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/track_image_cardview"
+                        android:layout_width="47dp"
+                        android:layout_height="47dp"
+                        app:cardCornerRadius="6dp"
+                        android:layout_gravity="center_vertical">
+                        <ImageView
+                            android:id="@+id/track_image"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:src="@drawable/icon_spotify"
+                            />
+                    </androidx.cardview.widget.CardView>
+
+                    <RelativeLayout
+                        android:layout_width="230dp"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_gravity="center_vertical">
+                        <TextView
+                            android:id="@+id/track_name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Chắc Ai Đó Sẽ Về"
+                            android:textSize="16sp"
+                            android:textColor="@android:color/white"
+                            android:fontFamily="@font/main_font"
+                            android:textStyle="bold"
+                            android:layout_marginStart="8dp" />
+
+                        <TextView
+                            android:id="@+id/track_artist"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@+id/track_name"
+                            android:paddingTop="3dp"
+                            android:text="Sơn Tùng M-TP"
+                            android:textSize="14sp"
+                            android:textColor="@color/track_artist"
+                            android:fontFamily="@font/main_font"
+                            android:layout_marginStart="8dp" />
+                    </RelativeLayout>
+
+                    <ImageButton
+                        android:id="@+id/connect_device"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/ic_connect_device_24"
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center_vertical"/>
+
+                    <ImageButton
+                        android:id="@+id/add_track_into_playlist"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="20dp"
+                        android:src="@drawable/ic_add_circle_outline"
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center_vertical"/>
+
+                    <ImageButton
+                        android:id="@+id/track_play_pause"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:src="@drawable/ic_pause_white_24"
+                        android:background="@android:color/transparent"
+                        android:layout_gravity="center_vertical"/>
+                </LinearLayout>
+
+                <SeekBar
+                    android:id="@+id/seekBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="3dp"
+                    android:layout_below="@+id/info_track"
+                    android:layout_marginLeft="-7dp"
+                    android:background="@null"
+                    android:progressTint="@color/white"
+                    android:progressBackgroundTint="@color/gray"
+                    android:thumb="@null"/>
+
+            </RelativeLayout>
+
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"

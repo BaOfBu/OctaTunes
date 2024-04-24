@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp"
+    android:background="@color/background_color">
+    <ImageView
+        android:id="@+id/artist_image"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/ic_artist"
+        android:background="@drawable/avatar_shape"
+        android:layout_marginBottom="10dp"
+        android:scaleType="centerCrop"
+        android:clipToOutline="true"
+        />
+    <!--  Artist Name      -->
+    <TextView
+        android:id="@+id/artist_item_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:text="RPT MCK"
+        />
+</LinearLayout>

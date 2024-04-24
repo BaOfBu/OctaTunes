@@ -1,5 +1,6 @@
 package com.example.octatunes;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -25,6 +26,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -71,7 +73,6 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         super.onCreate(savedInstanceState);
         View rootView = inflater.inflate(R.layout.layout_result_search, container, false);
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
-
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
         listSearchResultLayout = rootView.findViewById(R.id.list_search_result);
 
@@ -186,7 +187,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 
     private ArrayList<String> getListCategories(){
         ArrayList<String> listCategories = new ArrayList<>();
-        
+
         listCategories.add("Kết quả phù hợp nhất");
         listCategories.add("Bài hát");
         listCategories.add("Nghệ sĩ");
@@ -196,10 +197,10 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 
         return  listCategories;
     }
-    
+
     private void getListCategoriesButton(){
         ArrayList<String> listCategories = getListCategories();
-        
+
         ListCategoriesButtonAdapter listCategoriesButtonAdapter = new ListCategoriesButtonAdapter(listCategories, this.getContext(), this);
         listCategoriesButtonRecyclerView.setAdapter(listCategoriesButtonAdapter);
         listCategoriesButtonAdapter.notifyDataSetChanged();

@@ -1,6 +1,7 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistSpotifyActivity;
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.ArtistsModel;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -49,9 +55,19 @@ public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<Resear
 
         Picasso.get().load(artistsModel.getImage()).into(holder.userImage);
         holder.fullname.setText(artistsModel.getName());
+        ArtistsModel finalArtistsModel = artistsModel;
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+//                ArtistSpotifyActivity fragment = new ArtistSpotifyActivity();
+//                Bundle bundle = new Bundle();
+//                bundle.putString("artistModel", new Gson().toJson(finalArtistsModel));
+//                fragment.setArguments(bundle);
+//
+//                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+//                transaction.replace(R.id.fragment_container, fragment);
+//                transaction.addToBackStack(null);
+//                transaction.commit();
             }
         });
     }

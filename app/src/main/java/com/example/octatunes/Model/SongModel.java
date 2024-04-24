@@ -2,7 +2,9 @@ package com.example.octatunes.Model;
 
 import com.google.gson.Gson;
 
-public class SongModel {
+import java.io.Serializable;
+
+public class SongModel implements Serializable {
 
     public String getImage() {
         return Image;
@@ -26,8 +28,9 @@ public class SongModel {
     private String Album;
     private String Genre;
     private String Image;
-
-    public SongModel(int songID, String title, String artist, String album, String genre, String image, String file) {
+    private String File;
+    private int Duration;
+    public SongModel(int songID, String title, String artist, String album, String genre, String image, String file, int duration) {
         SongID = songID;
         Title = title;
         Artist = artist;
@@ -35,11 +38,20 @@ public class SongModel {
         Genre = genre;
         Image = image;
         File = file;
+        Duration = duration;
     }
 
-    private String File;
-
     public SongModel() {
+    }
+
+    public SongModel(String title, String artist, String album, String genre, String image, String file, int duration) {
+        Title = title;
+        Artist = artist;
+        Album = album;
+        Genre = genre;
+        Image = image;
+        File = file;
+        Duration = duration;
     }
 
     public int getSongID() {
@@ -81,6 +93,15 @@ public class SongModel {
     public void setGenre(String genre) {
         Genre = genre;
     }
+
+    public int getDuration() {
+        return Duration;
+    }
+
+    public void setDuration(int duration) {
+        Duration = duration;
+    }
+
     @Override
     public String toString() {
         return new Gson().toJson(this);
