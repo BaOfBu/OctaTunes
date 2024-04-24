@@ -130,7 +130,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.frameLayout.setOnClickListener(this);
         binding.trackPlayPause.setOnClickListener(this);
 
-        //binding.frameLayout.setVisibility(View.GONE);
+        binding.frameLayout.setVisibility(View.GONE);
         //Search(26, 11, 4, "PLAYING FROM SEARCH", "\"Như+ngày+hôm+qua\" in Search", null);
     }
 
@@ -290,6 +290,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             isServiceBound = false;
         }
         Search(trackID, playlistID, albumID, from, belong, mode);
+        if(binding.frameLayout.getVisibility() == View.GONE){
+            binding.frameLayout.setVisibility(View.VISIBLE);
+        }
     }
 
     private class MyThread implements Runnable{

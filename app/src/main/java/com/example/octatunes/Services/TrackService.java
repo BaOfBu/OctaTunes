@@ -177,7 +177,10 @@ public class TrackService {
                         return;
                     }
                 }
-                listener.onArtistNameLoaded(null); // No artist found
+                else{
+                    listener.onArtistNameLoaded(null);
+                }
+
             }
 
             @Override

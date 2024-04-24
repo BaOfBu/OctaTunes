@@ -1,5 +1,6 @@
 package com.example.octatunes.Activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.SongAdapter;
+import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.PlaylistLibrary_User;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -42,9 +45,28 @@ import java.util.List;
 public class PlaylistSpotifyActivity extends Fragment {
     private List<TracksModel> songList;
 
+    private FragmentListener listener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        MainActivity.lastFrag=this;
 
         View view = inflater.inflate(R.layout.layout_playlist_spotify, container, false);
 
@@ -99,6 +121,18 @@ public class PlaylistSpotifyActivity extends Fragment {
             trackService.getTracksByPlaylistId(playlistId, new TrackService.OnTracksLoadedListener() {
                 @Override
                 public void onTracksLoaded(List<TracksModel> tracks) {
+                    /* Play Button Playlist */
+                    String mode = "sequencePlay";
+                    int trackFirstId = tracks.get(0).getTrackID();
+                    int albumId = -1;
+                    String from =  "PLAYING FROM PLAYLIST";
+                    String belong = playlistsModel.getName();
+                    ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
+                    playButton.setOnClickListener(v -> {
+                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                    });
+
+                    /* Adapter for track */
                     allTracks.addAll(tracks);
                     if (getContext() != null) {
                         RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
@@ -189,45 +223,22 @@ public class PlaylistSpotifyActivity extends Fragment {
                 }
             });
 
-            /* Play button */
-            /*
-            ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
-            playButton.setOnClickListener(v -> {
-                // Check if there are tracks available
-                if (!allTracks.isEmpty()) {
-                    // Get the image for the first track
-                    trackService.getImageForTrack(allTracks.get(0), new TrackService.OnImageLoadedListener() {
-                        @Override
-                        public void onImageLoaded(String imageUrl) {
-                            // Create NowPlayingBarFragment instance with the first track and its image URL
-                            NowPlayingBarFragment nowPlayingBarFragment = NowPlayingBarFragment.newInstance("Param 1", "Param 2", allTracks.get(0), imageUrl);
+            //String mode = "sequencePlay";
+            //playlistId = playlistsModel.getPlaylistID();
+            //int trackFirstId = allTracks.get(0).getTrackID();
+            //int albumId;
+            //int albumId = 0;
+            //String from =  "PLAYING FROM PLAYLIST";
+            //String belong = playlistsModel.getName();
+            //ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
+            //Log.w("ferf",trackFirstId + "");
+            //int finalPlaylistId = playlistId;
+            //playButton.setOnClickListener(v -> {
+            //    sendSignalToMainActivity(trackFirstId, finalPlaylistId,albumId,from,belong,mode);
+            //});
 
-                            // Get FragmentManager
-                            FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
 
-                            // Begin transaction
-                            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-                            // Find the FrameLayout using the activity's findViewById()
-                            FrameLayout frameLayout = ((AppCompatActivity) getContext()).findViewById(R.id.frame_layout);
-                            frameLayout.setVisibility(View.VISIBLE);
-
-                            // Replace fragment_container with NowPlayingBarFragment
-                            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-
-                            // Commit transaction
-                            fragmentTransaction.commit();
-                        }
-                    });
-                } else {
-                    // Handle the case where there are no tracks available
-                    // You can show a message to the user or handle it based on your requirements
-                }
-            });
-
-            */
         }
         return view;
     }
-
 }
