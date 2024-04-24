@@ -151,6 +151,29 @@ public class ArtistService {
                 }
         );
     }
+    public CompletableFuture<ArtistsModel> findArtistById(int artistId){
+        CompletableFuture<ArtistsModel> future = new CompletableFuture<>();
+        Query query = artistsRef.orderByChild("artistID").equalTo(artistId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        ArtistsModel artistsModel = snapshot.getValue(ArtistsModel.class);
+                        future.complete(artistsModel);
+                        return;
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+                // Handle errors
+                future.completeExceptionally(error.toException());
+            }
+        });
+        return future;
+    }
     public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
         getAllArtists(
                 new OnSuccessListener<List<ArtistsModel>>() {
