@@ -62,6 +62,8 @@ public class LoginFormFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+
                 String UE = edtUE.getText().toString();
                 String pass = edtPass.getText().toString();
                 if(UE.equals("")){
