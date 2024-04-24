@@ -129,6 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         binding.frameLayout.setOnClickListener(this);
         binding.trackPlayPause.setOnClickListener(this);
+
         binding.frameLayout.setVisibility(View.GONE);
         //Search(26, 11, 4, "PLAYING FROM SEARCH", "\"Như+ngày+hôm+qua\" in Search", null);
     }
@@ -141,10 +142,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //            binder.setRandomPlay();
 //        }
 
-        if(!Objects.equals(from, "PLAYING FROM ALBUM")){
-            loadData(playlistID, trackID);
-        }else{
+        if(from.equals("PLAYING FROM ALBUM")){
             loadDataFromAlbum(albumID, trackID);
+        }else if(from.equals("PLAYING FROM SEARCH")){
+            loadDataFromAlbum(albumID, trackID);
+        }else if(from.equals("PLAYING FROM PLAYLIST")){
+            loadData(playlistID, trackID);
         }
     }
 

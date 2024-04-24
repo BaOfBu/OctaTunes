@@ -1,6 +1,7 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +9,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.PlaylistsModel;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -20,6 +25,7 @@ public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<Result
     private ArrayList<PlaylistsModel> playlistPreviewModelsLeft;
     private ArrayList<PlaylistsModel> playlistPreviewModelsRight;
     private Context context;
+
 
     public ResultSearchOnlyPlaylistAdapter(List<PlaylistsModel> array, Context context) {
         playlistPreviewModelsLeft = new ArrayList<>();
@@ -60,6 +66,20 @@ public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<Result
             PlaylistsModel trackPreviewModelLeft = playlistPreviewModelsLeft.get(position);
             Picasso.get().load(trackPreviewModelLeft.getImage()).into(holder.playlistImageLeft);
             holder.playlistNameLeft.setText(trackPreviewModelLeft.getName());
+            holder.playlistImageLeft.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("playlistItem", new Gson().toJson(trackPreviewModelLeft));
+                    fragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
         }
 
         if(playlistPreviewModelsRight.size() <= position){
@@ -71,6 +91,20 @@ public class ResultSearchOnlyPlaylistAdapter extends RecyclerView.Adapter<Result
             PlaylistsModel trackPreviewModelRight = playlistPreviewModelsRight.get(position);
             Picasso.get().load(trackPreviewModelRight.getImage()).into(holder.playlistImageRight);
             holder.playlistNameRight.setText(trackPreviewModelRight.getName());
+            holder.playlistImageRight.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("playlistItem", new Gson().toJson(trackPreviewModelRight));
+                    fragment.setArguments(bundle);
+
+                    FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fragment_container, fragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

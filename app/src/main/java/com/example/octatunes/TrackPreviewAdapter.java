@@ -20,10 +20,21 @@ import java.util.List;
 public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapter.ViewHolder> {
     private List<TracksModel> trackPreviewModels;
     private Context context;
+    private String belong;
+    private String mode = "sequencePlay";
+    private FragmentListener fragmentListener;
 
-    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context) {
+    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener) {
         this.trackPreviewModels = trackPreviewModels;
         this.context = context;
+        this.fragmentListener = fragmentListener;
+        this.belong = belong;
+    }
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (fragmentListener != null) {
+            fragmentListener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -53,6 +64,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
             }
         });
     }
