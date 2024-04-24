@@ -172,6 +172,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         handler.post(updateTrackRunnable);
 
         /* Play button */
+        /*
         holder.play_button_home_playlist_preview.setTag(R.drawable.ic_play_circle);
         holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -207,6 +208,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                 fragmentTransaction.commit();
             }
         });
+        */
 
         /* More Info button */
         holder.tbin_homepage_playlist_detail_menu_button.setOnClickListener(new View.OnClickListener() {
@@ -229,6 +231,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                 bottomSheetDialog.show();
             }
         });
+
         /* Add button */
         // Create an instance of the UserService
         UserService userService = new UserService();

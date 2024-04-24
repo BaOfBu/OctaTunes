@@ -190,6 +190,7 @@ public class PlaylistSpotifyActivity extends Fragment {
             });
 
             /* Play button */
+            /*
             ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
             playButton.setOnClickListener(v -> {
                 // Check if there are tracks available
@@ -223,6 +224,8 @@ public class PlaylistSpotifyActivity extends Fragment {
                     // You can show a message to the user or handle it based on your requirements
                 }
             });
+
+            */
         }
         return view;
     }
