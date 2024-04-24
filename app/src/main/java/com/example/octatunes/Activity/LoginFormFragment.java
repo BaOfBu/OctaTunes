@@ -2,6 +2,7 @@ package com.example.octatunes.Activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
@@ -30,6 +31,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.auth.User;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,13 +70,16 @@ public class LoginFormFragment extends Fragment {
                 if(pass.equals("")){
                     Toast.makeText(context.getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
                 }
-                if(validateEmail(UE)){
+                if(main.validateEmail(UE)){
                     FirebaseAuth.getInstance().signInWithEmailAndPassword(UE, pass)
                             .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         //User signed in successfully
+                                        //save logged user for auto login
+                                        main.saveAutoLoginAccount(UE, pass);
+                                        //move to home
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         startActivity(intent);
                                     } else {
@@ -88,6 +93,7 @@ public class LoginFormFragment extends Fragment {
                 }
             }
         });
+
         btnNoPass = layout.findViewById(R.id.btnNoPass);
         btnNoPass.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -95,6 +101,7 @@ public class LoginFormFragment extends Fragment {
 
             }
         });
+
         btnPrev = layout.findViewById(R.id.btnPrev);
         btnPrev.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -104,14 +111,7 @@ public class LoginFormFragment extends Fragment {
         });
         return layout;
     }
-    public boolean validateEmail(String email){
-        String EMAIL_PATTERN =
-                "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@" +
-                        "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
-        Pattern pattern = Pattern.compile(EMAIL_PATTERN);
-        Matcher matcher = pattern.matcher(email);
-        return matcher.matches();
-    }
+
     private void loginByUsername(String username, String password) {
         DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
         usersRef.orderByChild("name").equalTo(username).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -127,10 +127,9 @@ public class LoginFormFragment extends Fragment {
                                     public void onComplete(@NonNull Task<AuthResult> task) {
                                         if (task.isSuccessful()) {
                                             // User signed in successfully
-//                                            Intent intent = new Intent(main.getApplicationContext(), HomeActivity.class);
-//                                            startActivity(intent);
-//                                            main.finish();
-                                            Toast.makeText(context.getApplicationContext(), "Login success", Toast.LENGTH_SHORT).show();
+                                            main.saveAutoLoginAccount(email, password);
+                                            Intent intent = new Intent(main.getApplicationContext(), MainActivity.class);
+                                            startActivity(intent);
                                         } else {
                                             // Authentication failed
                                             Toast.makeText(context.getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
@@ -139,11 +138,11 @@ public class LoginFormFragment extends Fragment {
                                 });
                         return;
                     }
+                }else{
+                    // Username not found
+                    Toast.makeText(context.getApplicationContext(), "Username not found", Toast.LENGTH_SHORT).show();
                 }
-                // Username not found
-                Toast.makeText(context.getApplicationContext(), "Username not found", Toast.LENGTH_SHORT).show();
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle database error
