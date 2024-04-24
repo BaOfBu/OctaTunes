@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -31,9 +32,15 @@ import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.databinding.ActivityMainBinding;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, FragmentListener {
@@ -152,109 +159,99 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadDataFromAlbum(int albumID, int trackID){
+        if(!songList.isEmpty()) songList.clear();
         trackService.getTracksByAlbumId(albumID).thenAccept(tracksModels -> {
             albumService.findAlbumById(albumID).thenAccept(albumsModel ->{
                artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
-                   if(songList != null) songList.clear();
                    for(int i = 0; i < tracksModels.size(); i++){
                        TracksModel track = tracksModels.get(i);
-                       Log.i("TRACK SERVICE IN MAIN", track.toString());
-                       if(track.getTrackID() == trackID) pos = i;
-                       SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
-                       songList.add(songModel);
+                       if(track != null) {
+                           Log.i("TRACK SERVICE IN MAIN", track.toString());
+                           if(track.getTrackID() == trackID) pos = i;
+                           SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
+                           songList.add(songModel);
+                       }
                    }
-                   myThread=new Thread(new MainActivity.MyThread());
+
+                   myThread = new Thread(new MainActivity.MyThread());
                    myThread.start();
 
-                   if(intent == null) {
-                       intent = new Intent(MainActivity.this, MusicService.class);
-                       bindService(intent, connection, BIND_AUTO_CREATE);
-                   }else{
-                       connection = new ServiceConnection() {
-                           @Override
-                           public void onServiceConnected(ComponentName name, IBinder service) {
-                               binder=(MusicService.MusicBinder) service;
-                               isServiceBound = true;
-                           }
-
-                           @Override
-                           public void onServiceDisconnected(ComponentName name) {
-                               isServiceBound = false;
-                           }
-                       };
-                       startService(intent);
-                       bindService(intent, connection, BIND_AUTO_CREATE);
-                   }
-
                    MusicService.setPos(pos);
+
+                   intent = new Intent(MainActivity.this, MusicService.class);
+                   startService(intent);
+
+                   bindService(intent, connection, BIND_AUTO_CREATE);
+
                    initNowPlayingBar();
+
                }) ;
             });
         });
     }
     private void loadData(int playlistID, int trackID){
+        final boolean flag = !songList.isEmpty();
+        if(!songList.isEmpty()) songList.clear();
         trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
             int totalTracks = tracksModels.size();
             AtomicInteger processedTracks = new AtomicInteger(0);
             for (int i = 0; i < tracksModels.size(); i++) {
                 TracksModel track = tracksModels.get(i);
-                Log.i("TRACK SERVICE IN MAIN", track.toString());
-
-                if(track.getTrackID() == trackID) pos = i;
-
                 SongModel songModel = new SongModel();
-                songModel.setTitle(track.getName());
-                songModel.setFile(track.getFile());
-                songModel.setDuration(track.getDuration());
-                if(songList != null) songList.clear();
+                if(track != null){
+                    Log.i("TRACK SERVICE IN MAIN", track.toString());
+                    songModel.setTitle(track.getName());
+                    songModel.setFile(track.getFile());
+                    songModel.setDuration(track.getDuration());
+                    songModel.setSongID(track.getTrackID());
+                    // Fetch album asynchronously and set properties of songModel
+                    albumService.findAlbumById(track.getAlubumID()).thenAccept(albumsModel -> {
+                        songModel.setAlbum(albumsModel.getName());
+                        songModel.setImage(albumsModel.getImage());
 
-                // Fetch album asynchronously and set properties of songModel
-                albumService.findAlbumById(track.getAlubumID()).thenAccept(albumsModel -> {
-                    songModel.setAlbum(albumsModel.getName());
-                    songModel.setImage(albumsModel.getImage());
+                        Log.i("ALBUM SERVICE IN MAIN", "Fetch album asynchronously and set properties of songModel");
+                        // Fetch artist asynchronously and set properties of songModel
+                        artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
+                            songModel.setArtist(artistsModel.getName());
+                            songModel.setGenre(artistsModel.getGenre());
 
-                    Log.i("ALBUM SERVICE IN MAIN", "Fetch album asynchronously and set properties of songModel");
-                    // Fetch artist asynchronously and set properties of songModel
-                    artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
-                        songModel.setArtist(artistsModel.getName());
-                        songModel.setGenre(artistsModel.getGenre());
+                            // Add songModel to MainActivity.songList after all data is loaded
+                            songList.add(songModel);
+                            int processed = processedTracks.incrementAndGet();
+                            if (processed == totalTracks) {
+                                // All tracks have been processed
+                                if(songList != null) Log.i(TAG, songList.toString());
+                                List<SongModel> songsTmp = songList;
+                                for(int j = 0; j < tracksModels.size(); j++){
+                                    for(int z = 0; z < songsTmp.size(); z++){
+                                        if(songsTmp.get(z).getSongID() == tracksModels.get(j).getTrackID()){
+                                            songList.set(j, songsTmp.get(z));
+                                            if(songsTmp.get(z).getSongID() == trackID) {
+                                                pos = j;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
 
-                        // Add songModel to MainActivity.songList after all data is loaded
-                        songList.add(songModel);
-                        int processed = processedTracks.incrementAndGet();
-                        if (processed == totalTracks) {
-                            // All tracks have been processed
-                            Log.i(TAG, songList.toString());
+                                myThread = new Thread(new MainActivity.MyThread());
+                                myThread.start();
 
-                            myThread=new Thread(new MainActivity.MyThread());
-                            myThread.start();
-
-                            if(intent == null) {
+                                MusicService.setPos(pos);
+                                isServiceBound = false;
                                 intent = new Intent(MainActivity.this, MusicService.class);
                                 startService(intent);
                                 bindService(intent, connection, BIND_AUTO_CREATE);
-                            }else{
-                                connection = new ServiceConnection() {
-                                    @Override
-                                    public void onServiceConnected(ComponentName name, IBinder service) {
-                                        binder=(MusicService.MusicBinder) service;
-                                        isServiceBound = true;
-                                    }
 
-                                    @Override
-                                    public void onServiceDisconnected(ComponentName name) {
-                                        isServiceBound = false;
-                                    }
-                                };
-                                bindService(intent, connection, BIND_AUTO_CREATE);
+                                if(flag){
+                                    MusicService.setPos(pos - 1);
+                                    binder.nextMusic();
+                                }
+                                initNowPlayingBar();
                             }
-
-                            MusicService.setPos(pos);
-
-                            initNowPlayingBar();
-                        }
+                        });
                     });
-                });
+                }
             }
         });
     }
@@ -293,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }
+
     }
 
     private class MyThread implements Runnable{
@@ -350,6 +348,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             int totalTime = songList.get(pos).getDuration() * 1000; //miliseconds
 
             binding.seekBar.setMax(totalTime);
+        }
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        songList.clear();
+        myThread.interrupt();
+        if (isServiceBound) {
+            unbindService(connection);
+            stopService(intent);
+            isServiceBound = false;
         }
     }
 }

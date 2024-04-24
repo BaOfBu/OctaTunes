@@ -136,7 +136,7 @@ public class SearchingActivity extends Fragment {
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());
                 text.setVisibility(View.GONE);
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(),null);
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),null, null);
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }
@@ -158,7 +158,7 @@ public class SearchingActivity extends Fragment {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(),null);
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),null, null);
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }

@@ -118,28 +118,24 @@ public class PlaylistSpotifyActivity extends Fragment {
 
             // Get tracks by playlist ID
             int playlistId = playlistsModel.getPlaylistID();
-            trackService.getTracksByPlaylistId(playlistId, new TrackService.OnTracksLoadedListener() {
-                @Override
-                public void onTracksLoaded(List<TracksModel> tracks) {
-                    /* Play Button Playlist */
-                    String mode = "sequencePlay";
-                    int trackFirstId = tracks.get(0).getTrackID();
-                    int albumId = -1;
-                    String from =  "PLAYING FROM PLAYLIST";
-                    String belong = playlistsModel.getName();
-                    ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
-                    playButton.setOnClickListener(v -> {
-                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
-                    });
+            trackService.getTracksByPlaylistId(playlistId).thenAccept(tracks -> {
+                String mode = "sequencePlay";
+                int trackFirstId = tracks.get(0).getTrackID();
+                int albumId = -1;
+                String from =  "PLAYING FROM PLAYLIST";
+                String belong = playlistsModel.getName();
+                ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
+                playButton.setOnClickListener(v -> {
+                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                });
 
-                    /* Adapter for track */
-                    allTracks.addAll(tracks);
-                    if (getContext() != null) {
-                        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        SongAdapter adapter = new SongAdapter(getContext(), tracks);
-                        recyclerView.setAdapter(adapter);
-                    }
+                /* Adapter for track */
+                allTracks.addAll(tracks);
+                if (getContext() != null) {
+                    RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    SongAdapter adapter = new SongAdapter(getContext(), tracks);
+                    recyclerView.setAdapter(adapter);
                 }
             });
 
