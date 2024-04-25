@@ -55,4 +55,7 @@ public class SongService {
             }
         });
     }
+    public interface OnSongLoadedListener {
+        void onSongLoaded();
+    }
 }

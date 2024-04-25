@@ -1,6 +1,7 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,10 +21,21 @@ import java.util.List;
 public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapter.ViewHolder> {
     private List<TracksModel> trackPreviewModels;
     private Context context;
+    private String belong;
+    private String mode = "sequencePlay";
+    private FragmentListener fragmentListener;
 
-    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context) {
+    public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener, String belong) {
         this.trackPreviewModels = trackPreviewModels;
         this.context = context;
+        this.fragmentListener = fragmentListener;
+        this.belong = belong;
+    }
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (fragmentListener != null) {
+            fragmentListener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -49,10 +61,16 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
         loadArtistName(tracksModel.getAlubumID(), holder.trackArtist);
         loadImageForTrack(tracksModel, holder.trackImage);
         holder.trackName.setText(tracksModel.getName());
-
+        if(fragmentListener == null) {
+            fragmentListener = (FragmentListener) context;
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getTrackID()));
+                Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
+                sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
             }
         });
     }
