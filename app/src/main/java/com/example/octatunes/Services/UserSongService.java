@@ -31,21 +31,24 @@ public class UserSongService {
         userSongRef.orderByChild("UserID").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                userSongRef.push().setValue(userSong)
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            @Override
-                            public void onSuccess(Void aVoid) {
-                                Log.d("TAG", "UserID: " + userSong.getUserID()+ " and SongID: " + userSong.getSongID());
-                            }
-                        })
-                        .addOnFailureListener(new OnFailureListener() {
-                            @Override
-                            public void onFailure(@NonNull Exception e) {
-                                Log.e("TAG", "Error adding album", e);
-                            }
-                        });
-            }
+                UserSongModel last = dataSnapshot.getValue(UserSongModel.class);
+                if(last != null && (last.getSongID() != userSong.getSongID())){
+                    userSongRef.push().setValue(userSong)
+                            .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                @Override
+                                public void onSuccess(Void aVoid) {
+                                    Log.d("TAG", "UserID: " + userSong.getUserID()+ " and SongID: " + userSong.getSongID());
+                                }
+                            })
+                            .addOnFailureListener(new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Log.e("TAG", "Error adding album", e);
+                                }
+                            });
+                }
 
+            }
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
