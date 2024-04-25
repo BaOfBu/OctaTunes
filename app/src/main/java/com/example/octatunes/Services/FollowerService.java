@@ -1,9 +1,12 @@
 package com.example.octatunes.Services;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.FollowersModel;
 import com.example.octatunes.Model.PlaylistsModel;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -30,6 +33,40 @@ public class FollowerService {
         databaseReference = firebaseDatabase.getReference("followers");
         artistsReference = firebaseDatabase.getReference("artists");
     }
+
+    public void unfollowArtist(int userId, int artistId, OnUnfollowListener listener) {
+        databaseReference.orderByChild("userID").equalTo(userId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    if (userSnapshot.child("artistID").getValue(Integer.class) == artistId) {
+                        userSnapshot.getRef().removeValue()
+                                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
+                                        listener.onUnfollowSuccess(); // Notify listener that unfollow was successful
+                                    }
+                                })
+                                .addOnFailureListener(new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        listener.onUnfollowFailure(e.getMessage()); // Notify listener of failure and pass error message
+                                    }
+                                });
+                        return;
+                    }
+                }
+                // If no match is found
+                listener.onUnfollowFailure("User does not follow the artist"); // Notify listener that user does not follow the artist
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onUnfollowFailure(databaseError.getMessage()); // Notify listener of failure and pass error message
+            }
+        });
+    }
+
 
     public void addFollowedArtist(int userId, int artistId) {
         FirebaseUser currentUser = firebaseAuth.getCurrentUser();
@@ -111,7 +148,6 @@ public class FollowerService {
             }
         });
     }
-
     public interface FollowCheckCallback {
         void onFollowChecked(boolean isFollowed);
     }
@@ -172,6 +208,37 @@ public class FollowerService {
             }
         });
     }
+
+    public void checkIfUserFollowsArtist(int userId, int artistId, OnFollowCheckListener listener) {
+        databaseReference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                // Iterate through each child node
+                for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                    // Check if both userID and artistID match
+                    if (userSnapshot.child("userID").getValue(Integer.class) == userId && userSnapshot.child("artistID").getValue(Integer.class) == artistId) {
+                        listener.onFollowCheck(true);
+                        return;
+                    }
+                }
+                listener.onFollowCheck(false);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                listener.onFollowCheck(false);
+            }
+        });
+    }
+
+    public interface OnFollowCheckListener {
+        void onFollowCheck(boolean isFollowing);
+    }
+    public interface OnUnfollowListener {
+        void onUnfollowSuccess();
+        void onUnfollowFailure(String errorMessage);
+    }
+
 
     public interface ArtistListCallback {
         void onArtistsRetrieved(List<ArtistsModel> artists);
