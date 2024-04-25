@@ -1,5 +1,6 @@
 package com.example.octatunes.Activity;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -62,14 +63,16 @@ public class LoginFormFragment extends Fragment {
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                main.startProgressDialog();
 
                 String UE = edtUE.getText().toString();
                 String pass = edtPass.getText().toString();
                 if(UE.equals("")){
+                    main.stopProgressDialog();
                     Toast.makeText(context.getApplicationContext(), "Enter email or username", Toast.LENGTH_SHORT).show();
                 }
                 if(pass.equals("")){
+                    main.stopProgressDialog();
                     Toast.makeText(context.getApplicationContext(), "Enter password", Toast.LENGTH_SHORT).show();
                 }
                 if(main.validateEmail(UE)){
@@ -81,11 +84,14 @@ public class LoginFormFragment extends Fragment {
                                         //User signed in successfully
                                         //save logged user for auto login
                                         main.saveAutoLoginAccount(UE, pass);
+                                        main.setLoginTime();
                                         //move to home
+                                        main.stopProgressDialog();
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         startActivity(intent);
                                     } else {
                                         // Authentication failed
+                                        main.stopProgressDialog();
                                         Toast.makeText(context.getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                                     }
                                 }
@@ -130,10 +136,14 @@ public class LoginFormFragment extends Fragment {
                                         if (task.isSuccessful()) {
                                             // User signed in successfully
                                             main.saveAutoLoginAccount(email, password);
+                                            main.setLoginTime();
+
+                                            main.stopProgressDialog();
                                             Intent intent = new Intent(main.getApplicationContext(), MainActivity.class);
                                             startActivity(intent);
                                         } else {
                                             // Authentication failed
+                                            main.stopProgressDialog();
                                             Toast.makeText(context.getApplicationContext(), "Authentication failed", Toast.LENGTH_SHORT).show();
                                         }
                                     }
@@ -142,12 +152,14 @@ public class LoginFormFragment extends Fragment {
                     }
                 }else{
                     // Username not found
+                    main.stopProgressDialog();
                     Toast.makeText(context.getApplicationContext(), "Username not found", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 // Handle database error
+                main.stopProgressDialog();
                 Toast.makeText(context.getApplicationContext(), "Database error", Toast.LENGTH_SHORT).show();
             }
         });
