@@ -26,7 +26,7 @@ public class UserSongService {
         // Initialize Firebase database reference
         userSongRef = FirebaseDatabase.getInstance().getReference("userSongs");
     }
-    public void addAlbum(final UserSongModel userSong) {
+    public void addUserSong(final UserSongModel userSong) {
         // Fetch the current maximum AlbumID from Firebase
         userSongRef.orderByChild("UserID").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
