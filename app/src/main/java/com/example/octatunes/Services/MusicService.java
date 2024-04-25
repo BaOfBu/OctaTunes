@@ -35,10 +35,19 @@ import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.UserSongModel;
+import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.R;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -102,6 +111,33 @@ public class MusicService extends Service {
                     SongModel songCurrent = songList.get(pos);
                     songService.addSong(songCurrent);
 
+                    FirebaseAuth auth = FirebaseAuth.getInstance();
+                    FirebaseUser user = auth.getCurrentUser();
+
+                    if (user != null) {
+                        String uid = user.getUid();
+                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+                        usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                if (dataSnapshot.exists()) {
+                                    UsersModel userModel = dataSnapshot.getValue(UsersModel.class);
+                                    if (userModel != null) {
+                                        int userId = userModel.getUserID();
+                                        UserSongModel userSongModel = new UserSongModel(userId, songCurrent.getSongID(), new Date());
+                                        UserSongService userSongService = new UserSongService();
+                                        userSongService.addAlbum(userSongModel);
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
+                            }
+                        });
+                    }
+
                     mediaPlayer.reset();
                     mediaPlayer.setDataSource(songList.get(pos).getFile());
                     mediaPlayer.prepareAsync();
@@ -131,7 +167,7 @@ public class MusicService extends Service {
 
                     updateNotification();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.i(TAG, Objects.requireNonNull(e.getMessage()));
                 }
             }
         }
