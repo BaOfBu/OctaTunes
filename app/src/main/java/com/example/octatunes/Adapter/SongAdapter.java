@@ -16,6 +16,7 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.NowPlayingBarFragment;
+import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
@@ -33,6 +34,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public SongAdapter(Context context, List<TracksModel> songList) {
         this.context = context;
         this.songList = songList;
+    }
+
+    private FragmentListener listener;
+
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
     }
 
     @NonNull
