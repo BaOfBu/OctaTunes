@@ -1,6 +1,7 @@
 package com.example.octatunes;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +11,10 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistDetailFragment;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -74,6 +77,20 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
             holder.artistImage.setVisibility(View.VISIBLE);
             Picasso.get().load(artistProfileModel.get(0).getImage()).into(holder.artistImage);
             holder.artistName.setText(artistProfileModel.get(0).getName());
+            holder.artistLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    ArtistDetailFragment fragment = new ArtistDetailFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("artist", artistProfileModel.get(0));
+                    fragment.setArguments(bundle);
+
+                    ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
         }
 
         if(albumPreviewModels.size() == 0){

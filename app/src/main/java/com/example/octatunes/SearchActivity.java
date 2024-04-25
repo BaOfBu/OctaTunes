@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -49,6 +50,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     static RecyclerView listSearchResultRecyclerView;
     RecyclerView listCategoriesButtonRecyclerView;
     TextView emptyTextView;
+    ImageView clearSearchButton;
 
     private PlaylistService playlistService = new PlaylistService();
     private ArtistService artistService = new ArtistService();
@@ -98,10 +100,12 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listCategoriesButtonRecyclerView = rootView.findViewById(R.id.recyclerview_categories_search);
         emptyTextView = rootView.findViewById(R.id.emptyListText);
         cancelSearchButton = rootView.findViewById(R.id.HuyButton);
+        clearSearchButton = rootView.findViewById(R.id.iconRemove);
 
         if (listSearchResultRecyclerView.getParent() != null) {
             ((ViewGroup) listSearchResultRecyclerView.getParent()).removeView(listSearchResultRecyclerView);
         }
+
 
         listSearchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -117,6 +121,16 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 getFragmentManager().popBackStackImmediate();
             }
         });
+
+        clearSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEditText.setText("");
+                searchEditText.performClick();
+            }
+        });
+
+
         //uncomment this for instant search when type in search box
 //        searchEditText.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -346,23 +360,11 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     private void getBestMatchResults(){
         List<AlbumsModel> listAlbums = new ArrayList<>();
         List<ArtistsModel> artist = new ArrayList<>();
-        // Search for albums
-        albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
-            Log.e("SearchActivity", "ALbums: " + albums.size());
-            for(AlbumsModel album : albums){
-                listAlbums.add(album);
-            }
-        }).exceptionally(throwable -> {
-            Log.e("SearchActivity", "Error getting albums", throwable);
-            return null;
-        });
-
         // Search for artists
-
         artistService.findArtistByName(searchQuery, new OnSuccessListener<List<ArtistsModel>>() {
             @Override
             public void onSuccess(List<ArtistsModel> artists) {
-                Log.e("SearchActivity", "Artists: " + artists.size());
+                Log.e("getBestMatchResult", "Artists: " + artists.size());
                 if(artists.size() == 0)
                     return;
                 artist.addAll(artists);
@@ -373,11 +375,23 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 Log.e("SearchActivity", "Error getting artists", e);
             }
         });
+        // Search for albums
+        albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
+            Log.e("getBestMatchResult", "ALbums: " + albums.size());
+            for(AlbumsModel album : albums){
+                listAlbums.add(album);
+            }
+        }).exceptionally(throwable -> {
+            Log.e("SearchActivity", "Error getting albums", throwable);
+            return null;
+        });
+
+
         // Search for tracks
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                Log.e("getBestMatchResult", "Tracks: " + tracks.size());
                 ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks, getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
