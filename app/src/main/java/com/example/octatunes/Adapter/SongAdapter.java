@@ -105,9 +105,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                             listener = (FragmentListener) context;
                         }
                         String mode = "sequencePlay";
-                        UserSongService userSongService = new UserSongService();
-                        UserSongModel userSongModel = new UserSongModel(10, track.getTrackID(), new Date());
-                        userSongService.addAlbum(userSongModel);
                         sendSignalToMainActivity(track.getTrackID(), -1, track.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
                     }
                 }
