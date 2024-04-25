@@ -1,5 +1,6 @@
 package com.example.octatunes.Activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.octatunes.Adapter.PlaylistSmallAdapter;
 import com.example.octatunes.Adapter.PopularReleaseAlbumArtistAdapter;
 import com.example.octatunes.Adapter.SongAdapter;
+import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -43,8 +46,27 @@ public class ArtistDetailFragment extends Fragment {
     private UserService userService = new UserService();
 
     private FollowerService followerService = new FollowerService();
+    private FragmentListener listener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.layout_artist_detail, container, false);
+
+        MainActivity.lastFrag=this;
 
         // Retrieve the arguments passed to the fragment
         Bundle args = getArguments();
@@ -144,7 +166,7 @@ public class ArtistDetailFragment extends Fragment {
                 if (!tracks.isEmpty()) {
                     LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                     recyclerView.setLayoutManager(layoutManager);
-                    SongAdapter adapter = new SongAdapter(getActivity(), tracks);
+                    SongAdapter adapter = new SongAdapter(getActivity(), tracks,listener);
                     recyclerView.setAdapter(adapter);
                     setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
                     setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());

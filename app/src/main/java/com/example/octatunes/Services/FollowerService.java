@@ -69,33 +69,19 @@ public class FollowerService {
 
 
     public void addFollowedArtist(int userId, int artistId) {
-        FirebaseUser currentUser = firebaseAuth.getCurrentUser();
-        if (currentUser != null) {
-            DatabaseReference userFollowingRef = databaseReference.push(); // Generate random key
+        // Generate a random key for the new node
+        String randomKey = databaseReference.push().getKey();
 
-            // Create a new FollowersModel object
-            FollowersModel follower = new FollowersModel(userId, artistId);
-
-            // Add the follower to the database under the generated key
-            userFollowingRef.setValue(follower)
-                    .addOnSuccessListener(aVoid -> {
-                        // Follower added successfully
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle failure
-                    });
-
-            // Also, add the follower to the artists' followers list
-            DatabaseReference artistFollowersRef = artistsReference.child(String.valueOf(artistId)).child("followers");
-            artistFollowersRef.child(String.valueOf(userId)).setValue(true)
-                    .addOnSuccessListener(aVoid -> {
-                        // Follower added successfully to artist's followers list
-                    })
-                    .addOnFailureListener(e -> {
-                        // Handle failure
-                    });
-        }
+        // Add the followModel to the database under the generated key
+        databaseReference.child(randomKey).setValue(new FollowersModel(userId,artistId))
+                .addOnSuccessListener(aVoid -> {
+                    // Node added successfully
+                })
+                .addOnFailureListener(e -> {
+                    // Handle failure
+                });
     }
+
 
     public void addFollowedArtistForCurrentUser(int artistId) {
         userService.getCurrentUserId(new UserService.UserIdCallback() {
