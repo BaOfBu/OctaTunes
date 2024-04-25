@@ -162,6 +162,7 @@ public class SignUpNameFragment extends Fragment {
                                                         if (databaseTask.isSuccessful()) {
                                                             //save logged user for auto login
                                                             main.saveAutoLoginAccount(email, pass);
+                                                            main.setLoginTime();
                                                             //Move to home
                                                             main.stopProgressDialog();
                                                             Intent intent = new Intent(getActivity(), MainActivity.class);

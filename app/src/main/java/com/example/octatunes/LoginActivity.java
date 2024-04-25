@@ -37,6 +37,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.layout_login_container);
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.login_container, new LoginHomeFragment())
+                .commit();
+
         createProgressDialog();
     }
     @Override
@@ -44,10 +48,6 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         //auto login after user logged in
         autoLogin();
-        //move to login home page
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.login_container, new LoginHomeFragment())
-                .commit();
     }
 
     public void NavigateFragment(Fragment fragment) {
@@ -81,69 +81,97 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences sharedPref = getSharedPreferences("auto_login", Context.MODE_PRIVATE);
         return sharedPref.getString("logged_password", "");
     }
+    public int getLoginTime() {
+        SharedPreferences sharedPref = getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        return sharedPref.getInt("logged_time", 0);
+    }
 
-    public void autoLogin(){
+    public void setLoginTime(){
+        int maxLoginTime = 3;
+
+        SharedPreferences sharedPref = getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        int result = sharedPref.getInt("logged_time", 0);
+        result = (result >= maxLoginTime) ? 0 : result + 1;
+
+        SharedPreferences preferences = getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putInt("logged_time", result);
+        editor.apply();
+    }
+
+    public void autoLogin() {
         startProgressDialog();
 
         String UE = getAccount();
         String pass = getPassword();
+        int loginTime = getLoginTime();
 
-        if(!UE.equals("") && !pass.equals("")){
-            if(validateEmail(UE)){
-                FirebaseAuth.getInstance().signInWithEmailAndPassword(UE, pass)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    stopProgressDialog();
+        if (loginTime == 0) {
+            saveAutoLoginAccount("", "");
+            stopProgressDialog();
+            return;
+        }
 
-                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                    startActivity(intent);
+        if (UE.equals("") && pass.equals("")) {
+            stopProgressDialog();
+            return;
+        }
 
-                                }else{
-                                    stopProgressDialog();
-                                }
+        if (validateEmail(UE)) {
+            FirebaseAuth.getInstance().signInWithEmailAndPassword(UE, pass)
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                setLoginTime();
+
+                                stopProgressDialog();
+                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                startActivity(intent);
+
+                            } else {
+                                stopProgressDialog();
                             }
-                        });
-            }else{
-                DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
-                usersRef.orderByChild("name").equalTo(UE).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if (dataSnapshot.exists()) {
-                            for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
-                                String email = userSnapshot.child("email").getValue(String.class);
-                                // Authenticate the user with Firebase Authentication using email and password
-                                FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
-                                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                            @Override
-                                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                                if (task.isSuccessful()) {
-                                                    // User signed in successfully
-                                                    stopProgressDialog();
-
-                                                    Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                                    startActivity(intent);
-                                                }else{
-                                                    stopProgressDialog();
-                                                }
-                                            }
-                                        });
-                                return;
-                            }
-                        }else{
-                            stopProgressDialog();
                         }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-                        // Handle database error
+                    });
+        } else {
+            DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference("users");
+            usersRef.orderByChild("name").equalTo(UE).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                    if (dataSnapshot.exists()) {
+                        for (DataSnapshot userSnapshot : dataSnapshot.getChildren()) {
+                            String email = userSnapshot.child("email").getValue(String.class);
+                            // Authenticate the user with Firebase Authentication using email and password
+                            FirebaseAuth.getInstance().signInWithEmailAndPassword(email, pass)
+                                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
+                                                // User signed in successfully
+                                                setLoginTime();
+
+                                                stopProgressDialog();
+                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                                                startActivity(intent);
+                                            } else {
+                                                stopProgressDialog();
+                                            }
+                                        }
+                                    });
+                            return;
+                        }
+                    } else {
                         stopProgressDialog();
                     }
-                });
-            }
-        }else{
-            stopProgressDialog();
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+                    // Handle database error
+                    stopProgressDialog();
+                }
+            });
         }
     }
     public void createProgressDialog() {

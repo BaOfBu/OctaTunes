@@ -84,9 +84,9 @@ public class LoginFormFragment extends Fragment {
                                         //User signed in successfully
                                         //save logged user for auto login
                                         main.saveAutoLoginAccount(UE, pass);
+                                        main.setLoginTime();
                                         //move to home
                                         main.stopProgressDialog();
-
                                         Intent intent = new Intent(getActivity(), MainActivity.class);
                                         startActivity(intent);
                                     } else {
@@ -136,6 +136,7 @@ public class LoginFormFragment extends Fragment {
                                         if (task.isSuccessful()) {
                                             // User signed in successfully
                                             main.saveAutoLoginAccount(email, password);
+                                            main.setLoginTime();
 
                                             main.stopProgressDialog();
                                             Intent intent = new Intent(main.getApplicationContext(), MainActivity.class);
