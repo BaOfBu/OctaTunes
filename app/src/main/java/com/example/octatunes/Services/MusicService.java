@@ -167,7 +167,7 @@ public class MusicService extends Service {
 
                     updateNotification();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.i(TAG, Objects.requireNonNull(e.getMessage()));
                 }
             }
         }

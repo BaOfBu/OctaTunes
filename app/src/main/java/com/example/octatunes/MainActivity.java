@@ -159,7 +159,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadDataFromAlbum(int albumID, int trackID){
+        final boolean flag = !songList.isEmpty();
         if(!songList.isEmpty()) songList.clear();
+
         trackService.getTracksByAlbumId(albumID).thenAccept(tracksModels -> {
             albumService.findAlbumById(albumID).thenAccept(albumsModel ->{
                artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
@@ -182,7 +184,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                    startService(intent);
 
                    bindService(intent, connection, BIND_AUTO_CREATE);
-
+                   if(flag){
+                       MusicService.setPos(pos - 1);
+                       binder.nextMusic();
+                   }
                    initNowPlayingBar();
 
                }) ;
