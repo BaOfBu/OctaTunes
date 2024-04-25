@@ -193,6 +193,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 } else {
                     downloadFile(lyricModel.getLyric(),lyricModel.getTitle(), getContext());
                 }
+                handlerLyric = new Handler();
+                // Update progress bar and lyrics every second
+                handlerLyric.postDelayed(updateProgress, 500);
             }
             mLyricView.setLyricFile(fileLyric);
             mLyricView.setCurrentTimeMillis(0);
@@ -216,7 +219,8 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
                     MusicService.mediaPlayer.seekTo(progress);
-                    mLyricView.setCurrentTimeMillis(progress);
+                    if(mLyricView != null)
+                        mLyricView.setCurrentTimeMillis(progress);
                 }
             }
 
@@ -234,9 +238,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         myThread=new Thread(new MyThread());
         myThread.start();
 
-        handlerLyric = new Handler();
-        // Update progress bar and lyrics every second
-        handlerLyric.postDelayed(updateProgress, 500);
+
+
+
 
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().bindService(intent, connection, BIND_AUTO_CREATE);
@@ -246,9 +250,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         }else {
             play.setImageResource(R.drawable.ic_circle_play_white_70);
         }
-
-
-
         return rootView;
     }
 
