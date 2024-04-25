@@ -247,7 +247,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                     @Override
                     public void onTracksLoaded(List<TracksModel> tracks) {
                         Log.e("SearchActivity", "Tracks: " + tracks.size());
-                        if (tracks.size() == 0) {
+                        if (tracks == null || tracks.size() == 0){
                             emptyTextView.setVisibility(View.VISIBLE);
                             listSearchResultRecyclerView.setVisibility(View.GONE);
                         } else {

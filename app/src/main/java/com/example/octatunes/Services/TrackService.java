@@ -225,6 +225,7 @@ public class TrackService {
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
+                            listener.onTracksLoaded(null);
                         }
                     });
                 }
