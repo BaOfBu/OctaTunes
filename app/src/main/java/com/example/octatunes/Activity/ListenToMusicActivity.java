@@ -35,8 +35,15 @@ import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.MusicService;
+import com.example.octatunes.Utils.FileUtils;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.io.File;
+import java.io.IOException;
+
+import me.zhengken.lyricview.LyricView;
+
 
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
     String from;
@@ -56,6 +63,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private static final int UPDATE = 0;
     private MusicService.MusicBinder binder;
     private Thread myThread;
+    private Thread lyricThread;
     private int pos = -1;
     @SuppressLint("StaticFieldLeak")
     public static SeekBar seekBar;
@@ -64,9 +72,11 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private static TextView duration;
     private ImageButton show_options;
     private ImageButton track_minimize;
+    LyricView mLyricView;
     @SuppressLint("StaticFieldLeak")
     private static View rootView;
     private FragmentListener listener;
+    private Handler handlerLyric;
     @SuppressLint("StaticFieldLeak")
     public static ImageButton repeat;
     private View repeat_dot;
@@ -121,6 +131,23 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         }
         initMediaPlayer();
 
+        mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
+        mLyricView.reset();
+        File fileLyric = null;
+        try {
+            fileLyric = FileUtils.createFileFromRaw(getContext(), R.raw.thudocypher, "thudocypher.lrc");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        mLyricView.setLyricFile(fileLyric);
+        mLyricView.setCurrentTimeMillis(0);
+        mLyricView.setOnPlayerClickListener(new LyricView.OnPlayerClickListener() {
+            @Override
+            public void onPlayerClicked(long progress, String content) {
+                MusicService.mediaPlayer.seekTo((int) progress);
+            }
+        });
+
         track_minimize.setOnClickListener(this);
         show_options.setOnClickListener(this);
         previous.setOnClickListener(this);
@@ -133,6 +160,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
                     MusicService.mediaPlayer.seekTo(progress);
+                    mLyricView.setCurrentTimeMillis(progress);
                 }
             }
 
@@ -150,6 +178,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         myThread=new Thread(new MyThread());
         myThread.start();
 
+        handlerLyric = new Handler();
+        // Update progress bar and lyrics every second
+        handlerLyric.postDelayed(updateProgress, 1000);
+
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().bindService(intent, connection, BIND_AUTO_CREATE);
 
@@ -158,6 +190,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         }else {
             play.setImageResource(R.drawable.ic_circle_play_white_70);
         }
+
+
+
         return rootView;
     }
 
@@ -175,6 +210,21 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
         }
     }
+
+    private Runnable updateProgress = new Runnable() {
+        @Override
+        public void run() {
+            if (MusicService.mediaPlayer != null && MusicService.mediaPlayer.isPlaying()) {
+                int currentPosition = MusicService.mediaPlayer.getCurrentPosition();
+
+                // Call method to update lyrics progress
+                mLyricView.setCurrentTimeMillis(currentPosition);
+
+                // Call this runnable again after 1 second
+                handler.postDelayed(this, 1000);
+            }
+        }
+    };
 
     private class MyThread implements Runnable{
         @Override
@@ -212,6 +262,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     }
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
+                    //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
                     break;
                 default:
             }
