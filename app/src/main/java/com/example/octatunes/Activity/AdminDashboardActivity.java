@@ -1,4 +1,4 @@
-package com.example.octatunes;
+package com.example.octatunes.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -11,8 +11,9 @@ import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
 
-public class AdminDashboardActivity extends AppCompatActivity {
+import com.example.octatunes.R;
 
+public class AdminDashboardActivity extends AppCompatActivity {
     ImageButton _btn_more;
     TextView _textTitleAdmin;
     LayoutInflater _inflater;
@@ -58,20 +59,31 @@ public class AdminDashboardActivity extends AppCompatActivity {
         _popupWindow = new PopupWindow(popupView, width, height - _toolbarHeight, focus);
         _popupWindow.showAtLocation(view, Gravity.START | Gravity.BOTTOM, 0, 0);
 
+        TextView dashboard = popupView.findViewById(R.id.dashboard);
         TextView userManager = popupView.findViewById(R.id.user_manager);
         TextView musicManager = popupView.findViewById(R.id.music_manager);
+
+        dashboard.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminDashboardActivity.this, AdminDashboardActivity.class);
+                startActivity(intent);
+            }
+        });
 
         userManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdminDashboardActivity.this, AdminUserManagerActivity.class);
+                startActivity(intent);
             }
         });
 
         musicManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(AdminDashboardActivity.this, AdminSongManagerActivity.class);
+                startActivity(intent);
             }
         });
     }

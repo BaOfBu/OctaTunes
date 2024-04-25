@@ -162,7 +162,45 @@ public class AlbumService {
         });
     }
 
+    // Phương thức để lấy URL hình ảnh của album dựa trên albumID
+    public void getAlbumImageUrl(String albumID, OnImageUrlRetrievedListener listener) {
+        Query query = albumsRef.orderByChild("AlbumID").equalTo(Integer.parseInt(albumID));
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String imageUrl = snapshot.child("Image").getValue(String.class);
+                        if (imageUrl != null) {
+                            // Gọi phương thức callback để trả về URL hình ảnh
+                            listener.onImageUrlRetrieved(imageUrl);
+                        } else {
+                            // Trả về null nếu không tìm thấy URL hình ảnh
+                            listener.onImageUrlRetrieved(null);
+                        }
+                        return; // Chỉ lấy URL của album đầu tiên tìm thấy
+                    }
+                } else {
+                    // Trả về null nếu không tìm thấy album với ID tương ứng
+                    listener.onImageUrlRetrieved(null);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Xử lý khi có lỗi xảy ra
+                listener.onImageUrlRetrieved(null);
+            }
+        });
+    }
+
+    // Interface để định nghĩa phương thức callback cho việc lấy URL hình ảnh
+    public interface OnImageUrlRetrievedListener {
+        void onImageUrlRetrieved(String imageUrl);
+    }
+
     public interface ArtistNameCallback {
         void onArtistNameRetrieved(String artistName);
     }
 }
+

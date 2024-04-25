@@ -5,8 +5,17 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
+    <uses-permission
+        android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ManifestOrder" />
+    <uses-permission
+        android:name="android.permission.WAKE_LOCK"
+        tools:ignore="ManifestOrder" />
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 
     <application
         android:allowBackup="true"
@@ -19,6 +28,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OctaTunes"
         tools:targetApi="31">
+        <activity
+            android:name=".Activity.AdminDashboardActivity"
+            android:exported="false" />
+
         <service
             android:name=".Services.MusicService"
             android:enabled="true"
@@ -30,7 +43,6 @@
             android:exported="false"
             android:label="ListenToMusicActivity"
             android:theme="@style/Theme.OctaTunes" />
-
         <activity
             android:name=".TrackView"
             android:exported="false"
@@ -60,10 +72,4 @@
             android:label="PlaylistSpotifyActivity" />
     </application>
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
-        tools:ignore="ManifestOrder" />
-    <uses-permission android:name="android.permission.WAKE_LOCK"
-        tools:ignore="ManifestOrder" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
 </manifest>

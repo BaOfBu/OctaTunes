@@ -22,6 +22,7 @@ import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
@@ -41,15 +42,15 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
         this.songList = songList;
-        this.listener=listener;
-    }
-    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener,PlaylistsModel playList) {
-        this.context = context;
-        this.songList = songList;
-        this.listener=listener;
-        this.playList=playList;
+        this.listener = listener;
     }
 
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener, PlaylistsModel playList) {
+        this.context = context;
+        this.songList = songList;
+        this.listener = listener;
+        this.playList = playList;
+    }
 
     private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
@@ -86,12 +87,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         String mode = "sequencePlay";
                         int trackFirstId = track.getTrackID();
                         int albumId = -1;
-                        String from =  "PLAYING FROM PLAYLIST";
+                        String from = "PLAYING FROM PLAYLIST";
                         String belong = playList.getName();
                         int playlistId = playList.getPlaylistID();
                         sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
-                    }
-                    else if (fragment instanceof ArtistDetailFragment) {
+                    } else if (fragment instanceof ArtistDetailFragment) {
 
                     }
                 }
@@ -103,9 +103,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
             bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
             //
-            ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
+            ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
             TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
-            TextView item_artist=bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
+            TextView item_artist = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
             tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
             titleBottomSheet.setText(track.getName());
             item_artist.setText(holder.itemArtist.getText());
@@ -126,6 +126,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             }
         });
     }
+
     private void loadArtistName(int albumId, TextView textView) {
         TrackService trackService = new TrackService();
         trackService.getArtistNameByAlbumId(albumId, new TrackService.OnArtistNameLoadedListener() {
@@ -139,6 +140,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             }
         });
     }
+
     @Override
     public int getItemCount() {
         return songList.size();
