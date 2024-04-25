@@ -6,17 +6,17 @@ import java.io.Serializable;
 
 public class LyricModel implements Serializable {
     private String lyric;
-    private String trackId;
+    private Integer trackId;
     public String getLyric() {
         return lyric;
     }
     public void setLyric(String lyric) {
         this.lyric = lyric;
     }
-    public String getTrackId() {
+    public Integer getTrackId() {
         return trackId;
     }
-    public void setTrackId(String trackId) {
+    public void setTrackId(Integer trackId) {
         this.trackId = trackId;
     }
     @Override

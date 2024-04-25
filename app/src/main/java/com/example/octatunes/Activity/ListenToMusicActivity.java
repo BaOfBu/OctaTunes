@@ -34,10 +34,12 @@ import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.LyricService;
 import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Utils.FileUtils;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
@@ -82,9 +84,12 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private View repeat_dot;
     private ImageButton shuffle;
     private View shuffle_dot;
+
+    LyricService lyricService = new LyricService();
     private boolean chosenSequence = false;
     public static boolean chosenRepeatOneSong = false;
     public static boolean chosenShuffle = false;
+    private StorageReference storageRef;
     public ListenToMusicActivity(String from, String belong, SongModel song){
         this.from = from;
         this.belong = belong;
@@ -130,7 +135,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             shuffle_dot.setVisibility(View.INVISIBLE);
         }
         initMediaPlayer();
-
+    //test lyric for local file
         mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
         mLyricView.reset();
         File fileLyric = null;
@@ -147,6 +152,24 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 MusicService.mediaPlayer.seekTo((int) progress);
             }
         });
+//        lyricService.getLyricFile(currentSong.getTitle()).thenAccept(lyricModel -> {
+//            mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
+//            mLyricView.reset();
+//            File fileLyric = null;
+//            try {
+//                fileLyric = FileUtils.createFileFromRaw(getContext(), lyricModel.getLyricFile(), lyricModel.getTitle());
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//            mLyricView.setLyricFile(fileLyric);
+//            mLyricView.setCurrentTimeMillis(0);
+//            mLyricView.setOnPlayerClickListener(new LyricView.OnPlayerClickListener() {
+//                @Override
+//                public void onPlayerClicked(long progress, String content) {
+//                    MusicService.mediaPlayer.seekTo((int) progress);
+//                }
+//            });
+//        });
 
         track_minimize.setOnClickListener(this);
         show_options.setOnClickListener(this);
@@ -205,6 +228,28 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
+//    private void downloadFile(String filePathInStorage, String localFileName) {
+//        // Create a reference to the file you want to download
+//        StorageReference fileRef = storageRef.child(filePathInStorage);
+//
+//        // Create a local file to store the downloaded file
+//        File localFile = new File(getExternalFilesDir(null), localFileName);
+//
+//        // Download the file to the local file
+//        fileRef.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+//            @Override
+//            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+//                // File downloaded successfully
+//                Log.d(TAG, "File downloaded to " + localFile.getAbsolutePath());
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//                Log.e(TAG, "Error downloading file: " + exception.getMessage());
+//            }
+//        });
+//    }
     private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
