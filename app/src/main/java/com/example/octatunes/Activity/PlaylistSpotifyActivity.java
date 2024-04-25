@@ -134,7 +134,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 if (getContext() != null) {
                     RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener);
+                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel);
                     recyclerView.setAdapter(adapter);
                 }
             });

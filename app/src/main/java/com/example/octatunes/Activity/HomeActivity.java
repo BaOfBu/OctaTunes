@@ -23,6 +23,7 @@ import com.example.octatunes.Adapter.ListPlaylistAdapter;
 import com.example.octatunes.Adapter.PlaylistPreviewAdapter;
 import com.example.octatunes.Adapter.PlaylistSectionAdapter;
 import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
@@ -75,6 +76,9 @@ public class HomeActivity extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        MainActivity.lastFrag=this;
+
         View rootView = inflater.inflate(R.layout.layout_home, container, false);
 
         setupToggleButtons(rootView);
