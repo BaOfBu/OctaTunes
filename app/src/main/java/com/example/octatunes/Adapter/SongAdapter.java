@@ -82,6 +82,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         // Load artist name for the track
         loadArtistName(track.getAlubumID(), holder.itemArtist);
 
+        if(listener == null) {
+            listener = (FragmentListener) context;
+        }
 
         holder.itemView.setOnClickListener(v -> {
             if (context instanceof FragmentActivity) {
