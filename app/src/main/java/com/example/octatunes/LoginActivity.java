@@ -31,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        //autoLogin();
+        autoLogin();
         setContentView(R.layout.layout_login_container);
 
         getSupportFragmentManager().beginTransaction()

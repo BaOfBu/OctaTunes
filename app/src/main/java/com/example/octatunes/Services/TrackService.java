@@ -196,7 +196,7 @@ public class TrackService {
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final List<Integer> trackIds = new ArrayList<>();
+                List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     String input = StringUtil.removeAccents(Objects.requireNonNull(snapshot.child("name").getValue(String.class)));
 
@@ -220,6 +220,9 @@ public class TrackService {
                             }
                             if (count.decrementAndGet() == 0) {
                                 listener.onTracksLoaded(tracks);
+                            }
+                            else{
+                                listener.onTracksLoaded(null);
                             }
                         }
 

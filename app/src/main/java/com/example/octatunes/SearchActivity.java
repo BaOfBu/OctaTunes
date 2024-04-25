@@ -246,7 +246,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
                     @Override
                     public void onTracksLoaded(List<TracksModel> tracks) {
-                        Log.e("SearchActivity", "Tracks: " + tracks.size());
+                        //Log.e("SearchActivity", "Tracks: " + tracks.size());
                         if (tracks == null || tracks.size() == 0){
                             emptyTextView.setVisibility(View.VISIBLE);
                             listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -274,7 +274,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 new OnSuccessListener<List<ArtistsModel>>() {
                     @Override
                     public void onSuccess(List<ArtistsModel> artistsModels) {
-                        Log.e("SearchActivity", "ArtisModels: " + artistsModels.size());
+                        //Log.e("SearchActivity", "ArtisModels: " + artistsModels.size());
                         if(artistsModels.size() == 0){
                             emptyTextView.setVisibility(View.VISIBLE);
                             listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -307,7 +307,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        listSearchResultRecyclerView.setAdapter(resultSearchOnlyAlbumAdapter);
 //        resultSearchOnlyAlbumAdapter.notifyDataSetChanged();
         albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
-            Log.e("SearchActivity", "ALbums: " + albums.size());
+            //Log.e("SearchActivity", "ALbums: " + albums.size());
             if(albums.size() == 0){
                 emptyTextView.setVisibility(View.VISIBLE);
                 listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -335,7 +335,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        listSearchResultRecyclerView.setAdapter(resultSearchOnlyPlaylistAdapter);
 //        resultSearchOnlyPlaylistAdapter.notifyDataSetChanged();
         playlistService.getPlaylistByName(searchQuery).thenAccept(playlists -> {
-            Log.e("SearchActivity", "Playlists: " + playlists.size());
+            //Log.e("SearchActivity", "Playlists: " + playlists.size());
             if(playlists.size() == 0){
                 emptyTextView.setVisibility(View.VISIBLE);
                 listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -368,6 +368,9 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 if(artists.size() == 0)
                     return;
                 artist.addAll(artists);
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+                listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
+                resultSearchByBandNameAdapter.notifyDataSetChanged();
             }
         }, new OnFailureListener() {
             @Override
@@ -381,6 +384,9 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             for(AlbumsModel album : albums){
                 listAlbums.add(album);
             }
+            ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+            listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
+            resultSearchByBandNameAdapter.notifyDataSetChanged();
         }).exceptionally(throwable -> {
             Log.e("SearchActivity", "Error getting albums", throwable);
             return null;
@@ -391,7 +397,14 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("getBestMatchResult", "Tracks: " + tracks.size());
+                Log.e("getBestMatchResult", "Tracks: " + tracks);
+                if(tracks==null && listAlbums.isEmpty() && artist.isEmpty()){
+                    emptyTextView.setVisibility(View.VISIBLE);
+                    listSearchResultRecyclerView.setVisibility(View.GONE);
+                    return;
+                }
+                emptyTextView.setVisibility(View.GONE);
+                listSearchResultRecyclerView.setVisibility(View.VISIBLE);
                 ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks, getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();

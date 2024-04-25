@@ -152,7 +152,7 @@ public class SearchingActivity extends Fragment {
         trackService.findTrackByName(query, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                //Log.e("SearchActivity", "Tracks: " + tracks.size());
                 text.setVisibility(View.GONE);
                 TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),listener, FormatSpace(searchBox.getText().toString())+" From Search");
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
