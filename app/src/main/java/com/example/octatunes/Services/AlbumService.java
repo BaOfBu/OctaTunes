@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -98,9 +99,16 @@ public class AlbumService {
         getAllAlbums().thenAccept(albums -> {
             List<AlbumsModel> foundAlbums = new ArrayList<>();
             for (AlbumsModel album : albums) {
-                if (album.getName().toLowerCase().contains(albumName.toLowerCase())) {
+                if (StringUtil.removeAccents(album.getName()).toLowerCase().contains(StringUtil.removeAccents(albumName).toLowerCase())) {
                     foundAlbums.add(album);
+                }else {
+                    getArtistNameForAlbum(album.getArtistID(), artistName -> {
+                        if (artistName != null && StringUtil.removeAccents(artistName).toLowerCase().contains(StringUtil.removeAccents(albumName).toLowerCase())) {
+                            foundAlbums.add(album);
+                        }
+                    });
                 }
+
             }
             future.complete(foundAlbums);
         }).exceptionally(throwable -> {

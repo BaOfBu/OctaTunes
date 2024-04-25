@@ -9,6 +9,7 @@ import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.TrackPreviewAdapter;
 import com.example.octatunes.TrackPreviewModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -191,20 +192,16 @@ public class TrackService {
     }
     public void findTrackByName(String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");
-        String regex = "\\p{InCombiningDiacriticalMarks}+";
-        trackName = Normalizer.normalize(trackName, Normalizer.Form.NFD);
-        trackName.replaceAll(regex, "");
-        String finalTrackName = trackName;
-        Log.e("TrackService", "TrackName normalizer: " + finalTrackName);
+        String finalTrackName = StringUtil.removeAccents(trackName);
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    String input = Objects.requireNonNull(snapshot.child("name").getValue(String.class));
-                    String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
-                    temp.replaceAll(regex, "");
-                    if(temp.toLowerCase().contains(finalTrackName.toLowerCase())){
+                    String input = StringUtil.removeAccents(Objects.requireNonNull(snapshot.child("name").getValue(String.class)));
+
+                    Log.e("TrackService", "search keyword: " + input + " track name: " + finalTrackName);
+                    if(input.toLowerCase().contains(finalTrackName.toLowerCase())){
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                     }
                 }

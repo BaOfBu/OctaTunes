@@ -9,10 +9,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistDetailFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.ArtistsModel;
 import com.google.gson.Gson;
@@ -58,15 +60,15 @@ public class ResearchSearchOnlyArtistAdapter extends RecyclerView.Adapter<Resear
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ArtistSpotifyActivity fragment = new ArtistSpotifyActivity();
-//                Bundle bundle = new Bundle();
-//                bundle.putString("artistModel", new Gson().toJson(finalArtistsModel));
-//                fragment.setArguments(bundle);
-//
-//                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
-//                transaction.replace(R.id.fragment_container, fragment);
-//                transaction.addToBackStack(null);
-//                transaction.commit();
+                ArtistDetailFragment fragment = new ArtistDetailFragment();
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("artist", finalArtistsModel);
+                fragment.setArguments(bundle);
+
+                ((AppCompatActivity) context).getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit();
             }
         });
     }
