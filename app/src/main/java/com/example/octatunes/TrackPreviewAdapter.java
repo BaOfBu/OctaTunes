@@ -12,10 +12,13 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Services.UserSongService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapter.ViewHolder> {
@@ -24,6 +27,8 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     private String belong;
     private String mode = "sequencePlay";
     private FragmentListener fragmentListener;
+
+    UserSongService userSong = new UserSongService();
 
     public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener, String belong) {
         this.trackPreviewModels = trackPreviewModels;
@@ -70,6 +75,8 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
 
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getTrackID()));
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
+                UserSongModel userSongModel = new UserSongModel(10, tracksModel.getTrackID(), new Date());
+                userSong.addAlbum(userSongModel);
                 sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
             }
         });

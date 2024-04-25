@@ -11,6 +11,7 @@ import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -177,10 +178,7 @@ public class ArtistService {
         return future;
     }
     public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
-        String regex = "\\p{InCombiningDiacriticalMarks}+";
-        query = Normalizer.normalize(query, Normalizer.Form.NFD);
-        query.replaceAll(regex, "");
-        String finalArtistName = query;
+        String finalArtistName = StringUtil.removeAccents(query);
         Log.d(TAG, "Searching for artist: " + finalArtistName);
         getAllArtists(
                 new OnSuccessListener<List<ArtistsModel>>() {
@@ -188,10 +186,7 @@ public class ArtistService {
                     public void onSuccess(List<ArtistsModel> allArtists) {
                         List<ArtistsModel> foundArtists = new ArrayList<>();
                         for (ArtistsModel artist : allArtists) {
-                            String input = artist.getName();
-                            String temp = Normalizer.normalize(input, Normalizer.Form.NFD);
-                            temp = temp.replaceAll(regex, "");
-                            if (temp.toLowerCase().contains(finalArtistName.toLowerCase())) {
+                            if (StringUtil.removeAccents(artist.getName()).toLowerCase().contains(finalArtistName.toLowerCase())) {
                                 foundArtists.add(artist);
                             }
                         }

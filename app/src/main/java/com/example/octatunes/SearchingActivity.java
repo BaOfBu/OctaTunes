@@ -65,6 +65,23 @@ public class SearchingActivity extends Fragment {
     RecyclerView searchResultsRecyclerView;
     TextView text;
 
+    private FragmentListener listener;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -136,7 +153,7 @@ public class SearchingActivity extends Fragment {
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());
                 text.setVisibility(View.GONE);
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),null, null);
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),listener, FormatSpace(searchBox.getText().toString())+" From Search");
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }
@@ -158,7 +175,7 @@ public class SearchingActivity extends Fragment {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),null, null);
+                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),listener, "Recent Search");
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
                 trackPreviewAdapter.notifyDataSetChanged();
             }
@@ -192,5 +209,9 @@ public class SearchingActivity extends Fragment {
         } else {
 
         }
+    }
+
+    private String FormatSpace(String str) {
+        return str.replace(" ", "+");
     }
 }
