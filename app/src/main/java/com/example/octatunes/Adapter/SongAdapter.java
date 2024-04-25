@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,12 +32,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     private Context context;
     private List<TracksModel> songList;
 
-    public SongAdapter(Context context, List<TracksModel> songList) {
+    private FragmentListener listener;
+
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
         this.songList = songList;
+        this.listener=listener;
     }
-
-    private FragmentListener listener;
 
 
     private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
@@ -65,26 +67,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         loadArtistName(track.getAlubumID(), holder.itemArtist);
 
 
-        //holder.itemView.setOnClickListener(v -> {
-        //    // Create NowPlayingBarFragment instance
-        //    NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
-        //
-        //    // Get FragmentManager
-        //    FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-        //
-        //    // Begin transaction
-        //    FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        //
-        //    // Find the FrameLayout using the activity's findViewById()
-        //    FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
-        //    frameLayout.setVisibility(View.VISIBLE);
-        //
-        //    // Replace fragment_container with NowPlayingBarFragment
-        //    fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-        //
-        //    // Commit transaction
-        //    fragmentTransaction.commit();
-        //});
+        holder.itemView.setOnClickListener(v -> {
+
+        });
 
         holder.songMoreInfo.setOnClickListener(v -> {
             //// Creating the BottomSheetDialog

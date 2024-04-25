@@ -134,7 +134,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 if (getContext() != null) {
                     RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    SongAdapter adapter = new SongAdapter(getContext(), tracks);
+                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener);
                     recyclerView.setAdapter(adapter);
                 }
             });
@@ -218,21 +218,6 @@ public class PlaylistSpotifyActivity extends Fragment {
                     });
                 }
             });
-
-            //String mode = "sequencePlay";
-            //playlistId = playlistsModel.getPlaylistID();
-            //int trackFirstId = allTracks.get(0).getTrackID();
-            //int albumId;
-            //int albumId = 0;
-            //String from =  "PLAYING FROM PLAYLIST";
-            //String belong = playlistsModel.getName();
-            //ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
-            //Log.w("ferf",trackFirstId + "");
-            //int finalPlaylistId = playlistId;
-            //playButton.setOnClickListener(v -> {
-            //    sendSignalToMainActivity(trackFirstId, finalPlaylistId,albumId,from,belong,mode);
-            //});
-
 
         }
         return view;
