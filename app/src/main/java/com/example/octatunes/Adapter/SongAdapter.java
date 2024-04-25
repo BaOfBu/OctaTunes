@@ -24,11 +24,16 @@ import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Services.UserService;
+import com.example.octatunes.Services.UserSongService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+import com.google.firebase.database.DatabaseReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.Date;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
@@ -37,6 +42,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     private List<TracksModel> songList;
     private FragmentListener listener;
     private PlaylistsModel playList;
+
 
     public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
@@ -92,7 +98,14 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
                     }
                     else if (fragment instanceof ArtistDetailFragment) {
-
+                        if(listener == null) {
+                            listener = (FragmentListener) context;
+                        }
+                        String mode = "sequencePlay";
+                        UserSongService userSongService = new UserSongService();
+                        UserSongModel userSongModel = new UserSongModel(10, track.getTrackID(), new Date());
+                        userSongService.addAlbum(userSongModel);
+                        sendSignalToMainActivity(track.getTrackID(), -1, track.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
                     }
                 }
             }
