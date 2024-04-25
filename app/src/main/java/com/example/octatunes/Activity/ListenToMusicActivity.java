@@ -3,6 +3,9 @@ package com.example.octatunes.Activity;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -11,16 +14,15 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.view.GestureDetector;
+import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +45,7 @@ import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Calendar;
 
 import me.zhengken.lyricview.LyricView;
 
@@ -84,12 +87,16 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private View repeat_dot;
     private ImageButton shuffle;
     private View shuffle_dot;
-
+    private ImageButton alarm;
+    private boolean isOnAlarm = false;
     LyricService lyricService = new LyricService();
     private boolean chosenSequence = false;
     public static boolean chosenRepeatOneSong = false;
     public static boolean chosenShuffle = false;
     private StorageReference storageRef;
+    Handler handlerAlarm = new Handler();
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
     public ListenToMusicActivity(String from, String belong, SongModel song){
         this.from = from;
         this.belong = belong;
@@ -124,6 +131,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         repeat_dot= rootView.findViewById(R.id.repeat_dot);
         shuffle= rootView.findViewById(R.id.imageButtonShuffle);
         shuffle_dot= rootView.findViewById(R.id.shuffle_dot);
+        alarm = rootView.findViewById(R.id.imageButtonAlarm);
 
         track_from.setText(from);
         track_belong.setText(belong);
@@ -178,6 +186,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         next.setOnClickListener(this);
         shuffle.setOnClickListener(this);
         repeat.setOnClickListener(this);
+        alarm.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -402,6 +411,144 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
                 shuffle_dot.setVisibility(View.INVISIBLE);
             }
+        }else if(id == R.id.imageButtonAlarm){
+            if(!isOnAlarm){
+                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+                bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
+                bottomSheetDialog.show();
+
+                TextView title = bottomSheetDialog.findViewById(R.id.title);
+
+                TextView five_minutesTV = bottomSheetDialog.findViewById(R.id.five_minutes);
+                five_minutesTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 5 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 5 phút");
+                    }
+                });
+
+                TextView ten_minutesTV = bottomSheetDialog.findViewById(R.id.ten_minutes);
+                ten_minutesTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 10 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 10 phút");
+                    }
+                });
+
+                TextView fifteen_minutesTV = bottomSheetDialog.findViewById(R.id.fifteen_minutes);
+                fifteen_minutesTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 15 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 15 phút");
+                    }
+                });
+
+                TextView thirty_minutesTV = bottomSheetDialog.findViewById(R.id.thirty_minutes);
+                thirty_minutesTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 30 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 30 phút");
+                    }
+                });
+
+                TextView fortyfive_minutesTV = bottomSheetDialog.findViewById(R.id.fortyfive_minutes);
+                fortyfive_minutesTV.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 45 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 45 phút");
+                    }
+                });
+
+                TextView one_hour = bottomSheetDialog.findViewById(R.id.one_hour);
+                one_hour.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = 60 * 60 * 1000;
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 60 phút");
+                    }
+                });
+
+                TextView end_track = bottomSheetDialog.findViewById(R.id.end_track);
+                end_track.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        int delayInMillis = (currentSong.getDuration() + 2) * 1000 - MusicService.mediaPlayer.getCurrentPosition();
+                        handleScheduleAlarm(delayInMillis);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
+                    }
+                });
+
+                TextView off_mode = bottomSheetDialog.findViewById(R.id.off_mode);
+                off_mode.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                        isOnAlarm = false;
+                        alarm.setImageResource(R.drawable.ic_alarm_white_24);
+                        handlerAlarm.removeCallbacksAndMessages(null);
+                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ");
+                    }
+                });
+
+                TextView close = bottomSheetDialog.findViewById(R.id.close);
+                close.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        bottomSheetDialog.cancel();
+                    }
+                });
+            }
+        }
+    }
+    private void handleScheduleAlarm(int time){
+        scheduleAlarm();
+        handlerAlarm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binder.pauseMusic();
+                isOnAlarm = false;
+                alarm.setImageResource(R.drawable.ic_alarm_white_24);
+            }
+        }, time);
+        isOnAlarm = true;
+        alarm.setImageResource(R.drawable.ic_alarm_on_white_24);
+    }
+    private void scheduleAlarm() {
+        alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(requireContext(), AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, 10);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        Log.i("SCHEDULE ALARM", "SUCCESS");
+        Toast.makeText(requireContext(), "Đã tắt chế độ hẹn giờ", Toast.LENGTH_SHORT).show();
+    }
+    public class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "Đã bật chế độ hẹn giờ", Toast.LENGTH_SHORT).show();
         }
     }
     private void replaceLastFragment(){
