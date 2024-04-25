@@ -33,6 +33,7 @@ public class LoginHomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater , ViewGroup container, Bundle savedInstanceState ){
         layout = (RelativeLayout) inflater.inflate(R.layout.layout_login_home,null);
+
         btnEmail = layout.findViewById(R.id.btnEmail);
         btnEmail.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +50,12 @@ public class LoginHomeFragment extends Fragment {
                 Fragment f = new SignUpPhoneFragment();
                 f.setArguments(new Bundle());
                 main.NavigateFragment(f);
+            }
+        });
+        btnFacebook = layout.findViewById(R.id.btnFacebook);
+        btnFacebook.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
             }
         });
         btnLogin = layout.findViewById(R.id.btnLogin);
