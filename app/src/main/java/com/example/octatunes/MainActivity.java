@@ -23,10 +23,12 @@ import com.bumptech.glide.Glide;
 import com.example.octatunes.Activity.HomeActivity;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Activity.LibraryFragment;
+import com.example.octatunes.Model.LyricModel;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Services.AlbumService;
 import com.example.octatunes.Services.ArtistService;
+import com.example.octatunes.Services.LyricService;
 import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
@@ -138,6 +140,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.trackPlayPause.setOnClickListener(this);
 
         binding.frameLayout.setVisibility(View.GONE);
+
         //Search(26, 11, 4, "PLAYING FROM SEARCH", "\"Như+ngày+hôm+qua\" in Search", null);
     }
 

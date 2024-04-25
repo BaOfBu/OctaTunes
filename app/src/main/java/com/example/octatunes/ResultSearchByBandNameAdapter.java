@@ -66,9 +66,10 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
 
     @Override
     public void onBindViewHolder(@NonNull ResultSearchByBandNameAdapter.ViewHolder holder, int position) {
-        Log.e("ByBand","artist model:"+ artistProfileModel.size());
-        Log.e("ByBand","album model:"+ albumPreviewModels.size());
-        Log.e("ByBand","track model:"+ trackPreviewModels.size());
+//        Log.e("ByBand","artist model:"+ artistProfileModel.size());
+//        Log.e("ByBand","album model:"+ albumPreviewModels.size());
+//        Log.e("ByBand","track model:"+ trackPreviewModels.size());
+
         if(artistProfileModel.size() == 0){
             holder.artistLayout.setVisibility(View.GONE);
         }
@@ -105,7 +106,7 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
             albumPreviewAdapter.notifyDataSetChanged();
         }
 
-        if(trackPreviewModels.size() == 0){
+        if(trackPreviewModels == null){
             holder.trackRecyclerView.setVisibility(View.GONE);
         }
         else {

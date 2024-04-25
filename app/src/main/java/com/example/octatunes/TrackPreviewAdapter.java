@@ -76,7 +76,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getTrackID()));
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
                 UserSongModel userSongModel = new UserSongModel(10, tracksModel.getTrackID(), new Date());
-                userSong.addAlbum(userSongModel);
+                userSong.addUserSong(userSongModel);
                 sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
             }
         });
