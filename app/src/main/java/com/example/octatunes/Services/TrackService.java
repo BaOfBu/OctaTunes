@@ -1,10 +1,16 @@
 package com.example.octatunes.Services;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Model.UserSongModel;
+import com.example.octatunes.TrackPreviewAdapter;
+import com.example.octatunes.TrackPreviewModel;
+import com.example.octatunes.Utils.StringUtil;
+import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -20,6 +26,8 @@ import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.text.Normalizer;
+import java.util.regex.Pattern;
 
 public class TrackService {
     private DatabaseReference playlistTracksRef;
@@ -98,7 +106,6 @@ public class TrackService {
                         public void onDataChange(DataSnapshot dataSnapshot) {
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TracksModel track = snapshot.getValue(TracksModel.class);
-                                Log.i("ONDATA CHANGE", track.toString());
                                 tracks.add(track);
                             }
                             if (count.decrementAndGet() == 0) {
@@ -128,6 +135,7 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String imageUrl = snapshot.child("image").getValue(String.class);
                         listener.onImageLoaded(imageUrl);
+                        return;
                     }
                 }
                 listener.onImageLoaded(null);
@@ -147,6 +155,7 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         int artistId = snapshot.child("artistID").getValue(int.class);
                         getArtistNameById(artistId, listener);
+                        return;
                     }
                 }
                 listener.onArtistNameLoaded(null); // No artist found
@@ -166,9 +175,13 @@ public class TrackService {
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                         String artistName = snapshot.child("name").getValue(String.class);
                         listener.onArtistNameLoaded(artistName);
+                        return;
                     }
                 }
-                listener.onArtistNameLoaded(null); // No artist found
+                else{
+                    listener.onArtistNameLoaded(null);
+                }
+
             }
 
             @Override
@@ -177,15 +190,63 @@ public class TrackService {
             }
         });
     }
-    public void findTrackByName(final String trackName, final OnTracksLoadedListener listener) {
+    public void findTrackByName(String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");
+        String finalTrackName = StringUtil.removeAccents(trackName);
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(Objects.requireNonNull(snapshot.child("name").getValue(String.class)).toLowerCase().contains(trackName.toLowerCase())){
+                    String input = StringUtil.removeAccents(Objects.requireNonNull(snapshot.child("name").getValue(String.class)));
+
+                    Log.e("TrackService", "search keyword: " + input + " track name: " + finalTrackName);
+                    if(input.toLowerCase().contains(finalTrackName.toLowerCase())){
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                    }
+                }
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<TracksModel> tracks = new ArrayList<>();
+                for (Integer trackId : trackIds) {
+                    Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TracksModel track = snapshot.getValue(TracksModel.class);
+                                tracks.add(track);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                listener.onTracksLoaded(tracks);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+    public void findTrackByID(final List<UserSongModel> trackIDs, final OnTracksLoadedListener listener) {
+        Query trackQuery = tracksRef.orderByChild("trackID");
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for (UserSongModel trackID : trackIDs) {
+                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getSongID())) {
+                            trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                            break;
+                        }
                     }
                 }
 

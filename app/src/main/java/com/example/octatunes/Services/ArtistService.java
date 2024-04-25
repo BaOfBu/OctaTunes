@@ -1,4 +1,6 @@
 package com.example.octatunes.Services;
+import java.text.Normalizer;
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 
 import android.util.Log;
@@ -9,6 +11,7 @@ import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -175,13 +178,15 @@ public class ArtistService {
         return future;
     }
     public void findArtistByName(String query, OnSuccessListener<List<ArtistsModel>> successListener, OnFailureListener failureListener) {
+        String finalArtistName = StringUtil.removeAccents(query);
+        Log.d(TAG, "Searching for artist: " + finalArtistName);
         getAllArtists(
                 new OnSuccessListener<List<ArtistsModel>>() {
                     @Override
                     public void onSuccess(List<ArtistsModel> allArtists) {
                         List<ArtistsModel> foundArtists = new ArrayList<>();
                         for (ArtistsModel artist : allArtists) {
-                            if (artist.getName().toLowerCase().contains(query.toLowerCase())) {
+                            if (StringUtil.removeAccents(artist.getName()).toLowerCase().contains(finalArtistName.toLowerCase())) {
                                 foundArtists.add(artist);
                             }
                         }
