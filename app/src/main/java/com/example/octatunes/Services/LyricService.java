@@ -1,5 +1,7 @@
 package com.example.octatunes.Services;
 
+import android.util.Log;
+
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.LyricModel;
 import com.google.firebase.database.DataSnapshot;
@@ -33,6 +35,7 @@ public class LyricService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (com.google.firebase.database.DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     LyricModel lyricModel = snapshot.getValue(LyricModel.class);
+                    //Log.d("LyricService", "Tìm được url tải: " + lyricModel.getLyric());
                     future.complete(lyricModel);
                     return;
                 }
