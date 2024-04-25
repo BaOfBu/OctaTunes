@@ -1,6 +1,7 @@
 package com.example.octatunes.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,12 +11,18 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistDetailFragment;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
+import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
@@ -28,10 +35,26 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     private Context context;
     private List<TracksModel> songList;
+    private FragmentListener listener;
+    private PlaylistsModel playList;
 
-    public SongAdapter(Context context, List<TracksModel> songList) {
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
         this.songList = songList;
+        this.listener=listener;
+    }
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener,PlaylistsModel playList) {
+        this.context = context;
+        this.songList = songList;
+        this.listener=listener;
+        this.playList=playList;
+    }
+
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
     }
 
     @NonNull
@@ -55,24 +78,24 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
 
         holder.itemView.setOnClickListener(v -> {
-            // Create NowPlayingBarFragment instance
-            NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
+            if (context instanceof FragmentActivity) {
+                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (fragment != null) {
+                    if (fragment instanceof PlaylistSpotifyActivity) {
+                        String mode = "sequencePlay";
+                        int trackFirstId = track.getTrackID();
+                        int albumId = -1;
+                        String from =  "PLAYING FROM PLAYLIST";
+                        String belong = playList.getName();
+                        int playlistId = playList.getPlaylistID();
+                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                    }
+                    else if (fragment instanceof ArtistDetailFragment) {
 
-            // Get FragmentManager
-            FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-
-            // Begin transaction
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            // Find the FrameLayout using the activity's findViewById()
-            FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
-            frameLayout.setVisibility(View.VISIBLE);
-
-            // Replace fragment_container with NowPlayingBarFragment
-            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-
-            // Commit transaction
-            fragmentTransaction.commit();
+                    }
+                }
+            }
         });
 
         holder.songMoreInfo.setOnClickListener(v -> {

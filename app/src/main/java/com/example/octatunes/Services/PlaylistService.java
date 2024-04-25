@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.UsersModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -117,7 +118,7 @@ public class PlaylistService {
         getAllPlaylists().thenAccept(playlists -> {
             List<PlaylistsModel> playlistsByName = new ArrayList<>();
             for (PlaylistsModel playlist : playlists) {
-                if (playlist.getName().toLowerCase().contains(playlistName.toLowerCase())) {
+                if (StringUtil.removeAccents(playlist.getName()).toLowerCase().contains(StringUtil.removeAccents(playlistName).toLowerCase())) {
                     playlistsByName.add(playlist);
                 }
             }
@@ -159,8 +160,5 @@ public class PlaylistService {
 
         return future;
     }
-
-
-
 
 }

@@ -6,7 +6,6 @@
     android:orientation="vertical"
     android:background="@color/background_color"
     android:layout_height="match_parent">
-    <!-- Tab  -->
     <androidx.cardview.widget.CardView
         android:id="@+id/tab_library"
         android:orientation="vertical"

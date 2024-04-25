@@ -8,6 +8,7 @@ import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
+import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.PlaylistLibrary_User;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -57,12 +59,21 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
 
     private ImageView playPlaylist = null;
 
+    private FragmentListener listener;
 
-    public PlaylistPreviewAdapter(Context context, List<String> playlistPreviews, List<PlaylistsModel> playlistsModels, List<Integer> iconResourceIds) {
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
+    public PlaylistPreviewAdapter(Context context, List<String> playlistPreviews, List<PlaylistsModel> playlistsModels, List<Integer> iconResourceIds ,FragmentListener listener) {
         this.context = context;
         this.playlistPreviews = playlistPreviews;
         this.playlistsModels = playlistsModels;
         this.iconResourceIds = iconResourceIds;
+        this.listener = listener;
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -133,30 +144,51 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
         });
 
         TrackService trackService = new TrackService();
+        final TracksModel[] tracksModel = {new TracksModel()};
+        final String[] trackImg = new String[1];
         Runnable updateTrackRunnable = new Runnable() {
             @Override
             public void run() {
                 trackService.getTracksByPlaylistId(playlist.getPlaylistID(), new TrackService.OnTracksLoadedListener() {
                     @Override
                     public void onTracksLoaded(List<TracksModel> tracks) {
+
                         int trackSize = tracks.size();
                         TracksModel randomTrack = new TracksModel();
                         if (trackSize > 0) {
                             int randomIndex = new Random().nextInt(trackSize);
                             randomTrack = tracks.get(randomIndex);
-                            // Set random track name
+                            tracksModel[0] = randomTrack;
                             holder.music_name.setText(randomTrack.getName());
                             holder.song_count.setText(String.valueOf(trackSize) + " Songs");
+
+                            /* Play Button Playlist */
+                            String mode = "sequencePlay";
+                            int trackFirstId = randomTrack.getTrackID();
+                            int albumId = -1;
+                            String from =  "PLAYING FROM PLAYLIST";
+                            String belong = playlist.getName();
+                            int playlistId = playlist.getPlaylistID();
+                            holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                                }
+                            });
                         }
+
                         // Load image for random track using Picasso
                         trackService.getImageForTrack(randomTrack, new TrackService.OnImageLoadedListener() {
                             @Override
                             public void onImageLoaded(String imageUrl) {
                                 if (imageUrl != null) {
+                                    trackImg[0] = imageUrl;
                                     Picasso.get().load(imageUrl).into(holder.playlistImage);
                                 }
                             }
                         });
+
+
                     }
                 });
 
@@ -167,6 +199,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
 
         // Initial execution
         handler.post(updateTrackRunnable);
+
 
         /* More Info button */
         holder.tbin_homepage_playlist_detail_menu_button.setOnClickListener(new View.OnClickListener() {
@@ -190,42 +223,6 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
             }
         });
 
-        /* Play button */
-        holder.play_button_home_playlist_preview.setTag(R.drawable.ic_play_circle);
-        holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Get the resource IDs of the drawables
-                int playDrawableId = R.drawable.ic_play_circle;
-                int pauseDrawableId = R.drawable.baseline_pause_circle_24;
-
-                // Get the current drawable resource ID of the button
-                int currentDrawableId = (Integer) holder.play_button_home_playlist_preview.getTag();
-
-                // Check if the current drawable is the play drawable
-                if (currentDrawableId == playDrawableId) {
-                    if (playPlaylist!=null){
-                        playPlaylist.setImageResource(playDrawableId);
-                        playPlaylist.setTag(playDrawableId);
-                    }
-                    holder.play_button_home_playlist_preview.setImageResource(pauseDrawableId);
-                    holder.play_button_home_playlist_preview.setTag(pauseDrawableId);
-                    playPlaylist = holder.play_button_home_playlist_preview;
-                } else {
-                    playPlaylist = null;
-                    holder.play_button_home_playlist_preview.setImageResource(playDrawableId);
-                    holder.play_button_home_playlist_preview.setTag(playDrawableId);
-                }
-
-                NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
-                FragmentManager fragmentManager = ((AppCompatActivity) context).getSupportFragmentManager();
-                FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-                FrameLayout frameLayout = ((AppCompatActivity) context).findViewById(R.id.frame_layout);
-                frameLayout.setVisibility(View.VISIBLE);
-                fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-                fragmentTransaction.commit();
-            }
-        });
         /* Add button */
         // Create an instance of the UserService
         UserService userService = new UserService();

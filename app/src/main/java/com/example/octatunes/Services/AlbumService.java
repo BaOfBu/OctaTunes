@@ -5,12 +5,14 @@ import android.util.Log;
 
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -70,8 +72,6 @@ public class AlbumService {
             }
         });
     }
-
-
     public CompletableFuture<List<AlbumsModel>> getAllAlbums(){
         CompletableFuture<List<AlbumsModel>> future = new CompletableFuture<>();
         albumsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -94,20 +94,49 @@ public class AlbumService {
         });
         return future;
     }
-
     public CompletableFuture<List<AlbumsModel>> findAlbumByName(String albumName){
         CompletableFuture<List<AlbumsModel>> future = new CompletableFuture<>();
         getAllAlbums().thenAccept(albums -> {
             List<AlbumsModel> foundAlbums = new ArrayList<>();
             for (AlbumsModel album : albums) {
-                if (album.getName().toLowerCase().contains(albumName.toLowerCase())) {
+                if (StringUtil.removeAccents(album.getName()).toLowerCase().contains(StringUtil.removeAccents(albumName).toLowerCase())) {
                     foundAlbums.add(album);
+                }else {
+                    getArtistNameForAlbum(album.getArtistID(), artistName -> {
+                        if (artistName != null && StringUtil.removeAccents(artistName).toLowerCase().contains(StringUtil.removeAccents(albumName).toLowerCase())) {
+                            foundAlbums.add(album);
+                        }
+                    });
                 }
+
             }
             future.complete(foundAlbums);
         }).exceptionally(throwable -> {
             future.completeExceptionally(throwable);
             return null;
+        });
+        return future;
+    }
+    public CompletableFuture<AlbumsModel> findAlbumById(int albumID){
+        CompletableFuture<AlbumsModel> future = new CompletableFuture<>();
+        Query query = albumsRef.orderByChild("albumID").equalTo(albumID);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        AlbumsModel albumsModel = snapshot.getValue(AlbumsModel.class);
+                        future.complete(albumsModel);
+                        return;
+                    }
+                }
+
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle errors
+                future.completeExceptionally(databaseError.toException());
+            }
         });
         return future;
     }

@@ -8,10 +8,12 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ArtistDetailFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
@@ -90,6 +92,7 @@ public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Picasso.get()
                         .load(imageUrl)
                         .into(((PlaylistAlbumViewHolder) playlistAlbumViewHolder).image_library_item);
+
                 if (item instanceof PlaylistsModel){
                     playlistAlbumViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -122,6 +125,21 @@ public class LibraryAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
                     }
                 });
+                if (item instanceof ArtistsModel){
+                    artistViewHolder.itemView.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ArtistDetailFragment fragment = new ArtistDetailFragment();
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("artist", (ArtistsModel)item);
+                            fragment.setArguments(bundle);
+                            FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                            transaction.replace(R.id.fragment_container, fragment);
+                            transaction.addToBackStack(null);
+                            transaction.commit();
+                        }
+                    });
+                }
                 break;
         }
     }

@@ -1,5 +1,6 @@
 package com.example.octatunes.Activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import com.example.octatunes.Adapter.ArtistSectionAdapter;
 import com.example.octatunes.Adapter.ListPlaylistAdapter;
 import com.example.octatunes.Adapter.PlaylistPreviewAdapter;
 import com.example.octatunes.Adapter.PlaylistSectionAdapter;
+import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
@@ -58,20 +61,25 @@ public class HomeActivity extends Fragment {
     private PlaylistService playlistService = new PlaylistService();
 
     private ArtistService artistService = new ArtistService();
+
+    private FragmentListener listener;
+
+    @Override
+    public void onAttach(@android.support.annotation.NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        MainActivity.lastFrag=this;
+
         View rootView = inflater.inflate(R.layout.layout_home, container, false);
-
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        FirebaseUser user = auth.getCurrentUser();
-
-        if (user != null) {
-            String userID = user.getUid();
-            Log.w("User", userID);
-        } else {
-            Log.w("User","Null");
-        }
 
         setupToggleButtons(rootView);
 
@@ -93,7 +101,7 @@ public class HomeActivity extends Fragment {
         playlistSectionRecyclerView.setAdapter(adapter);
     }
     private void setupPlaylistPreviewSectionAdapter(List<String> sectionTitles, List<Integer> playlistPreviewIcon) {
-        PlaylistPreviewAdapter adapter = new PlaylistPreviewAdapter(getContext(),sectionTitles, playlistPreviewBySection,playlistPreviewIcon);
+        PlaylistPreviewAdapter adapter = new PlaylistPreviewAdapter(getContext(),sectionTitles, playlistPreviewBySection,playlistPreviewIcon,listener);
         RecyclerView playlistSectionRecyclerView =  getView().findViewById(R.id.playlistDetail);
         playlistSectionRecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         playlistSectionRecyclerView.setAdapter(adapter);

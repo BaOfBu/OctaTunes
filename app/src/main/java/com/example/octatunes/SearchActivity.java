@@ -1,5 +1,6 @@
 package com.example.octatunes;
 
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -25,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -47,6 +50,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     static RecyclerView listSearchResultRecyclerView;
     RecyclerView listCategoriesButtonRecyclerView;
     TextView emptyTextView;
+    ImageView clearSearchButton;
 
     private PlaylistService playlistService = new PlaylistService();
     private ArtistService artistService = new ArtistService();
@@ -66,12 +70,28 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     public static void setSelectedButton(ToggleButton button){
         selectedButton = button;
     }
+
+    private FragmentListener listener;
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.lastFrag = this;
         View rootView = inflater.inflate(R.layout.layout_result_search, container, false);
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
-
         searchEditText = rootView.findViewById(R.id.search_bar_edit_text);
         listSearchResultLayout = rootView.findViewById(R.id.list_search_result);
 
@@ -80,10 +100,12 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listCategoriesButtonRecyclerView = rootView.findViewById(R.id.recyclerview_categories_search);
         emptyTextView = rootView.findViewById(R.id.emptyListText);
         cancelSearchButton = rootView.findViewById(R.id.HuyButton);
+        clearSearchButton = rootView.findViewById(R.id.iconRemove);
 
         if (listSearchResultRecyclerView.getParent() != null) {
             ((ViewGroup) listSearchResultRecyclerView.getParent()).removeView(listSearchResultRecyclerView);
         }
+
 
         listSearchResultRecyclerView.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -99,6 +121,16 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 getFragmentManager().popBackStackImmediate();
             }
         });
+
+        clearSearchButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                searchEditText.setText("");
+                searchEditText.performClick();
+            }
+        });
+
+
         //uncomment this for instant search when type in search box
 //        searchEditText.addTextChangedListener(new TextWatcher() {
 //            @Override
@@ -186,7 +218,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 
     private ArrayList<String> getListCategories(){
         ArrayList<String> listCategories = new ArrayList<>();
-        
+
         listCategories.add("Kết quả phù hợp nhất");
         listCategories.add("Bài hát");
         listCategories.add("Nghệ sĩ");
@@ -196,10 +228,10 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 
         return  listCategories;
     }
-    
+
     private void getListCategoriesButton(){
         ArrayList<String> listCategories = getListCategories();
-        
+
         ListCategoriesButtonAdapter listCategoriesButtonAdapter = new ListCategoriesButtonAdapter(listCategories, this.getContext(), this);
         listCategoriesButtonRecyclerView.setAdapter(listCategoriesButtonAdapter);
         listCategoriesButtonAdapter.notifyDataSetChanged();
@@ -212,23 +244,21 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
         listSearchResultRecyclerView.setAdapter(null);
         List<TracksModel> tempTracks = new ArrayList<>();
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
-            @Override
-            public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
-                if(tracks.size() == 0){
-                    emptyTextView.setVisibility(View.VISIBLE);
-                    listSearchResultRecyclerView.setVisibility(View.GONE);
-                    return;
-                }else{
-                    emptyTextView.setVisibility(View.GONE);
-                    listSearchResultRecyclerView.setVisibility(View.VISIBLE);
-                }
-                TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext());
-                listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-                trackPreviewAdapter.notifyDataSetChanged();
-            }
-        });
-
+                    @Override
+                    public void onTracksLoaded(List<TracksModel> tracks) {
+                        //Log.e("SearchActivity", "Tracks: " + tracks.size());
+                        if (tracks == null || tracks.size() == 0){
+                            emptyTextView.setVisibility(View.VISIBLE);
+                            listSearchResultRecyclerView.setVisibility(View.GONE);
+                        } else {
+                            emptyTextView.setVisibility(View.GONE);
+                            listSearchResultRecyclerView.setVisibility(View.VISIBLE);
+                            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(), listener, null);
+                            listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+                            trackPreviewAdapter.notifyDataSetChanged();
+                        }
+                    }
+                });
     }
     private void getListUserProfile(String searchQuery) {
 //        ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
@@ -244,7 +274,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 new OnSuccessListener<List<ArtistsModel>>() {
                     @Override
                     public void onSuccess(List<ArtistsModel> artistsModels) {
-                        Log.e("SearchActivity", "ArtisModels: " + artistsModels.size());
+                        //Log.e("SearchActivity", "ArtisModels: " + artistsModels.size());
                         if(artistsModels.size() == 0){
                             emptyTextView.setVisibility(View.VISIBLE);
                             listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -277,7 +307,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        listSearchResultRecyclerView.setAdapter(resultSearchOnlyAlbumAdapter);
 //        resultSearchOnlyAlbumAdapter.notifyDataSetChanged();
         albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
-            Log.e("SearchActivity", "ALbums: " + albums.size());
+            //Log.e("SearchActivity", "ALbums: " + albums.size());
             if(albums.size() == 0){
                 emptyTextView.setVisibility(View.VISIBLE);
                 listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -305,7 +335,7 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        listSearchResultRecyclerView.setAdapter(resultSearchOnlyPlaylistAdapter);
 //        resultSearchOnlyPlaylistAdapter.notifyDataSetChanged();
         playlistService.getPlaylistByName(searchQuery).thenAccept(playlists -> {
-            Log.e("SearchActivity", "Playlists: " + playlists.size());
+            //Log.e("SearchActivity", "Playlists: " + playlists.size());
             if(playlists.size() == 0){
                 emptyTextView.setVisibility(View.VISIBLE);
                 listSearchResultRecyclerView.setVisibility(View.GONE);
@@ -330,26 +360,17 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
     private void getBestMatchResults(){
         List<AlbumsModel> listAlbums = new ArrayList<>();
         List<ArtistsModel> artist = new ArrayList<>();
-        // Search for albums
-        albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
-            Log.e("SearchActivity", "ALbums: " + albums.size());
-            for(AlbumsModel album : albums){
-                listAlbums.add(album);
-            }
-        }).exceptionally(throwable -> {
-            Log.e("SearchActivity", "Error getting albums", throwable);
-            return null;
-        });
-
         // Search for artists
-
         artistService.findArtistByName(searchQuery, new OnSuccessListener<List<ArtistsModel>>() {
             @Override
             public void onSuccess(List<ArtistsModel> artists) {
-                Log.e("SearchActivity", "Artists: " + artists.size());
+                Log.e("getBestMatchResult", "Artists: " + artists.size());
                 if(artists.size() == 0)
                     return;
                 artist.addAll(artists);
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+                listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
+                resultSearchByBandNameAdapter.notifyDataSetChanged();
             }
         }, new OnFailureListener() {
             @Override
@@ -357,11 +378,33 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 Log.e("SearchActivity", "Error getting artists", e);
             }
         });
+        // Search for albums
+        albumService.findAlbumByName(searchQuery).thenAccept(albums -> {
+            Log.e("getBestMatchResult", "ALbums: " + albums.size());
+            for(AlbumsModel album : albums){
+                listAlbums.add(album);
+            }
+            ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+            listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
+            resultSearchByBandNameAdapter.notifyDataSetChanged();
+        }).exceptionally(throwable -> {
+            Log.e("SearchActivity", "Error getting albums", throwable);
+            return null;
+        });
+
+
         // Search for tracks
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                Log.e("getBestMatchResult", "Tracks: " + tracks);
+                if(tracks==null && listAlbums.isEmpty() && artist.isEmpty()){
+                    emptyTextView.setVisibility(View.VISIBLE);
+                    listSearchResultRecyclerView.setVisibility(View.GONE);
+                    return;
+                }
+                emptyTextView.setVisibility(View.GONE);
+                listSearchResultRecyclerView.setVisibility(View.VISIBLE);
                 ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks, getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();

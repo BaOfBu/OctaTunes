@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Image View for the background image -->
+                <ImageView
+                    android:id="@+id/artist_detail_image"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:src="@drawable/mck"
+                    android:scaleType="centerCrop" />
+
+                <!-- Semi-transparent overlay -->
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:background="#80000000" /> <!-- Adjust opacity by changing the alpha value (80 in this case) -->
+
+                <!-- TextView for the artist name -->
+                <TextView
+                    android:id="@+id/artist_detail_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="top"
+                    android:textStyle="bold"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="180dp"
+                    android:gravity="left"
+                    android:text="RPT MCK"
+                    android:textColor="#FFFFFF"
+                    android:textSize="45sp" />
+
+                <!-- ImageView for the back icon -->
+                <ImageView
+                    android:id="@+id/back_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+                    android:src="@drawable/ic_back_arrow"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="5dp"
+                android:textColor="#a1a09f"
+                android:layout_marginLeft="20dp"
+                android:text="1.3M monthly listeners"
+                />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp">
+                <TextView
+                    android:id="@+id/artist_follow_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textColor="#fff"
+                    android:letterSpacing="0.1"
+                    android:paddingLeft="15dp"
+                    android:paddingRight="15dp"
+                    android:layout_marginRight="20dp"
+                    android:gravity="center"
+                    android:background="@drawable/following_btn"
+                    android:text="Following" />
+                <ImageView
+                    android:id="@+id/more_info"
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#a7a7a7"
+                    android:background="@drawable/baseline_more_vert_24"
+                    />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:layout_width="36dp"
+                    android:layout_gravity="center"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="5dp"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_shuffle_24"
+                    />
+                <ImageView
+                    android:id="@+id/play_button_playlist_display"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_play_circle_filled_24"
+                    />
+            </LinearLayout>
+
+            <!-- No Music -->
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/no_music_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="An artist does not have any music"
+                android:textColor="#a7a7a7"
+                android:textSize="18sp"
+                android:layout_gravity="left"
+                android:visibility="gone" />
+
+
+            <!--  Popular    -->
+            <TextView
+                android:id="@+id/popular_song_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="Popular"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                />
+            <RelativeLayout
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSongPopular"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_playlist_spotify_item" />
+            </RelativeLayout>
+            <!--  Popular Release Album    -->
+            <TextView
+                android:id="@+id/popular_release_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="Popular Release"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                />
+            <RelativeLayout
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:nestedScrollingEnabled="false"
+                    android:id="@+id/recyclerViewSongPopularRelease"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_popular_release_album_artist" />
+            </RelativeLayout>
+            <!--  Featuring Artist    -->
+            <TextView
+                android:id="@+id/featuring_titlte"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="Featuring RPT MCK"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                />
+            <RelativeLayout
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSongFeaturing"
+                    android:layout_width="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_playlist_item_artist_small" />
+            </RelativeLayout>
+            <!--  Fan also like    -->
+            <TextView
+                android:id="@+id/fan_also_like"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_marginTop="20dp"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:layout_marginBottom="5dp"
+                android:text="Fans also like"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                />
+            <RelativeLayout
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                android:layout_marginBottom="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewSongFansAlsoLike"
+                    android:layout_width="match_parent"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    android:orientation="horizontal"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_artist_item_small" />
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

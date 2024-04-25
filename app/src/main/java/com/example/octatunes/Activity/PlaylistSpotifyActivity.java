@@ -1,5 +1,6 @@
 package com.example.octatunes.Activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -21,6 +22,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.SongAdapter;
+import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.PlaylistLibrary_User;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
@@ -42,35 +45,32 @@ import java.util.List;
 public class PlaylistSpotifyActivity extends Fragment {
     private List<TracksModel> songList;
 
+    private FragmentListener listener;
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+        if (context instanceof FragmentListener) {
+            listener = (FragmentListener) context;
+        } else {
+            throw new ClassCastException(context.toString() + " must implement FragmentListener");
+        }
+    }
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        MainActivity.lastFrag=this;
+
         View view = inflater.inflate(R.layout.layout_playlist_spotify, container, false);
 
         String playlistsModelJson = getArguments().getString("playlistItem");
-
-        ImageView play_button_playlist_display=view.findViewById(R.id.play_button_playlist_display);
-        play_button_playlist_display.setOnClickListener(v -> {
-            // Create NowPlayingBarFragment instance
-            NowPlayingBarFragment nowPlayingBarFragment = new NowPlayingBarFragment();
-
-            // Get FragmentManager
-            FragmentManager fragmentManager = ((AppCompatActivity) getContext()).getSupportFragmentManager();
-
-            // Begin transaction
-            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-
-            // Find the FrameLayout using the activity's findViewById()
-            FrameLayout frameLayout = ((AppCompatActivity) getContext()).findViewById(R.id.frame_layout);
-            frameLayout.setVisibility(View.VISIBLE);
-
-            // Replace fragment_container with NowPlayingBarFragment
-            fragmentTransaction.replace(R.id.frame_layout, nowPlayingBarFragment);
-
-            // Commit transaction
-            fragmentTransaction.commit();
-        });
 
         if (playlistsModelJson != null && getContext() != null) {
             PlaylistsModel playlistsModel = new Gson().fromJson(playlistsModelJson, PlaylistsModel.class);
@@ -89,18 +89,16 @@ public class PlaylistSpotifyActivity extends Fragment {
             playlistService.getUsernameOfPlaylistCreator(playlistsModel)
                     .thenAccept(username -> {
                         if (username != null) {
-                            if (username.equals("Spotify")){
+                            if (username.equals("Spotify")) {
                                 int randomNumber = (int) (Math.random() * 100) + 1;
-                                if (randomNumber%2==0){
+                                if (randomNumber % 2 == 0) {
                                     String madeByText = "<font color='#a7a7a7'>Made for </font>" + "Binh Le Tuan";
                                     creator.setText(Html.fromHtml(madeByText));
-                                }
-                                else{
+                                } else {
                                     creator.setText(username);
                                 }
 
-                            }
-                            else{
+                            } else {
                                 String madeByText = "<font color='#a7a7a7'>Made by </font>" + username;
                                 creator.setText(Html.fromHtml(madeByText));
                             }
@@ -116,17 +114,28 @@ public class PlaylistSpotifyActivity extends Fragment {
 
 
             TrackService trackService = new TrackService();
+            List<TracksModel> allTracks = new ArrayList<>();
+
             // Get tracks by playlist ID
             int playlistId = playlistsModel.getPlaylistID();
-            trackService.getTracksByPlaylistId(playlistId, new TrackService.OnTracksLoadedListener() {
-                @Override
-                public void onTracksLoaded(List<TracksModel> tracks) {
-                    if (getContext() != null) {
-                        RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
-                        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                        SongAdapter adapter = new SongAdapter(getContext(), tracks);
-                        recyclerView.setAdapter(adapter);
-                    }
+            trackService.getTracksByPlaylistId(playlistId).thenAccept(tracks -> {
+                String mode = "sequencePlay";
+                int trackFirstId = tracks.get(0).getTrackID();
+                int albumId = -1;
+                String from =  "PLAYING FROM PLAYLIST";
+                String belong = playlistsModel.getName();
+                ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
+                playButton.setOnClickListener(v -> {
+                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                });
+
+                /* Adapter for track */
+                allTracks.addAll(tracks);
+                if (getContext() != null) {
+                    RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel);
+                    recyclerView.setAdapter(adapter);
                 }
             });
 
@@ -140,7 +149,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
                 bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_playlist_spotify);
 
-                ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
+                ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_image);
                 TextView tbin_playlist_bottom_sheet_title = bottomSheetDialog.findViewById(R.id.tbin_playlist_bottom_sheet_title);
 
                 tbin_playlist_bottom_sheet_image.setImageDrawable(imageView.getDrawable());
@@ -151,11 +160,11 @@ public class PlaylistSpotifyActivity extends Fragment {
 
             /* Download option */
             ImageView download = view.findViewById(R.id.download_playlist_spotify);
-            download.setOnClickListener(v ->{
+            download.setOnClickListener(v -> {
                 // Creating the BottomSheetDialog
                 BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
                 bottomSheetDialog.setContentView(R.layout.bottom_sheet_playlist_spotify_download);
-                ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.download_bottom_sheet_image);
+                ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.download_bottom_sheet_image);
                 TextView tbin_playlist_bottom_sheet_title = bottomSheetDialog.findViewById(R.id.download_bottom_sheet_title);
 
                 tbin_playlist_bottom_sheet_image.setImageDrawable(imageView.getDrawable());
@@ -213,5 +222,4 @@ public class PlaylistSpotifyActivity extends Fragment {
         }
         return view;
     }
-
 }

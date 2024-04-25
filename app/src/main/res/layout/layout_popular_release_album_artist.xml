@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:background="@color/background_color"
+    android:layout_marginBottom="10dp"
+    android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/album_image_view_popular_release_artist_detail"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginRight="15dp"
+        android:src="@drawable/playlist_06"
+        />
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">
+        <TextView
+            android:id="@+id/album_name_text_popular_release_artist_detail"
+            android:layout_width="match_parent"
+            android:textColor="#fff"
+            android:layout_marginBottom="10dp"
+            android:textStyle="bold"
+            android:maxLines="1"
+            android:ellipsize="end"
+            android:textSize="16dp"
+            android:text="Đìu Anh Luôn Giữ Kín Trong Tym"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:id="@+id/album_release_date_popular_release_artist_detail"
+            android:layout_width="match_parent"
+            android:textColor="#a7a7a7"
+            android:textSize="14dp"
+            android:text="2021 - Single"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>
