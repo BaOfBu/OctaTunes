@@ -73,13 +73,15 @@ public class SignUpNameFragment extends Fragment {
         btnSignUp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(context.getApplicationContext(), "Button Press",
-                        Toast.LENGTH_SHORT).show();
+                main.startProgressDialog();
+
                 String name = edtName.getText().toString();
                 String email = args.getString("email");
                 String pass = args.getString("password");
                 Date birth = new Date(args.getLong("birth"));
                 if(name.equals("")){
+                    main.stopProgressDialog();
+
                     Toast.makeText(context.getApplicationContext(), "Enter Username",
                             Toast.LENGTH_SHORT).show();
                     return;
@@ -161,9 +163,11 @@ public class SignUpNameFragment extends Fragment {
                                                             //save logged user for auto login
                                                             main.saveAutoLoginAccount(email, pass);
                                                             //Move to home
+                                                            main.stopProgressDialog();
                                                             Intent intent = new Intent(getActivity(), MainActivity.class);
                                                             startActivity(intent);
                                                         } else {
+                                                            main.stopProgressDialog();
                                                             Toast.makeText(context.getApplicationContext(), "Failed to save user data"
                                                                     , Toast.LENGTH_SHORT).show();
                                                         }
@@ -171,12 +175,14 @@ public class SignUpNameFragment extends Fragment {
                                                 });
                                     } else {
                                         // Handle error
+                                        main.stopProgressDialog();
                                         Toast.makeText(context.getApplicationContext(), "Failed to retrieve highest User ID"
                                                 , Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
                         } else {
+                            main.stopProgressDialog();
                             Toast.makeText(context.getApplicationContext(), "Sign up failed", Toast.LENGTH_SHORT).show();
                         }
                     }

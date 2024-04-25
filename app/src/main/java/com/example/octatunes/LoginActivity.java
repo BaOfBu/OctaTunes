@@ -1,13 +1,17 @@
 package com.example.octatunes;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
@@ -28,12 +32,19 @@ import java.util.regex.Pattern;
 public class LoginActivity extends AppCompatActivity {
     Button btn_signup_free, btn_login_phone;
     Button btn_login;
+    public ProgressDialog progressDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        autoLogin();
         setContentView(R.layout.layout_login_container);
-
+        createProgressDialog();
+    }
+    @Override
+    protected void onStart() {
+        super.onStart();
+        //auto login after user logged in
+        autoLogin();
+        //move to login home page
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.login_container, new LoginHomeFragment())
                 .commit();
@@ -72,6 +83,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     public void autoLogin(){
+        startProgressDialog();
+
         String UE = getAccount();
         String pass = getPassword();
 
@@ -82,8 +95,13 @@ public class LoginActivity extends AppCompatActivity {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if (task.isSuccessful()) {
+                                    stopProgressDialog();
+
                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                     startActivity(intent);
+
+                                }else{
+                                    stopProgressDialog();
                                 }
                             }
                         });
@@ -102,21 +120,47 @@ public class LoginActivity extends AppCompatActivity {
                                             public void onComplete(@NonNull Task<AuthResult> task) {
                                                 if (task.isSuccessful()) {
                                                     // User signed in successfully
+                                                    stopProgressDialog();
+
                                                     Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                                                     startActivity(intent);
+                                                }else{
+                                                    stopProgressDialog();
                                                 }
                                             }
                                         });
                                 return;
                             }
+                        }else{
+                            stopProgressDialog();
                         }
                     }
                     @Override
                     public void onCancelled(@NonNull DatabaseError databaseError) {
                         // Handle database error
+                        stopProgressDialog();
                     }
                 });
             }
+        }else{
+            stopProgressDialog();
+        }
+    }
+    public void createProgressDialog() {
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Đang tải...");
+        progressDialog.setCancelable(false);
+    }
+
+    public void startProgressDialog() {
+        if (progressDialog != null && !progressDialog.isShowing()) {
+            progressDialog.show();
+        }
+    }
+
+    public void stopProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
         }
     }
 }
