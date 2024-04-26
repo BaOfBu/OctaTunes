@@ -1,44 +1,60 @@
 package com.example.octatunes.Model;
 
 public class SongManagerModel {
-    private String trackID;
-    private String name;
-    private String artist;
-    private String albumID;
+    private int trackID;
+    private String trackName;
+    private int albumID;
+    private String artistName;
+    private String file;
+    private String image;
 
-    public SongManagerModel() {
-        // Default constructor required for calls to DataSnapshot.getValue(Song.class)
-    }
 
-    public String getTrackID() {
+
+    public int getTrackID() {
         return trackID;
     }
 
-    public void setTrackID(String trackID) {
-        this.trackID = trackID;
+    public void setTrackID(int TrackID) {
+        trackID = TrackID;
     }
 
-    public String getName() {
-        return name;
+    public String getTrackName() {
+        return trackName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setTrackName(String TrackName) {
+        trackName = TrackName;
     }
 
-    public String getArtist() {
-        return artist;
-    }
-
-    public void setArtist(String artist) {
-        this.artist = artist;
-    }
-
-    public String getAlbumID() {
+    public int getAlbumID() {
         return albumID;
     }
 
-    public void setAlbumID(String albumID) {
-        this.albumID = albumID;
+    public void setAlbumID(int AlbumID) {
+        albumID = AlbumID;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String ArtistName) {
+        artistName = ArtistName;
+    }
+
+    public String getFile() {
+        return file;
+    }
+
+    public void setFile(String File) {
+        file = File;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String Image) {
+        image = Image;
     }
 }
