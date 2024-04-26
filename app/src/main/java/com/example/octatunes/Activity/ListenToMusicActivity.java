@@ -97,6 +97,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private ImageButton shuffle;
     private View shuffle_dot;
     private ImageButton alarm;
+    private ImageButton queue;
     private boolean isOnAlarm = false;
     private int minutes_schedule_alarm = 0;
     LyricService lyricService = new LyricService();
@@ -143,6 +144,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         shuffle_dot= rootView.findViewById(R.id.shuffle_dot);
         alarm = rootView.findViewById(R.id.imageButtonAlarm);
         imageButtonDownload = rootView.findViewById(R.id.imageButtonDownload);
+        queue = rootView.findViewById(R.id.imageButtonPlaylist);
 
         track_from.setText(from);
         track_belong.setText(belong);
@@ -224,13 +226,16 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         shuffle.setOnClickListener(this);
         repeat.setOnClickListener(this);
         alarm.setOnClickListener(this);
+        queue.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
                     MusicService.mediaPlayer.seekTo(progress);
-                    if(mLyricView != null)
+                    if(mLyricView != null){
                         mLyricView.setCurrentTimeMillis(progress);
+                        handlerLyric.postDelayed(updateProgress, 500);
+                    }
                 }
             }
 
@@ -384,6 +389,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     }else{
                         play.setImageResource(R.drawable.ic_circle_play_white_70);
                     }
+                    handlerLyric.postDelayed(updateProgress, 500);
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
                     //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
@@ -557,6 +563,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     title.setText(titleText);
                 }
             }
+        }else if(id == R.id.imageButtonPlaylist){
+            Fragment fragment = new DetailPlaylistFragment(from, belong, currentSong);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }
     private void setupClickListeners(final BottomSheetDialog bottomSheetDialog, TextView textView, final int minutes) {
