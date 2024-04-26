@@ -236,7 +236,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     MusicService.mediaPlayer.seekTo(progress);
                     if(mLyricView != null){
                         mLyricView.setCurrentTimeMillis(progress);
-                        handlerLyric.postDelayed(updateProgress, 500);
+                        //handlerLyric.postDelayed(updateProgress, 500);
                     }
                 }
             }
@@ -430,7 +430,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     }else{
                         play.setImageResource(R.drawable.ic_circle_play_white_70);
                     }
-                    handlerLyric.postDelayed(updateProgress, 500);
+                    //handlerLyric.postDelayed(updateProgress, 500);
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
                     //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
