@@ -128,7 +128,13 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         extracted(track);
                     }
                     else if (fragment instanceof LikedSongFragment) {
-
+                        String mode = "sequencePlay";
+                        int trackFirstId = track.getTrackID();
+                        int albumId = -1;
+                        String from =  "PLAYING FROM PLAYLIST";
+                        String belong = "Liked Songs";
+                        int playlistId = playlistLoveId;
+                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
                     }
                 }
             }

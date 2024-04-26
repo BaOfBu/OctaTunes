@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,13 +23,9 @@ import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
-import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -86,9 +81,14 @@ public class LikedSongFragment extends Fragment {
                             number.setText(tracks.size() + " songs");
                             if (tracks.size()>0){
                                 setupRecyclerViewPopularSong(rootView,tracks,userId,playlistModel.getPlaylistID());
+
+                                setupPlayButton(rootView,tracks.get(0),playlistModel.getPlaylistID());
+
                             }
 
                         });
+
+
                     }
 
                     @Override
@@ -102,6 +102,21 @@ public class LikedSongFragment extends Fragment {
 
 
         return rootView;
+    }
+    private void setupPlayButton(View rootView, TracksModel tracksModel, int playlistID){
+        ImageView play_button_liked_display = rootView.findViewById(R.id.play_button_liked_display);
+        play_button_liked_display.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String mode = "sequencePlay";
+                int trackFirstId = tracksModel.getTrackID();
+                int albumId = -1;
+                String from =  "PLAYING FROM PLAYLIST";
+                String belong = "Liked Songs";
+                int playlistId = playlistID;
+                sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+            }
+        });
     }
     private void setupRecyclerViewPopularSong(View rootView, List<TracksModel> tracks, int userID,int playlistId) {
         RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewLove);

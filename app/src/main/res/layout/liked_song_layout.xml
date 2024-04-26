@@ -92,7 +92,7 @@
                     android:background="@drawable/baseline_shuffle_24"
                     />
                 <ImageView
-                    android:id="@+id/play_button_artist_display"
+                    android:id="@+id/play_button_liked_display"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_gravity="center"
