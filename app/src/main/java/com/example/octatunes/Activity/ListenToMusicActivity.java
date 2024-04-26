@@ -430,7 +430,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     }else{
                         play.setImageResource(R.drawable.ic_circle_play_white_70);
                     }
-//                    handlerLyric.postDelayed(updateProgress, 500);
+                    //handlerLyric.postDelayed(updateProgress, 500);
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
                     //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
@@ -576,7 +576,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     bottomSheetDialog.cancel();
-                    int delay = (currentSong.getDuration() + 2) * 1000 - MusicService.mediaPlayer.getCurrentPosition();
+                    int delay = (currentSong.getDuration() + 3) * 1000 - 500 - MusicService.mediaPlayer.getCurrentPosition();
                     handleScheduleAlarm(delay);
                     if(isOnAlarm){
                         title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
