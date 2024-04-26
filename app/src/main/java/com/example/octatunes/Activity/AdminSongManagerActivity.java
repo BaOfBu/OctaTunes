@@ -20,10 +20,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.octatunes.Adapter.SongManagerAdapter;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongManagerModel;
-import com.example.octatunes.Model.SongModel;
-import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
-import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Services.SongManagerService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
@@ -32,7 +30,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdminSongManagerActivity extends AppCompatActivity {
+public class AdminSongManagerActivity extends AppCompatActivity implements SongManagerService.onGetDataListener<List<SongManagerModel>> {
     private TextView _textTitleAdmin, _textTotalSongs;
     private EditText _editTextSearch;
     private Button _btnSearch, _btnAddSong;
@@ -45,8 +43,8 @@ public class AdminSongManagerActivity extends AppCompatActivity {
     boolean isPopupMenuShow = false;
 
     private SongManagerAdapter adapter;
-    private List<TracksModel> tracks;
-    private TrackService trackService;
+    private List<SongManagerModel> songs;
+    private SongManagerService service;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,12 +54,11 @@ public class AdminSongManagerActivity extends AppCompatActivity {
 
         _textTitleAdmin.setText("Quản lý bài hát");
 
-        adapter = new SongManagerAdapter();
         _recyclerViewSongList.setLayoutManager(new LinearLayoutManager(this));
-        _recyclerViewSongList.setAdapter(adapter);
+        _recyclerViewSongList.setHasFixedSize(true);
 
-        trackService = new TrackService();
-        loadSongs();
+        service = new SongManagerService();
+        service.getSongs(this);
 
         _btn_menu.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,50 +84,24 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         });
     }
 
-    private void loadSongs() {
-        trackService.getTracksRef().addListenerForSingleValueEvent(new ValueEventListener() {
+    @Override
+    public void onSuccess(List<SongManagerModel>data){
+        adapter = new SongManagerAdapter(data, new SongManagerAdapter.onItemClickListener(){
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<SongManagerModel> songsList = new ArrayList<>();
-                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    SongManagerModel song = new SongManagerModel();
-                    TracksModel track = snapshot.getValue(TracksModel.class);
-                    if (track != null) {
-                        // Lấy ID Track
-                        song.setTrackID(track.getTrackID());
-                        // Lấy Name Track
-                        song.setTrackName(track.getName());
-                        // Lấy Artist Name của Track
-                        trackService.getArtistNameByAlbumId(track.getAlubumID(), new TrackService.OnArtistNameLoadedListener() {
-                            @Override
-                            public void onArtistNameLoaded(String artistName) {
-                                if (artistName != null) {
-                                    song.setArtistName(artistName);
-                                }
-                            }
-                        });
-                        // Lấy Image cho Track
-                        trackService.getImageForTrack(track, new TrackService.OnImageLoadedListener() {
-                            @Override
-                            public void onImageLoaded(String imageUrl) {
-                                if (imageUrl != null) {
-                                    song.setImageUrl(imageUrl);
-                                }
-                            }
-                        });
-                        // Lấy File cho Track
-                        song.setFile(track.getFile());
-                    }
-                    songsList.add(song);
-                }
-                adapter.setSongsList(songsList);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
+            public void onItemClick(SongManagerModel track) {
+                // Handle click event
             }
         });
+        _recyclerViewSongList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onFailure(Exception e) {
+        // Handle error
+    }
+
+    private void loadSongs() {
+
     }
 
     private void togglePopupMenu() {

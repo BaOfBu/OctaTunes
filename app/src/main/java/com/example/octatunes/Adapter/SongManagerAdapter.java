@@ -23,8 +23,11 @@ import java.util.List;
 
 public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.SongViewHolder> {
     private List<SongManagerModel> songsList;
-    public void setSongsList(List<SongManagerModel> songsList) {
+    private onItemClickListener listener;
+
+    public SongManagerAdapter(List<SongManagerModel> songsList, onItemClickListener listener) {
         this.songsList = songsList;
+        this.listener = listener;
         notifyDataSetChanged();
     }
 
@@ -39,9 +42,7 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
 
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         SongManagerModel song = songsList.get(position);
-        holder.textViewName.setText(song.getTrackName());
-        holder.textViewArtist.setText(song.getArtistName());
-        Picasso.get().load(song.getImageUrl()).into(holder.imageViewSong);
+        holder.bind(song, listener);
     }
 
     @Override
@@ -61,5 +62,22 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewArtist = itemView.findViewById(R.id.textViewArtist);
         }
+
+        public void bind(final SongManagerModel songManagerModel, final onItemClickListener listener) {
+            Glide.with(itemView.getContext()).load(songManagerModel.getImage()).into(imageViewSong);
+            textViewName.setText(songManagerModel.getTrackName());
+            textViewArtist.setText(songManagerModel.getArtistName());
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(songManagerModel);
+                }
+            });
+        }
+    }
+
+    public interface onItemClickListener {
+        void onItemClick(SongManagerModel songManagerModel);
     }
 }
