@@ -47,6 +47,7 @@ public class ArtistDetailFragment extends Fragment {
 
     private FollowerService followerService = new FollowerService();
     private FragmentListener listener;
+    SongAdapter songAdapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -149,12 +150,32 @@ public class ArtistDetailFragment extends Fragment {
             // Set up RecyclerView for popular songs
             setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
 
-            //setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
-            //
-            //setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
+            // Set up click event for shuffle icon
+            setupShuffleIcon(rootView);
+
         }
 
         return rootView;
+    }
+
+    private void setupPlayIcon(View rootView,TracksModel tracksModels,SongAdapter songAdapter) {
+        ImageView playIcon = rootView.findViewById(R.id.play_button_artist_display);
+        playIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                songAdapter.extracted(tracksModels);
+            }
+        });
+    }
+
+    private void setupShuffleIcon(View rootView) {
+        ImageView shuffleIcon = rootView.findViewById(R.id.artist_shuffle_icon);
+        shuffleIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
     }
 
     private void setupRecyclerViewPopularSong(View rootView, int artistId) {
@@ -166,6 +187,7 @@ public class ArtistDetailFragment extends Fragment {
                         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                         recyclerView.setLayoutManager(layoutManager);
                         SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener);
+                        setupPlayIcon(rootView,tracks.get(0),adapter);
                         recyclerView.setAdapter(adapter);
                         setupRecyclerViewPopularRelease(rootView, artistId);
                         setupRecyclerViewFeaturing(rootView, artistId);
@@ -177,8 +199,6 @@ public class ArtistDetailFragment extends Fragment {
                         TextView popularReleaseTitle = rootView.findViewById(R.id.popular_release_title);
                         popularReleaseTitle.setVisibility(View.GONE);
                         TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                        TextView fanAlsoLike = rootView.findViewById(R.id.fan_also_like);
-                        fanAlsoLike.setVisibility(View.GONE);
                         noMusicTextView.setVisibility(View.VISIBLE);
                     }
                 })
@@ -208,8 +228,6 @@ public class ArtistDetailFragment extends Fragment {
                     TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
                     popular_release_title.setVisibility(View.GONE);
                     TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
-                    fan_also_like.setVisibility(View.GONE);
                     noMusicTextView.setVisibility(View.VISIBLE);
                 }
             }
@@ -240,8 +258,6 @@ public class ArtistDetailFragment extends Fragment {
                     TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
                     popular_release_title.setVisibility(View.GONE);
                     TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
-                    fan_also_like.setVisibility(View.GONE);
                     noMusicTextView.setVisibility(View.VISIBLE);
                 }
 

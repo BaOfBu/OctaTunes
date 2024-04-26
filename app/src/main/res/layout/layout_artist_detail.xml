@@ -99,6 +99,7 @@
                     android:layout_height="0dp"
                     android:layout_weight="1"/>
                 <ImageView
+                    android:id="@+id/artist_shuffle_icon"
                     android:layout_width="36dp"
                     android:layout_gravity="center"
                     android:layout_height="36dp"
@@ -107,7 +108,7 @@
                     android:background="@drawable/baseline_shuffle_24"
                     />
                 <ImageView
-                    android:id="@+id/play_button_playlist_display"
+                    android:id="@+id/play_button_artist_display"
                     android:layout_width="42dp"
                     android:layout_height="42dp"
                     android:layout_gravity="center"
@@ -216,37 +217,6 @@
                     android:orientation="horizontal"
                     android:layout_height="match_parent"
                     tools:listitem="@layout/layout_playlist_item_artist_small" />
-            </RelativeLayout>
-            <!--  Fan also like    -->
-            <TextView
-                android:id="@+id/fan_also_like"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:textColor="@color/white"
-                android:layout_marginTop="20dp"
-                android:textSize="20dp"
-                android:textStyle="bold"
-                android:layout_marginBottom="5dp"
-                android:text="Fans also like"
-                android:layout_marginLeft="20dp"
-                android:layout_gravity="center"
-                android:layout_marginRight="20dp"
-                />
-            <RelativeLayout
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="20dp"
-                android:layout_gravity="center"
-                android:layout_marginRight="20dp"
-                android:layout_marginBottom="20dp"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerViewSongFansAlsoLike"
-                    android:layout_width="match_parent"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    android:orientation="horizontal"
-                    android:layout_height="match_parent"
-                    tools:listitem="@layout/layout_artist_item_small" />
             </RelativeLayout>
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

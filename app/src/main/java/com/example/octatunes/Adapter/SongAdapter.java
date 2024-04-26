@@ -26,6 +26,7 @@ import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.LoveService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
@@ -101,11 +102,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
                     }
                     else if (fragment instanceof ArtistDetailFragment) {
-                        if(listener == null) {
-                            listener = (FragmentListener) context;
-                        }
-                        String mode = "sequencePlay";
-                        sendSignalToMainActivity(track.getTrackID(), -1, track.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
+                        extracted(track);
                     }
                 }
             }
@@ -115,16 +112,45 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             //// Creating the BottomSheetDialog
             BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
             bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
-            //
+
             ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
             TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
+            TextView add_to_liked_song=bottomSheetDialog.findViewById(R.id.add_to_liked_song);
             TextView item_artist=bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
             tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
             titleBottomSheet.setText(track.getName());
             item_artist.setText(holder.itemArtist.getText());
-
+            // Checking if a song is already loved
+            LoveService loveService = new LoveService();
+            loveService.isLoved(11, track.getTrackID(), new LoveService.LoveCheckCallback() {
+                @Override
+                public void onLoveChecked(boolean isLoved) {
+                    if (isLoved) {
+                        holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                        add_to_liked_song.setVisibility(View.GONE);
+                    } else {
+                        holder.check_icon_liked_song.setVisibility(View.GONE);
+                        add_to_liked_song.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+            // Set click listener for the TextView add_to_liked_song
+            add_to_liked_song.setOnClickListener(view -> {
+                loveService.addLove(11, track.getTrackID());
+                holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                add_to_liked_song.setVisibility(View.GONE);
+                bottomSheetDialog.dismiss();
+            });
             bottomSheetDialog.show();
         });
+    }
+
+    public void extracted(TracksModel track) {
+        if(listener == null) {
+            listener = (FragmentListener) context;
+        }
+        String mode = "sequencePlay";
+        sendSignalToMainActivity(track.getTrackID(), -1, track.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
     }
 
     private void loadImageForTrack(TracksModel track, ImageView imageView) {
@@ -159,7 +185,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         TextView itemNumber, itemTitle, itemArtist;
-        ImageView itemImage, songMoreInfo;
+        ImageView itemImage, songMoreInfo, check_icon_liked_song;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -168,6 +194,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             itemArtist = itemView.findViewById(R.id.item_artist);
             itemImage = itemView.findViewById(R.id.item_image);
             songMoreInfo = itemView.findViewById(R.id.song_more_info);
+            check_icon_liked_song=itemView.findViewById(R.id.check_icon_liked_song);
         }
     }
 }
