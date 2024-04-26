@@ -60,6 +60,7 @@
             android:name=".Activity.PlaylistSpotifyActivity"
             android:label="PlaylistSpotifyActivity">
         </activity>
+        <service android:name=".Services.DownloadMusicService"/>
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
