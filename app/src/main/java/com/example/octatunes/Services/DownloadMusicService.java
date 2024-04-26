@@ -57,6 +57,7 @@ public class DownloadMusicService extends Service {
                     long downloadId = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1);
                     if (downloadId != -1) {
                         // Display a notification
+                        Toast.makeText(getApplicationContext(), "Download finish", Toast.LENGTH_SHORT).show();
                         showNotification(context, "Download completed", "Your file has been downloaded.");
                     }
                 }
@@ -93,7 +94,7 @@ public class DownloadMusicService extends Service {
         String downloadUrl = songModel.getFile();
         String songTitle = songModel.getTitle();
         String filename = getFilenameFromUrl(downloadUrl);
-        Toast.makeText(getApplicationContext(), filename, Toast.LENGTH_SHORT).show();
+
         DownloadManager downloadManager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         DownloadManager.Request request = new DownloadManager.Request(Uri.parse(downloadUrl));
 
@@ -106,8 +107,6 @@ public class DownloadMusicService extends Service {
 
         // Enqueue the download and get a download ID
         downloadId = downloadManager.enqueue(request);
-
-        Toast.makeText(getApplicationContext(), "Download finish", Toast.LENGTH_SHORT).show();
     }
     private String getFilenameFromUrl(String Url){
         // Split the URL by '/'
