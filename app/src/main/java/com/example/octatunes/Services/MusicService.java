@@ -1,6 +1,7 @@
 package com.example.octatunes.Services;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -172,6 +173,14 @@ public class MusicService extends Service {
             }
         }
 
+        public void pauseMusic(){
+            if(mediaPlayer != null) {
+                if (mediaPlayer.isPlaying()) {
+                    mediaPlayer.pause();
+                }
+                updateNotification();
+            }
+        }
         public void playMusic(){
             if(mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
