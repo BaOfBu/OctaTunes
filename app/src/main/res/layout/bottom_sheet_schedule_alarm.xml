@@ -180,7 +180,7 @@
             android:textSize="16sp"
             android:textColor="@color/white"
             android:layout_height="wrap_content"
-            android:text="Tắt hẹn nhạc"
+            android:text="Tắt hẹn giờ"
             android:fontFamily="@font/main_font"
             android:layout_marginStart="16dp"
             android:clickable="true"
