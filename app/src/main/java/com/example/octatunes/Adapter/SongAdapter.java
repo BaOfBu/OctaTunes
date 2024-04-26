@@ -86,8 +86,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TracksModel track = songList.get(position);
-        holder.itemNumber.setText(String.valueOf(position + 1));
+        TracksModel track = songList.get(holder.getAdapterPosition());
+        holder.itemNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
         holder.itemTitle.setText(track.getName());
 
         // Load image for the track
@@ -203,7 +203,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                                 PlaylistTrackService playlistTrackService = new PlaylistTrackService();
                                 playlistTrackService.removePlaylistTrack(playlistLoveId,track.getTrackID());
                                 loveService.removeLove(userId,track.getTrackID());
-                                songList.remove(position);
+                                songList.remove(holder.getAdapterPosition());
                                 notifyDataSetChanged();
                                 bottomSheetDialogLiked.dismiss();
 
