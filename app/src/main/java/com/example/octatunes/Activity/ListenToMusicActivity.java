@@ -3,6 +3,9 @@ package com.example.octatunes.Activity;
 import static android.content.Context.BIND_AUTO_CREATE;
 
 import android.annotation.SuppressLint;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.app.DownloadManager;
 import android.content.ComponentName;
 import android.content.Context;
@@ -21,7 +24,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -50,6 +52,7 @@ import com.google.firebase.storage.StorageReference;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.Calendar;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -96,12 +99,18 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private View repeat_dot;
     private ImageButton shuffle;
     private View shuffle_dot;
-
+    private ImageButton alarm;
+    private ImageButton queue;
+    private boolean isOnAlarm = false;
+    private int minutes_schedule_alarm = 0;
     LyricService lyricService = new LyricService();
     private boolean chosenSequence = false;
     public static boolean chosenRepeatOneSong = false;
     public static boolean chosenShuffle = false;
     private StorageReference storageRef;
+    Handler handlerAlarm = new Handler();
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
     public ListenToMusicActivity(String from, String belong, SongModel song){
         this.from = from;
         this.belong = belong;
@@ -136,7 +145,9 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         repeat_dot= rootView.findViewById(R.id.repeat_dot);
         shuffle= rootView.findViewById(R.id.imageButtonShuffle);
         shuffle_dot= rootView.findViewById(R.id.shuffle_dot);
+        alarm = rootView.findViewById(R.id.imageButtonAlarm);
         imageButtonDownload = rootView.findViewById(R.id.imageButtonDownload);
+        queue = rootView.findViewById(R.id.imageButtonPlaylist);
 
         track_from.setText(from);
         track_belong.setText(belong);
@@ -216,13 +227,17 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         next.setOnClickListener(this);
         shuffle.setOnClickListener(this);
         repeat.setOnClickListener(this);
+        alarm.setOnClickListener(this);
+        queue.setOnClickListener(this);
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
                     MusicService.mediaPlayer.seekTo(progress);
-                    if(mLyricView != null)
+                    if(mLyricView != null){
                         mLyricView.setCurrentTimeMillis(progress);
+                        handlerLyric.postDelayed(updateProgress, 500);
+                    }
                 }
             }
 
@@ -415,6 +430,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     }else{
                         play.setImageResource(R.drawable.ic_circle_play_white_70);
                     }
+                    handlerLyric.postDelayed(updateProgress, 500);
                     playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
                     seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
                     //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
@@ -526,6 +542,116 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             Toast.makeText(getActivity(), "Start download", Toast.LENGTH_SHORT).show();
             Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
             requireActivity().startService(downloadService);
+        }else if(id == R.id.imageButtonAlarm){
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+            bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
+            bottomSheetDialog.show();
+
+            TextView title = bottomSheetDialog.findViewById(R.id.title);
+
+            TextView close = bottomSheetDialog.findViewById(R.id.close);
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                }
+            });
+
+            TextView five_minutesTV = bottomSheetDialog.findViewById(R.id.five_minutes);
+            TextView ten_minutesTV = bottomSheetDialog.findViewById(R.id.ten_minutes);
+            TextView fifteen_minutesTV = bottomSheetDialog.findViewById(R.id.fifteen_minutes);
+            TextView thirty_minutesTV = bottomSheetDialog.findViewById(R.id.thirty_minutes);
+            TextView fortyfive_minutesTV = bottomSheetDialog.findViewById(R.id.fortyfive_minutes);
+            TextView one_hourTV = bottomSheetDialog.findViewById(R.id.one_hour);
+
+            setupClickListeners(bottomSheetDialog, five_minutesTV, 5);
+            setupClickListeners(bottomSheetDialog, ten_minutesTV, 10);
+            setupClickListeners(bottomSheetDialog, fifteen_minutesTV, 15);
+            setupClickListeners(bottomSheetDialog, thirty_minutesTV, 30);
+            setupClickListeners(bottomSheetDialog, fortyfive_minutesTV, 45);
+            setupClickListeners(bottomSheetDialog, one_hourTV, 60);
+
+            TextView end_track = bottomSheetDialog.findViewById(R.id.end_track);
+            end_track.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                    int delay = (currentSong.getDuration() + 2) * 1000 - 300 - MusicService.mediaPlayer.getCurrentPosition();
+                    handleScheduleAlarm(delay);
+                    if(isOnAlarm){
+                        title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
+                    }
+                }
+            });
+
+            TextView off_mode = bottomSheetDialog.findViewById(R.id.off_mode);
+            off_mode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                    isOnAlarm = false;
+                    minutes_schedule_alarm = 0;
+                    alarm.setImageResource(R.drawable.ic_alarm_white_24);
+                    handlerAlarm.removeCallbacksAndMessages(null);
+                    if(isOnAlarm) title.setText("Hẹn giờ đi ngủ");
+                    Toast.makeText(requireContext(), "Đã tắt chế độ hẹn giờ thành công!", Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            if(minutes_schedule_alarm != 0){
+                if (isOnAlarm) {
+                    String titleText = "Hẹn giờ đi ngủ - Còn lại " + minutes_schedule_alarm + " phút";
+                    title.setText(titleText);
+                }
+            }
+        }else if(id == R.id.imageButtonPlaylist){
+            Fragment fragment = new DetailPlaylistFragment(from, belong, currentSong);
+            getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
+        }
+    }
+    private void setupClickListeners(final BottomSheetDialog bottomSheetDialog, TextView textView, final int minutes) {
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.cancel();
+                minutes_schedule_alarm = minutes;
+                int delay = minutes * 60 * 1000; //milliseconds
+                handleScheduleAlarm(delay);
+            }
+        });
+    }
+
+    private void handleScheduleAlarm(int time){
+        scheduleAlarm();
+        isOnAlarm = true;
+        handlerAlarm.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                binder.pauseMusic();
+                isOnAlarm = false;
+                alarm.setImageResource(R.drawable.ic_alarm_white_24);
+            }
+        }, time);
+        alarm.setImageResource(R.drawable.ic_alarm_on_green_24);
+    }
+    private void scheduleAlarm() {
+        alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(requireContext(), AlarmReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(requireContext(), 0, intent, PendingIntent.FLAG_IMMUTABLE);
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.SECOND, 10);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(),
+                AlarmManager.INTERVAL_DAY, pendingIntent);
+
+        Log.i("SCHEDULE ALARM", "SUCCESS");
+        Toast.makeText(requireContext(), "Đã bật chế độ hẹn giờ thành công!", Toast.LENGTH_SHORT).show();
+    }
+    public class AlarmReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Toast.makeText(context, "Đã bật chế độ hẹn giờ", Toast.LENGTH_SHORT).show();
         }
     }
     private void replaceLastFragment(){
