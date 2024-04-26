@@ -81,7 +81,6 @@ public class LikedSongFragment extends Fragment {
                             number.setText(tracks.size() + " songs");
                             if (tracks.size()>0){
                                 setupRecyclerViewPopularSong(rootView,tracks,userId,playlistModel.getPlaylistID());
-
                                 setupPlayButton(rootView,tracks.get(0),playlistModel.getPlaylistID());
 
                             }

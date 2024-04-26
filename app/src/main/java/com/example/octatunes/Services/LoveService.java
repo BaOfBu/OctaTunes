@@ -54,6 +54,14 @@ public class LoveService {
                 .addOnSuccessListener(aVoid -> Log.d("LoveService", "Track added to loved list successfully"))
                 .addOnFailureListener(e -> Log.e("LoveService", "Error adding track to loved list: " + e.getMessage()));
     }
+    public void removeLove(int userId, int trackId) {
+        DatabaseReference userFavoritesRef = favoritesRef.child(String.valueOf(userId)).child(String.valueOf(trackId));
+
+        userFavoritesRef.removeValue()
+                .addOnSuccessListener(aVoid -> Log.d("LoveService", "Track removed from loved list successfully"))
+                .addOnFailureListener(e -> Log.e("LoveService", "Error removing track from loved list: " + e.getMessage()));
+    }
+
 
     // Callback interface for love check operation
     public interface LoveCheckCallback {

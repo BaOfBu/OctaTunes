@@ -197,6 +197,19 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         song_liked_bottom_sheet_item_title.setText(track.getName());
                         song_liked_bottom_sheet_item_artist.setText(holder.itemArtist.getText());
 
+                        song_liked_remove_liked.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                                playlistTrackService.removePlaylistTrack(playlistLoveId,track.getTrackID());
+                                loveService.removeLove(userId,track.getTrackID());
+                                songList.remove(position);
+                                notifyDataSetChanged();
+                                bottomSheetDialogLiked.dismiss();
+
+                            }
+                        });
+
                         bottomSheetDialogLiked.show();
                     }
                 }
