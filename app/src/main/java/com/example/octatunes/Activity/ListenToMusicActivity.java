@@ -236,7 +236,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                     MusicService.mediaPlayer.seekTo(progress);
                     if(mLyricView != null){
                         mLyricView.setCurrentTimeMillis(progress);
-                        //handlerLyric.postDelayed(updateProgress, 500);
+//                        handlerLyric.postDelayed(updateProgress, 500);
                     }
                 }
             }
@@ -576,7 +576,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     bottomSheetDialog.cancel();
-                    int delay = (currentSong.getDuration() + 2) * 1000 - 300 - MusicService.mediaPlayer.getCurrentPosition();
+                    int delay = (currentSong.getDuration() + 3) * 1000 - 500 - MusicService.mediaPlayer.getCurrentPosition();
                     handleScheduleAlarm(delay);
                     if(isOnAlarm){
                         title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
