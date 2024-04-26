@@ -2,9 +2,6 @@ package com.example.octatunes.Activity;
 
 import static android.content.Context.BIND_AUTO_CREATE;
 
-import static androidx.core.content.ContextCompat.getExternalFilesDirs;
-import static androidx.core.content.ContextCompat.getSystemService;
-
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
 import android.content.ComponentName;
@@ -13,7 +10,6 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -22,16 +18,15 @@ import android.os.IBinder;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.FrameLayout;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -45,14 +40,11 @@ import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.DownloadMusicService;
 import com.example.octatunes.Services.LyricService;
 import com.example.octatunes.Services.MusicService;
-import com.example.octatunes.Utils.FileUtils;
 import com.example.octatunes.Utils.MusicUtils;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
-import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
 
 import java.io.File;
@@ -60,12 +52,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Objects;
 
 import me.zhengken.lyricview.LyricView;
-
 
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
     String from;
@@ -94,6 +84,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private static TextView duration;
     private ImageButton show_options;
     private ImageButton track_minimize;
+    private ImageButton imageButtonDownload;
     LyricView mLyricView;
     @SuppressLint("StaticFieldLeak")
     private static View rootView;
@@ -144,6 +135,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         repeat_dot= rootView.findViewById(R.id.repeat_dot);
         shuffle= rootView.findViewById(R.id.imageButtonShuffle);
         shuffle_dot= rootView.findViewById(R.id.shuffle_dot);
+        imageButtonDownload = rootView.findViewById(R.id.imageButtonDownload);
 
         track_from.setText(from);
         track_belong.setText(belong);
@@ -217,6 +209,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         track_minimize.setOnClickListener(this);
         show_options.setOnClickListener(this);
+        imageButtonDownload.setOnClickListener(this);
         previous.setOnClickListener(this);
         play.setOnClickListener(this);
         next.setOnClickListener(this);
@@ -462,6 +455,16 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
             TextView item_belong = bottomSheetDialog.findViewById(R.id.item_belong);
             item_belong.setText(belong);
+
+//            androidx.appcompat.widget.AppCompatButton download = bottomSheetDialog.findViewById(R.id.download);
+//            assert download != null;
+//            download.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
+//                    requireActivity().startService(downloadService);
+//                }
+//            });
         }else if (id == R.id.track_minimize) {
             MusicService.setPos(MusicService.getPos());
             replaceLastFragment();
@@ -501,6 +504,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
                 shuffle_dot.setVisibility(View.INVISIBLE);
             }
+        }else if(id == R.id.imageButtonDownload){
+            Toast.makeText(getActivity(), "Start download", Toast.LENGTH_SHORT).show();
+            Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
+            requireActivity().startService(downloadService);
         }
     }
     private void replaceLastFragment(){
