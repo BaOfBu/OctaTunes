@@ -290,4 +290,21 @@
             android:focusable="true" />
     </LinearLayout>
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/download_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="start"
+        android:padding="16dp"
+        android:text="Download"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        android:textColor="@color/white"
+        android:fontFamily="@font/main_font"
+        android:drawableStart="@drawable/baseline_arrow_circle_down_24"
+        android:drawableTint="@color/gray"
+        android:drawablePadding="15dp"
+        android:backgroundTint="#242424"
+        android:clickable="true"
+        android:focusable="true"/>
 </LinearLayout>

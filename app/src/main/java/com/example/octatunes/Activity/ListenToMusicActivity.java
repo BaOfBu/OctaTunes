@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -34,9 +35,12 @@ import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.DownloadMusicService;
 import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
+
+import java.util.Objects;
 
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
     String from;
@@ -267,6 +271,15 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
             TextView item_belong = bottomSheetDialog.findViewById(R.id.item_belong);
             item_belong.setText(belong);
+
+            Button download = bottomSheetDialog.findViewById(R.id.download);
+            download.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
+                    requireActivity().startService(downloadService);
+                }
+            });
         }else if (id == R.id.track_minimize) {
             MusicService.setPos(MusicService.getPos());
             replaceLastFragment();

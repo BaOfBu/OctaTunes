@@ -6,7 +6,7 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -57,6 +57,7 @@
             android:name=".Activity.PlaylistSpotifyActivity"
             android:label="PlaylistSpotifyActivity">
         </activity>
+        <service android:name=".Services.DownloadMusicService"/>
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
