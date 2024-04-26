@@ -19,7 +19,7 @@
         android:textStyle="bold"/>
 
     <ImageView
-        android:id="@+id/item_image"
+        android:id="@+id/item_image_tbin"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="centerCrop" />
@@ -33,7 +33,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/item_title"
+            android:id="@+id/item_title_tbin"
             android:text="Chúng Ta Của Tương Lai"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -43,7 +43,7 @@
             android:ellipsize="end"/>
 
         <TextView
-            android:id="@+id/item_artist"
+            android:id="@+id/item_artist_tbin"
             android:text="Sơn Tùng M-TP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

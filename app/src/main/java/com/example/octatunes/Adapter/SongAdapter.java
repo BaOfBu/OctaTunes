@@ -18,15 +18,18 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.ArtistDetailFragment;
+import com.example.octatunes.Activity.LikedSongFragment;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.LoveService;
+import com.example.octatunes.Services.PlaylistTrackService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
@@ -38,7 +41,8 @@ import java.util.Date;
 import java.util.List;
 
 public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
-
+    private int userId;
+    private int playlistLoveId;
     private Context context;
     private List<TracksModel> songList;
     private FragmentListener listener;
@@ -50,11 +54,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         this.songList = songList;
         this.listener=listener;
     }
-    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener,PlaylistsModel playList) {
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener,int userId,int playlistLoveId) {
+        this.context = context;
+        this.songList = songList;
+        this.listener=listener;
+        this.userId=userId;
+        this.playlistLoveId = playlistLoveId;
+    }
+    public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener,PlaylistsModel playList,int userId,int playlistLoveId) {
         this.context = context;
         this.songList = songList;
         this.listener=listener;
         this.playList=playList;
+        this.userId = userId;
+        this.playlistLoveId = playlistLoveId;
     }
 
 
@@ -87,6 +100,16 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             listener = (FragmentListener) context;
         }
 
+        if (context instanceof FragmentActivity) {
+            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+            if (fragment != null) {
+                if (fragment instanceof LikedSongFragment) {
+                    holder.itemNumber.setVisibility(View.GONE);
+                }
+            }
+        }
+
         holder.itemView.setOnClickListener(v -> {
             if (context instanceof FragmentActivity) {
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
@@ -104,44 +127,76 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     else if (fragment instanceof ArtistDetailFragment) {
                         extracted(track);
                     }
+                    else if (fragment instanceof LikedSongFragment) {
+
+                    }
                 }
             }
         });
 
         holder.songMoreInfo.setOnClickListener(v -> {
-            //// Creating the BottomSheetDialog
-            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-            bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
 
-            ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
-            TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
-            TextView add_to_liked_song=bottomSheetDialog.findViewById(R.id.add_to_liked_song);
-            TextView item_artist=bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
-            tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
-            titleBottomSheet.setText(track.getName());
-            item_artist.setText(holder.itemArtist.getText());
             // Checking if a song is already loved
             LoveService loveService = new LoveService();
-            loveService.isLoved(11, track.getTrackID(), new LoveService.LoveCheckCallback() {
-                @Override
-                public void onLoveChecked(boolean isLoved) {
-                    if (isLoved) {
-                        holder.check_icon_liked_song.setVisibility(View.VISIBLE);
-                        add_to_liked_song.setVisibility(View.GONE);
-                    } else {
-                        holder.check_icon_liked_song.setVisibility(View.GONE);
-                        add_to_liked_song.setVisibility(View.VISIBLE);
+
+            if (context instanceof FragmentActivity) {
+                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (fragment != null) {
+                    if (!(fragment instanceof LikedSongFragment)){
+                        //// Creating the BottomSheetDialog
+                        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                        bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
+
+                        ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
+                        TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
+                        TextView add_to_liked_song=bottomSheetDialog.findViewById(R.id.add_to_liked_song);
+                        TextView item_artist=bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
+                        tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
+                        titleBottomSheet.setText(track.getName());
+                        item_artist.setText(holder.itemArtist.getText());
+                        loveService.isLoved(userId, track.getTrackID(), new LoveService.LoveCheckCallback() {
+                            @Override
+                            public void onLoveChecked(boolean isLoved) {
+                                if (isLoved) {
+                                    holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                                    add_to_liked_song.setVisibility(View.GONE);
+                                } else {
+                                    holder.check_icon_liked_song.setVisibility(View.GONE);
+                                    add_to_liked_song.setVisibility(View.VISIBLE);
+                                }
+                            }
+                        });
+                        // Set click listener for the TextView add_to_liked_song
+                        add_to_liked_song.setOnClickListener(view -> {
+                            loveService.addLove(userId, track.getTrackID());
+                            PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                            playlistTrackService.addPlaylistTrack(new Playlist_TracksModel(playlistLoveId, track.getTrackID(),0));
+                            holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                            add_to_liked_song.setVisibility(View.GONE);
+                            bottomSheetDialog.dismiss();
+                        });
+                        bottomSheetDialog.show();
+                    }
+                    else{
+                        BottomSheetDialog bottomSheetDialogLiked = new BottomSheetDialog(context);
+                        bottomSheetDialogLiked.setContentView(R.layout.bottom_sheet_song_liked);
+
+                        ImageView song_liked_item_image_bottom_sheet=bottomSheetDialogLiked.findViewById(R.id.song_liked_item_image_bottom_sheet);
+                        TextView song_liked_bottom_sheet_item_title = bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_title);
+                        TextView song_liked_bottom_sheet_item_artist=bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_artist);
+                        TextView song_liked_remove_liked = bottomSheetDialogLiked.findViewById(R.id.song_liked_remove_liked);
+
+                        song_liked_item_image_bottom_sheet.setImageDrawable(holder.itemImage.getDrawable());
+                        song_liked_bottom_sheet_item_title.setText(track.getName());
+                        song_liked_bottom_sheet_item_artist.setText(holder.itemArtist.getText());
+
+                        bottomSheetDialogLiked.show();
                     }
                 }
-            });
-            // Set click listener for the TextView add_to_liked_song
-            add_to_liked_song.setOnClickListener(view -> {
-                loveService.addLove(11, track.getTrackID());
-                holder.check_icon_liked_song.setVisibility(View.VISIBLE);
-                add_to_liked_song.setVisibility(View.GONE);
-                bottomSheetDialog.dismiss();
-            });
-            bottomSheetDialog.show();
+            }
+
+
         });
     }
 
@@ -190,9 +245,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemNumber = itemView.findViewById(R.id.item_number);
-            itemTitle = itemView.findViewById(R.id.item_title);
-            itemArtist = itemView.findViewById(R.id.item_artist);
-            itemImage = itemView.findViewById(R.id.item_image);
+            itemTitle = itemView.findViewById(R.id.item_title_tbin);
+            itemArtist = itemView.findViewById(R.id.item_artist_tbin);
+            itemImage = itemView.findViewById(R.id.item_image_tbin);
             songMoreInfo = itemView.findViewById(R.id.song_more_info);
             check_icon_liked_song=itemView.findViewById(R.id.check_icon_liked_song);
         }

@@ -31,6 +31,7 @@ import com.example.octatunes.R;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.FollowerService;
 import com.example.octatunes.Services.PlaylistLibraryUserService;
+import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.UserService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -92,6 +93,9 @@ public class ArtistDetailFragment extends Fragment {
             userService.getCurrentUserId(new UserService.UserIdCallback() {
                 @Override
                 public void onUserIdRetrieved(int userId) {
+
+                    // Set up RecyclerView for popular songs
+                    setupRecyclerViewPopularSong(rootView, artistModel.getArtistID(),userId);
                     followerService.checkIfUserFollowsArtist(userId, artistModel.getArtistID(), new FollowerService.OnFollowCheckListener() {
                         @Override
                         public void onFollowCheck(boolean isFollowing) {
@@ -147,8 +151,7 @@ public class ArtistDetailFragment extends Fragment {
             ImageView backIcon = rootView.findViewById(R.id.back_icon);
             backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
 
-            // Set up RecyclerView for popular songs
-            setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
+
 
             // Set up click event for shuffle icon
             setupShuffleIcon(rootView);
@@ -178,19 +181,30 @@ public class ArtistDetailFragment extends Fragment {
         });
     }
 
-    private void setupRecyclerViewPopularSong(View rootView, int artistId) {
+    private void setupRecyclerViewPopularSong(View rootView, int artistId,int userId) {
         ArtistService artistService = new ArtistService();
         artistService.getRandomTracksByArtistId(artistId)
                 .thenAccept(tracks -> {
                     RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopular);
                     if (!tracks.isEmpty()) {
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                        recyclerView.setLayoutManager(layoutManager);
-                        SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener);
-                        setupPlayIcon(rootView,tracks.get(0),adapter);
-                        recyclerView.setAdapter(adapter);
-                        setupRecyclerViewPopularRelease(rootView, artistId);
-                        setupRecyclerViewFeaturing(rootView, artistId);
+                        PlaylistService playlistService = new PlaylistService();
+                        playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+                            @Override
+                            public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
+                                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                recyclerView.setLayoutManager(layoutManager);
+                                SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,playlistModel.getPlaylistID());
+                                setupPlayIcon(rootView,tracks.get(0),adapter);
+                                recyclerView.setAdapter(adapter);
+                                setupRecyclerViewPopularRelease(rootView, artistId);
+                                setupRecyclerViewFeaturing(rootView, artistId);
+                            }
+                            @Override
+                            public void onError(String errorMessage) {
+                                // Handle error if any
+                            }
+                        });
+
                     } else {
                         TextView popularSongTitle = rootView.findViewById(R.id.popular_song_title);
                         popularSongTitle.setVisibility(View.GONE);

@@ -132,10 +132,27 @@ public class PlaylistSpotifyActivity extends Fragment {
                 /* Adapter for track */
                 allTracks.addAll(tracks);
                 if (getContext() != null) {
-                    RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel);
-                    recyclerView.setAdapter(adapter);
+                    UserService userService = new UserService();
+                    userService.getCurrentUserId(new UserService.UserIdCallback() {
+                         @Override
+                         public void onUserIdRetrieved(int userId) {
+                             playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+                                 @Override
+                                 public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
+                                     RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
+                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                     SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,playlistModel.getPlaylistID());
+                                     recyclerView.setAdapter(adapter);
+                                 }
+                                 @Override
+                                 public void onError(String errorMessage) {
+                                     // Handle error if any
+                                 }
+                             });
+
+                         }
+                     });
+
                 }
             });
 

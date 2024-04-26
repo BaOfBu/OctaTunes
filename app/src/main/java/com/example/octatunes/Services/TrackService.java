@@ -84,7 +84,6 @@ public class TrackService {
     }
     public void getTracksByPlaylistId(final Integer playlistId, final OnTracksLoadedListener listener) {
         Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
-        Log.i("TrackService", "Query playlistTrackQuery success!");
         playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -92,7 +91,6 @@ public class TrackService {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Playlist_TracksModel playlistTrack = snapshot.getValue(Playlist_TracksModel.class);
-                    // Add each TrackID associated with the playlistId to the list
                     trackIds.add(playlistTrack.getTrackID());
                 }
 
@@ -290,22 +288,29 @@ public class TrackService {
         playlistTrackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Log.i("TrackService", "OnDataChange success");
                 final List<Integer> trackIds = new ArrayList<>();
+                final List<TracksModel> tracks = new ArrayList<>();
+                if (!dataSnapshot.exists()){
+                    future.complete(tracks);
+                    return;
+                }
+
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     Playlist_TracksModel playlistTrack = snapshot.getValue(Playlist_TracksModel.class);
-                    // Add each TrackID associated with the playlistId to the list
                     trackIds.add(playlistTrack.getTrackID());
                 }
 
                 // Query tracks using the list of TrackIDs
                 final AtomicInteger count = new AtomicInteger(trackIds.size());
-                final List<TracksModel> tracks = new ArrayList<>();
                 for (Integer trackId : trackIds) {
                     Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
                     trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.exists()){
+                                future.complete(tracks);
+                                return;
+                            }
                             for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                 TracksModel track = snapshot.getValue(TracksModel.class);
                                 tracks.add(track);
@@ -313,13 +318,14 @@ public class TrackService {
                             if (count.decrementAndGet() == 0) {
                                 future.complete(tracks);
                             }
-                        }
 
+                        }
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });
                 }
+
             }
 
             @Override
