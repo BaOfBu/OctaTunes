@@ -15,6 +15,7 @@ import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserSongService;
+import com.example.octatunes.Utils.StringUtil;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -77,7 +78,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
                 UserSongModel userSongModel = new UserSongModel(10, tracksModel.getTrackID(), new Date());
                 userSong.addUserSong(userSongModel);
-                sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
+                sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", belong, mode);
             }
         });
     }

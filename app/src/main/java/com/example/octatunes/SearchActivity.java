@@ -36,6 +36,7 @@ import com.example.octatunes.Services.AlbumService;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.TrackService;
+import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
@@ -241,24 +242,25 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
 //        TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, this.getContext());
 //        listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
 //        trackPreviewAdapter.notifyDataSetChanged();
-        listSearchResultRecyclerView.setAdapter(null);
+        //listSearchResultRecyclerView.setAdapter(null);
         List<TracksModel> tempTracks = new ArrayList<>();
         trackService.findTrackByName(searchQuery, new TrackService.OnTracksLoadedListener() {
-                    @Override
-                    public void onTracksLoaded(List<TracksModel> tracks) {
-                        //Log.e("SearchActivity", "Tracks: " + tracks.size());
-                        if (tracks == null || tracks.size() == 0){
-                            emptyTextView.setVisibility(View.VISIBLE);
-                            listSearchResultRecyclerView.setVisibility(View.GONE);
-                        } else {
-                            emptyTextView.setVisibility(View.GONE);
-                            listSearchResultRecyclerView.setVisibility(View.VISIBLE);
-                            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(), listener, null);
-                            listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
-                            trackPreviewAdapter.notifyDataSetChanged();
-                        }
-                    }
-                });
+            @Override
+            public void onTracksLoaded(List<TracksModel> tracks) {
+                //Log.e("SearchActivity", "Tracks: " + tracks.size());
+                if (tracks == null || tracks.size() == 0){
+                    emptyTextView.setVisibility(View.VISIBLE);
+                    listSearchResultRecyclerView.setVisibility(View.GONE);
+                } else {
+                    emptyTextView.setVisibility(View.GONE);
+                    listSearchResultRecyclerView.setVisibility(View.VISIBLE);
+                    String belong = "\"" + StringUtil.replaceSpaceWithPlus(searchEditText.getText().toString()) +"\"" + " in Search";
+                    TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks, getContext(), listener, belong);
+                    listSearchResultRecyclerView.setAdapter(trackPreviewAdapter);
+                    trackPreviewAdapter.notifyDataSetChanged();
+                }
+            }
+        });
     }
     private void getListUserProfile(String searchQuery) {
 //        ArrayList<UserProfileModel> userProfileModels = getDataUserProfileFake();
@@ -368,7 +370,8 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 if(artists.size() == 0)
                     return;
                 artist.addAll(artists);
-                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+                String belong = "\"" + StringUtil.replaceSpaceWithPlus(searchEditText.getText().toString()) +"\"" + " in Search";
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null,belong, getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
             }
@@ -384,7 +387,8 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             for(AlbumsModel album : albums){
                 listAlbums.add(album);
             }
-            ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null, getContext());
+            String belong = "\"" + StringUtil.replaceSpaceWithPlus(searchEditText.getText().toString()) +"\"" + " in Search";
+            ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, null,belong, getContext());
             listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
             resultSearchByBandNameAdapter.notifyDataSetChanged();
         }).exceptionally(throwable -> {
@@ -405,7 +409,8 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
                 }
                 emptyTextView.setVisibility(View.GONE);
                 listSearchResultRecyclerView.setVisibility(View.VISIBLE);
-                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks, getContext());
+                String belong = "\"" + StringUtil.replaceSpaceWithPlus(searchEditText.getText().toString()) +"\"" + " in Search";
+                ResultSearchByBandNameAdapter resultSearchByBandNameAdapter = new ResultSearchByBandNameAdapter(artist, listAlbums, tracks,belong, getContext());
                 listSearchResultRecyclerView.setAdapter(resultSearchByBandNameAdapter);
                 resultSearchByBandNameAdapter.notifyDataSetChanged();
             }
