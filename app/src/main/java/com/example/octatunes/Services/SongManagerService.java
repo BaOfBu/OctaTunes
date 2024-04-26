@@ -36,57 +36,24 @@ public class SongManagerService {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 List<SongManagerModel> songs = new ArrayList<>();
                 for (DataSnapshot trackSnapshot : dataSnapshot.getChildren()) {
-                    TracksModel track = trackSnapshot.getValue(TracksModel.class);
+                    SongManagerModel track = trackSnapshot.getValue(SongManagerModel.class);
+                    track.setTrackID(Integer.parseInt(trackSnapshot.getKey()));
 
-                    final AlbumsModel album = new AlbumsModel();
-                    album.setAlbumID(track.getAlubumID());
+                    final AlbumsModel album = getAlbum(track.getAlbumID());
+                    final ArtistsModel artist = getArtist(album.getArtistID());
 
-                    DatabaseReference albumRef = mDatabase.child("albums").child(Integer.toString(track.getAlubumID()));
-                    albumRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            AlbumsModel albumsModel = dataSnapshot.getValue(AlbumsModel.class);
-                            // Cập nhật thông tin album vào biến album
+                    SongManagerModel song = new SongManagerModel();
 
-                            final ArtistsModel artist = new ArtistsModel();
-                            artist.setArtistID(albumsModel.getArtistID());
+                    song.setTrackID(track.getTrackID());
+                    song.setTrackName(track.getTrackName());
+                    song.setAlbumID(album.getAlbumID());
+                    song.setArtistName(artist.getName());
+                    song.setFile(track.getFile());
+                    song.setImage(album.getImage());
 
-                            DatabaseReference artistRef = mDatabase.child("artists").child(Integer.toString(albumsModel.getArtistID()));
-                            artistRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    ArtistsModel artistsModel = dataSnapshot.getValue(ArtistsModel.class);
-                                    // Cập nhật thông tin artist vào biến artist
-
-                                    SongManagerModel song = new SongManagerModel();
-
-                                    song.setTrackID(track.getTrackID());
-                                    song.setTrackName(track.getName());
-                                    song.setAlbumID(album.getAlbumID());
-                                    song.setArtistName(artistsModel.getName());
-                                    song.setFile(track.getFile());
-                                    song.setImage(album.getImage());
-
-                                    songs.add(song);
-
-                                    if (songs.size() == dataSnapshot.getChildrenCount()) {
-                                        listener.onSuccess(songs);
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError databaseError) {
-                                    // Xử lý lỗi
-                                }
-                            });
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError databaseError) {
-                            // Xử lý lỗi
-                        }
-                    });
+                    songs.add(song);
                 }
+                listener.onSuccess(songs);
             }
 
             @Override
@@ -97,12 +64,44 @@ public class SongManagerService {
     }
 
     private ArtistsModel getArtist(int artistID) {
+        DatabaseReference artistRef = mDatabase.child("artists").child(String.valueOf(artistID));
         final ArtistsModel artist = new ArtistsModel();
+
+        artistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                ArtistsModel artist = dataSnapshot.getValue(ArtistsModel.class);
+                artist.setArtistID(Integer.parseInt(dataSnapshot.getKey()));
+                // Cập nhật thông tin artist vào biến artist
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi
+            }
+        });
+
         return artist;
     }
 
     private AlbumsModel getAlbum(int albumID) {
+        DatabaseReference albumRef = mDatabase.child("albums").child(String.valueOf(albumID));
         final AlbumsModel album = new AlbumsModel();
+
+        albumRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                AlbumsModel album = dataSnapshot.getValue(AlbumsModel.class);
+                album.setAlbumID(Integer.parseInt(dataSnapshot.getKey()));
+                // Cập nhật thông tin album vào biến album
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Xử lý lỗi
+            }
+        });
+
         return album;
     }
 
