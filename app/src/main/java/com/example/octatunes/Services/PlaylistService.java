@@ -202,7 +202,6 @@ public class PlaylistService {
         });
     }
 
-
     // Define PlaylistCallback interface
     public interface PlaylistCallback {
         void onPlaylistRetrieved(PlaylistsModel playlistModel);

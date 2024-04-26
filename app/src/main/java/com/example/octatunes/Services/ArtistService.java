@@ -450,36 +450,38 @@ public class ArtistService {
 
                                         for (DataSnapshot playlistTrackDataSnapshot : playlistTrackSnapshot.getChildren()) {
                                             int playlistId = playlistTrackDataSnapshot.child("playlistID").getValue(Integer.class);
-                                            Query playlistQuery = playlistRef.orderByChild("playlistID").equalTo(playlistId);
-                                            playlistLatch.countDown(); // Decrement the latch count for each playlist track
-                                            playlistQuery.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                @Override
-                                                public void onDataChange(DataSnapshot playlistSnapshot) {
-                                                    playlistLatch.countDown(); // Decrement the latch count after playlist data retrieval
-                                                    if (playlistSnapshot.exists()) {
-                                                        for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
-                                                            int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
-                                                            if (!playlistIdSet.contains(playlistId)) {
-                                                                playlistIdSet.add(playlistId);
-                                                                PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);
-                                                                if (playlist != null) {
-                                                                    playlistSet.add(playlist);
+                                                Query playlistQuery = playlistRef.orderByChild("playlistID").equalTo(playlistId);
+                                                playlistLatch.countDown(); // Decrement the latch count for each playlist track
+                                                playlistQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(DataSnapshot playlistSnapshot) {
+                                                        playlistLatch.countDown(); // Decrement the latch count after playlist data retrieval
+                                                        if (playlistSnapshot.exists()) {
+                                                            for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
+                                                                int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
+                                                                String playlistName = playlistDataSnapshot.child("name").getValue(String.class);
+                                                                if (!Objects.equals(playlistName, "Liked Songs")){
+                                                                    if (!playlistIdSet.contains(playlistId)) {
+                                                                        playlistIdSet.add(playlistId);
+                                                                        PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);
+                                                                        if (playlist != null) {
+                                                                            playlistSet.add(playlist);
+                                                                        }
+                                                                    }
                                                                 }
                                                             }
                                                         }
+                                                        checkAllDataRetrieved(albumLatch, successListener, playlistSet);
                                                     }
-                                                    checkAllDataRetrieved(albumLatch, successListener, playlistSet);
-                                                }
 
-                                                @Override
-                                                public void onCancelled(DatabaseError databaseError) {
-                                                    failureListener.onFailure(databaseError.toException());
-                                                    playlistLatch.countDown(); // Decrement the latch count if onCancelled is triggered
-                                                }
-                                            });
+                                                    @Override
+                                                    public void onCancelled(DatabaseError databaseError) {
+                                                        failureListener.onFailure(databaseError.toException());
+                                                        playlistLatch.countDown(); // Decrement the latch count if onCancelled is triggered
+                                                    }
+                                                });
+                                            }
                                         }
-                                    }
-
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
                                         failureListener.onFailure(databaseError.toException());

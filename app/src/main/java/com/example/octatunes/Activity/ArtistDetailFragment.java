@@ -85,7 +85,10 @@ public class ArtistDetailFragment extends Fragment {
             // Artist Image
             if (artistModel != null) {
                 ImageView imageView = rootView.findViewById(R.id.artist_detail_image);
-                Picasso.get().load(artistModel.getImage()).into(imageView);
+                if (artistModel.getImage()!=null && artistModel.getImage()!=""){
+                    Picasso.get().load(artistModel.getImage()).into(imageView);
+                }
+
             }
 
             /* Check following */
@@ -94,8 +97,6 @@ public class ArtistDetailFragment extends Fragment {
                 @Override
                 public void onUserIdRetrieved(int userId) {
 
-                    // Set up RecyclerView for popular songs
-                    setupRecyclerViewPopularSong(rootView, artistModel.getArtistID(),userId);
                     followerService.checkIfUserFollowsArtist(userId, artistModel.getArtistID(), new FollowerService.OnFollowCheckListener() {
                         @Override
                         public void onFollowCheck(boolean isFollowing) {
@@ -106,6 +107,8 @@ public class ArtistDetailFragment extends Fragment {
                                 following.setText("Follow");
 
                             }
+                            // Set up RecyclerView for popular songs
+                            setupRecyclerViewPopularSong(rootView, artistModel.getArtistID(),userId);
                         }
                     });
                 }

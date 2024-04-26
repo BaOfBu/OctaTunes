@@ -213,7 +213,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         trackService.getImageForTrack(track, new TrackService.OnImageLoadedListener() {
             @Override
             public void onImageLoaded(String imageUrl) {
-                if (imageUrl != null && !imageUrl.isEmpty()) {
+                if (imageUrl != null && imageUrl!="") {
                     Picasso.get().load(imageUrl).into(imageView);
                 } else {
                 }
