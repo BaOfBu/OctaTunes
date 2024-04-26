@@ -28,11 +28,13 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
     private List<AlbumsModel> albumPreviewModels;
     private List<TracksModel> trackPreviewModels;
     private Context context;
+    private String belong;
 
-    public ResultSearchByBandNameAdapter(List<ArtistsModel> artistProfileModel, List<AlbumsModel> albumModels, List<TracksModel> trackModels, Context context) {
+    public ResultSearchByBandNameAdapter(List<ArtistsModel> artistProfileModel, List<AlbumsModel> albumModels, List<TracksModel> trackModels,String belong, Context context) {
         this.artistProfileModel = artistProfileModel;
         this.albumPreviewModels = albumModels;
         this.trackPreviewModels = trackModels;
+        this.belong = belong;
         this.context = context;
     }
 
@@ -112,7 +114,7 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
         else {
             holder.trackRecyclerView.setVisibility(View.VISIBLE);
             // Create a temporary list to pass to the adapter (to avoid modifying the original list
-            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context,null, null);
+            TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(trackPreviewModels, context,null, belong);
             holder.trackRecyclerView.setAdapter(trackPreviewAdapter);
             trackPreviewAdapter.notifyDataSetChanged();
         }
