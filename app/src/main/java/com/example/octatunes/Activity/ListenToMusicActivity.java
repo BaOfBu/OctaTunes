@@ -22,7 +22,6 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
@@ -99,6 +98,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private View shuffle_dot;
     private ImageButton alarm;
     private boolean isOnAlarm = false;
+    private int minutes_schedule_alarm = 0;
     LyricService lyricService = new LyricService();
     private boolean chosenSequence = false;
     public static boolean chosenRepeatOneSong = false;
@@ -496,114 +496,84 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
             requireActivity().startService(downloadService);
         }else if(id == R.id.imageButtonAlarm){
-            if(!isOnAlarm){
-                final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
-                bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
-                bottomSheetDialog.show();
+            final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
+            bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
+            bottomSheetDialog.show();
 
-                TextView title = bottomSheetDialog.findViewById(R.id.title);
+            TextView title = bottomSheetDialog.findViewById(R.id.title);
 
-                TextView five_minutesTV = bottomSheetDialog.findViewById(R.id.five_minutes);
-                five_minutesTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 5 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 5 phút");
+            TextView close = bottomSheetDialog.findViewById(R.id.close);
+            close.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                }
+            });
+
+            TextView five_minutesTV = bottomSheetDialog.findViewById(R.id.five_minutes);
+            TextView ten_minutesTV = bottomSheetDialog.findViewById(R.id.ten_minutes);
+            TextView fifteen_minutesTV = bottomSheetDialog.findViewById(R.id.fifteen_minutes);
+            TextView thirty_minutesTV = bottomSheetDialog.findViewById(R.id.thirty_minutes);
+            TextView fortyfive_minutesTV = bottomSheetDialog.findViewById(R.id.fortyfive_minutes);
+            TextView one_hourTV = bottomSheetDialog.findViewById(R.id.one_hour);
+
+            setupClickListeners(bottomSheetDialog, five_minutesTV, 5);
+            setupClickListeners(bottomSheetDialog, ten_minutesTV, 10);
+            setupClickListeners(bottomSheetDialog, fifteen_minutesTV, 15);
+            setupClickListeners(bottomSheetDialog, thirty_minutesTV, 30);
+            setupClickListeners(bottomSheetDialog, fortyfive_minutesTV, 45);
+            setupClickListeners(bottomSheetDialog, one_hourTV, 60);
+
+            TextView end_track = bottomSheetDialog.findViewById(R.id.end_track);
+            end_track.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                    int delay = (currentSong.getDuration() + 2) * 1000 - 300 - MusicService.mediaPlayer.getCurrentPosition();
+                    handleScheduleAlarm(delay);
+                    if(isOnAlarm){
+                        title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
                     }
-                });
+                }
+            });
 
-                TextView ten_minutesTV = bottomSheetDialog.findViewById(R.id.ten_minutes);
-                ten_minutesTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 10 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 10 phút");
-                    }
-                });
+            TextView off_mode = bottomSheetDialog.findViewById(R.id.off_mode);
+            off_mode.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    bottomSheetDialog.cancel();
+                    isOnAlarm = false;
+                    minutes_schedule_alarm = 0;
+                    alarm.setImageResource(R.drawable.ic_alarm_white_24);
+                    handlerAlarm.removeCallbacksAndMessages(null);
+                    if(isOnAlarm) title.setText("Hẹn giờ đi ngủ");
+                    Toast.makeText(requireContext(), "Đã tắt chế độ hẹn giờ thành công!", Toast.LENGTH_SHORT).show();
+                }
+            });
 
-                TextView fifteen_minutesTV = bottomSheetDialog.findViewById(R.id.fifteen_minutes);
-                fifteen_minutesTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 15 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 15 phút");
-                    }
-                });
-
-                TextView thirty_minutesTV = bottomSheetDialog.findViewById(R.id.thirty_minutes);
-                thirty_minutesTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 30 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 30 phút");
-                    }
-                });
-
-                TextView fortyfive_minutesTV = bottomSheetDialog.findViewById(R.id.fortyfive_minutes);
-                fortyfive_minutesTV.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 45 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 45 phút");
-                    }
-                });
-
-                TextView one_hour = bottomSheetDialog.findViewById(R.id.one_hour);
-                one_hour.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = 60 * 60 * 1000;
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Còn lại 60 phút");
-                    }
-                });
-
-                TextView end_track = bottomSheetDialog.findViewById(R.id.end_track);
-                end_track.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        int delayInMillis = (currentSong.getDuration() + 2) * 1000 - MusicService.mediaPlayer.getCurrentPosition();
-                        handleScheduleAlarm(delayInMillis);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
-                    }
-                });
-
-                TextView off_mode = bottomSheetDialog.findViewById(R.id.off_mode);
-                off_mode.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                        isOnAlarm = false;
-                        alarm.setImageResource(R.drawable.ic_alarm_white_24);
-                        handlerAlarm.removeCallbacksAndMessages(null);
-                        if(isOnAlarm) title.setText("Hẹn giờ đi ngủ");
-                    }
-                });
-
-                TextView close = bottomSheetDialog.findViewById(R.id.close);
-                close.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        bottomSheetDialog.cancel();
-                    }
-                });
+            if(minutes_schedule_alarm != 0){
+                if (isOnAlarm) {
+                    String titleText = "Hẹn giờ đi ngủ - Còn lại " + minutes_schedule_alarm + " phút";
+                    title.setText(titleText);
+                }
             }
         }
     }
+    private void setupClickListeners(final BottomSheetDialog bottomSheetDialog, TextView textView, final int minutes) {
+        textView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                bottomSheetDialog.cancel();
+                minutes_schedule_alarm = minutes;
+                int delay = minutes * 60 * 1000; //milliseconds
+                handleScheduleAlarm(delay);
+            }
+        });
+    }
+
     private void handleScheduleAlarm(int time){
         scheduleAlarm();
+        isOnAlarm = true;
         handlerAlarm.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -612,8 +582,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 alarm.setImageResource(R.drawable.ic_alarm_white_24);
             }
         }, time);
-        isOnAlarm = true;
-        alarm.setImageResource(R.drawable.ic_alarm_on_white_24);
+        alarm.setImageResource(R.drawable.ic_alarm_on_green_24);
     }
     private void scheduleAlarm() {
         alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
@@ -627,7 +596,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 AlarmManager.INTERVAL_DAY, pendingIntent);
 
         Log.i("SCHEDULE ALARM", "SUCCESS");
-        Toast.makeText(requireContext(), "Đã tắt chế độ hẹn giờ", Toast.LENGTH_SHORT).show();
+        Toast.makeText(requireContext(), "Đã bật chế độ hẹn giờ thành công!", Toast.LENGTH_SHORT).show();
     }
     public class AlarmReceiver extends BroadcastReceiver {
         @Override
