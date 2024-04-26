@@ -190,15 +190,22 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 // Check if the file exists
                 if (file.exists()) {
                     fileLyric = file;
+                    mLyricView.setLyricFile(fileLyric);
+                    mLyricView.setCurrentTimeMillis(0);
                 } else {
                     downloadFile(lyricModel.getLyric(),lyricModel.getTitle(), getContext());
+                    file = new File(subFolder, fileName);
+                    fileLyric = file;
+                    mLyricView.setLyricFile(fileLyric);
+                    mLyricView.setCurrentTimeMillis(0);
+
                 }
                 handlerLyric = new Handler();
                 // Update progress bar and lyrics every second
                 handlerLyric.postDelayed(updateProgress, 500);
+
             }
-            mLyricView.setLyricFile(fileLyric);
-            mLyricView.setCurrentTimeMillis(0);
+
             mLyricView.setOnPlayerClickListener(new LyricView.OnPlayerClickListener() {
                 @Override
                 public void onPlayerClicked(long progress, String content) {
@@ -237,10 +244,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         myThread=new Thread(new MyThread());
         myThread.start();
-
-
-
-
 
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().bindService(intent, connection, BIND_AUTO_CREATE);
@@ -315,9 +318,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         DownloadManager manager1 = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         Objects.requireNonNull(manager1).enqueue(request1);
-//        if (DownloadManager.STATUS_SUCCESSFUL == 8) {
-//            DownloadSuccess();
-//        }
+        if (DownloadManager.STATUS_SUCCESSFUL == 8) {
+            Log.d("Download", "Downloaded");
+        }
+
     }
 
 
