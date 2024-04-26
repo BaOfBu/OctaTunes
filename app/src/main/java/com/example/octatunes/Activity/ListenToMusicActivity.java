@@ -11,6 +11,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -18,6 +19,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -170,11 +172,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 //                MusicService.mediaPlayer.seekTo((int) progress);
 //            }
 //        });
-
+        handlerLyric = new Handler(Looper.getMainLooper());
         lyricService.getLyricFile(currentSong.getTitle()).thenAccept(lyricModel -> {
             mLyricView = (LyricView)rootView.findViewById(R.id.custom_lyric_view);
             mLyricView.reset();
-            File fileLyric = null;
             //Log.d("Lyric", "Lyric: " + lyricModel.getLyric());
             File[] externalFilesDirs = requireContext().getExternalFilesDirs(null);
             if (externalFilesDirs != null && externalFilesDirs.length > 0) {
@@ -189,22 +190,22 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
                 // Check if the file exists
                 if (file.exists()) {
-                    fileLyric = file;
-                    mLyricView.setLyricFile(fileLyric);
+                    Log.d("Lyric", "File existed: " + file.getAbsolutePath());
+                    Log.d("Download", "File downloaded to: " + file.getAbsolutePath());
+                    mLyricView.setLyricFile(file);
                     mLyricView.setCurrentTimeMillis(0);
+                    // Update progress bar and lyrics every second
+                    handlerLyric.postDelayed(updateProgress, 500);
                 } else {
-                    downloadFile(lyricModel.getLyric(),lyricModel.getTitle(), getContext());
-                    file = new File(subFolder, fileName);
-                    fileLyric = file;
-                    mLyricView.setLyricFile(fileLyric);
-                    mLyricView.setCurrentTimeMillis(0);
+                    try {
+                        downloadFile(lyricModel.getLyric(),lyricModel.getTitle(), getContext());
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
 
                 }
-                handlerLyric = new Handler();
-                // Update progress bar and lyrics every second
-                handlerLyric.postDelayed(updateProgress, 500);
-
             }
+
 
             mLyricView.setOnPlayerClickListener(new LyricView.OnPlayerClickListener() {
                 @Override
@@ -303,23 +304,45 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         Log.d("Download", "File downloaded to: " + file.getAbsolutePath());
     }
 
-    public void downloadFile(String url,String filename, Context context) {
+    public void downloadFile(String url,String filename, Context context) throws InterruptedException {
         String DownloadUrl = url;
         DownloadManager.Request request1 = new DownloadManager.Request(Uri.parse(DownloadUrl));
-        request1.setDescription("Sample Music File");   //appears the same in Notification bar while downloading
-        request1.setTitle("File1.mp3");
-        request1.setVisibleInDownloadsUi(false);
+        request1.setDescription("Download lyric");   //appears the same in Notification bar while downloading
+        request1.setTitle(filename+".lrc");
+        request1.setVisibleInDownloadsUi(true);
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request1.allowScanningByMediaScanner();
-            request1.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
-        }
+        request1.allowScanningByMediaScanner();
+        request1.setNotificationVisibility(DownloadManager.Request.VISIBILITY_HIDDEN);
         request1.setDestinationInExternalFilesDir(context, "/LyricFolder", filename + ".lrc");
 
         DownloadManager manager1 = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
-        Objects.requireNonNull(manager1).enqueue(request1);
-        if (DownloadManager.STATUS_SUCCESSFUL == 8) {
-            Log.d("Download", "Downloaded");
+        long downloadId = Objects.requireNonNull(manager1).enqueue(request1);
+        Cursor cursor = manager1.query(new DownloadManager.Query().setFilterById(downloadId));
+        if(cursor.moveToFirst()){
+            int statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
+            int status = cursor.getInt(statusColumnIndex);
+            if(status == DownloadManager.STATUS_SUCCESSFUL){
+                wait(500);
+                File[] externalFilesDirs = requireContext().getExternalFilesDirs(null);
+                if (externalFilesDirs != null && externalFilesDirs.length > 0) {
+                    // Get the first external files directory (primary storage)
+                    File primaryExternalDir = externalFilesDirs[0];
+
+                    String fileName = filename + ".lrc";
+
+                    // Construct the full path to the file within the "LyricFolder" subfolder
+                    File subFolder = new File(primaryExternalDir, "LyricFolder");
+                    File file = new File(subFolder, fileName);
+                    Log.d("Download", "File downloaded to: " + file.getAbsolutePath());
+                    Log.d("Download", "File downloaded existed ?: " + file.exists());
+                    if(file.exists()){
+                        mLyricView.setLyricFile(file);
+                        mLyricView.setCurrentTimeMillis(0);
+                        // Update progress bar and lyrics every second
+                        handlerLyric.postDelayed(updateProgress, 500);
+                    }
+                }
+            }
         }
 
     }
@@ -337,7 +360,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         public void run() {
             if (MusicService.mediaPlayer != null && MusicService.mediaPlayer.isPlaying()) {
                 int currentPosition = MusicService.mediaPlayer.getCurrentPosition();
-
+                Log.d("MLyricView", "mLyricView: " + mLyricView);
                 // Call method to update lyrics progress
                 mLyricView.setCurrentTimeMillis(currentPosition);
 
@@ -498,4 +521,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         seekBar.setMax(totalTime);
     }
+
+
+
 }
