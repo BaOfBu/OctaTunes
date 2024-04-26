@@ -90,6 +90,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private static View rootView;
     private FragmentListener listener;
     private Handler handlerLyric;
+    private Handler checkDownload;
     @SuppressLint("StaticFieldLeak")
     public static ImageButton repeat;
     private View repeat_dot;
@@ -311,43 +312,21 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         DownloadManager manager1 = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
         long downloadId = Objects.requireNonNull(manager1).enqueue(request1);
         Cursor cursor = manager1.query(new DownloadManager.Query().setFilterById(downloadId));
-        if(cursor.moveToFirst()){
-            int statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS);
-            int status = cursor.getInt(statusColumnIndex);
-            if(status == DownloadManager.STATUS_SUCCESSFUL){
-                wait(500);
-                File[] externalFilesDirs = requireContext().getExternalFilesDirs(null);
-                if (externalFilesDirs != null && externalFilesDirs.length > 0) {
-                    // Get the first external files directory (primary storage)
-                    File primaryExternalDir = externalFilesDirs[0];
-
-                    String fileName = filename + ".lrc";
-
-                    // Construct the full path to the file within the "LyricFolder" subfolder
-                    File subFolder = new File(primaryExternalDir, "LyricFolder");
-                    File file = new File(subFolder, fileName);
-                    Log.d("Download", "File downloaded to: " + file.getAbsolutePath());
-                    Log.d("Download", "File downloaded existed ?: " + file.exists());
-                    if(file.exists()){
-                        mLyricView.setLyricFile(file);
-                        mLyricView.setCurrentTimeMillis(0);
-                        // Update progress bar and lyrics every second
-                        handlerLyric.postDelayed(updateProgress, 500);
-                    }
+        checkDownload = new Handler();
+        checkDownload.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Boolean flag = checkDownloadStatus(cursor, filename);
+                if (flag) {
+                    checkDownload.removeCallbacksAndMessages(null);
+                }
+                else{
+                    checkDownload.postDelayed(this, 500);
                 }
             }
-        }
+        }, 500);
 
     }
-
-
-
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
-        if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
-        }
-    }
-
     private Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
@@ -362,6 +341,45 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             }
         }
     };
+
+    private Boolean checkDownloadStatus(Cursor cursor, String filename) {
+        if (cursor.moveToFirst()) {
+            File[] externalFilesDirs = requireContext().getExternalFilesDirs(null);
+            if (externalFilesDirs != null && externalFilesDirs.length > 0) {
+                // Get the first external files directory (primary storage)
+                File primaryExternalDir = externalFilesDirs[0];
+
+                String fileName = filename + ".lrc";
+
+                // Construct the full path to the file within the "LyricFolder" subfolder
+                File subFolder = new File(primaryExternalDir, "LyricFolder");
+                File file = new File(subFolder, fileName);
+                Log.d("Download", "File downloaded to: " + file.getAbsolutePath());
+                Log.d("Download", "File downloaded existed ?: " + file.exists());
+                if (file.exists()) {
+                    mLyricView.setLyricFile(file);
+                    mLyricView.setCurrentTimeMillis(0);
+                    // Update progress bar and lyrics every second
+                    handlerLyric.postDelayed(updateProgress, 500);
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+        }
+        return false;
+    }
+
+
+
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
+
 
     private class MyThread implements Runnable{
         @Override
