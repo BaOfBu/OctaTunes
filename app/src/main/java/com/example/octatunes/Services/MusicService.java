@@ -126,7 +126,7 @@ public class MusicService extends Service {
                                         int userId = userModel.getUserID();
                                         UserSongModel userSongModel = new UserSongModel(userId, songCurrent.getSongID(), new Date());
                                         UserSongService userSongService = new UserSongService();
-                                        userSongService.addAlbum(userSongModel);
+                                        userSongService.addUserSong(userSongModel);
                                     }
                                 }
                             }

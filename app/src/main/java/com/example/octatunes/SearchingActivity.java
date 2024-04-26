@@ -85,6 +85,7 @@ public class SearchingActivity extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container,@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MainActivity.lastFrag=this;
         View rootView = inflater.inflate(R.layout.layout_search, container, false);
         searchBox = rootView.findViewById(R.id.search_bar_edit_text);
         text = rootView.findViewById(R.id.BrowseAllText);
@@ -151,7 +152,7 @@ public class SearchingActivity extends Fragment {
         trackService.findTrackByName(query, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
-                Log.e("SearchActivity", "Tracks: " + tracks.size());
+                //Log.e("SearchActivity", "Tracks: " + tracks.size());
                 text.setVisibility(View.GONE);
                 TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),listener, FormatSpace(searchBox.getText().toString())+" From Search");
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
