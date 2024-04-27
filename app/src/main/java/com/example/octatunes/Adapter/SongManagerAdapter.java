@@ -19,16 +19,15 @@ import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.SongViewHolder> {
-    private List<SongManagerModel> songsList;
-    private onItemClickListener listener;
+    private List<SongManagerModel> songsList = new ArrayList<>();
 
-    public SongManagerAdapter(List<SongManagerModel> songsList, onItemClickListener listener) {
+    public void setSongs(List<SongManagerModel> songsList) {
         this.songsList = songsList;
-        this.listener = listener;
-        notifyDataSetChanged();
+        filter(songsList);
     }
 
     @NonNull
@@ -42,7 +41,7 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
 
     public void onBindViewHolder(@NonNull SongViewHolder holder, int position) {
         SongManagerModel song = songsList.get(position);
-        holder.bind(song, listener);
+        holder.bind(song);
     }
 
     @Override
@@ -63,21 +62,15 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
             textViewArtist = itemView.findViewById(R.id.textViewArtist);
         }
 
-        public void bind(final SongManagerModel songManagerModel, final onItemClickListener listener) {
+        public void bind(final SongManagerModel songManagerModel) {
             Glide.with(itemView.getContext()).load(songManagerModel.getImage()).into(imageViewSong);
             textViewName.setText(songManagerModel.getTrackName());
             textViewArtist.setText(songManagerModel.getArtistName());
-
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(songManagerModel);
-                }
-            });
         }
     }
-
-    public interface onItemClickListener {
-        void onItemClick(SongManagerModel songManagerModel);
+    public void filter(List<SongManagerModel> filteredSongs) {
+        songsList = new ArrayList<>();
+        songsList.addAll(filteredSongs);
+        notifyDataSetChanged();
     }
 }

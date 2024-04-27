@@ -11,8 +11,10 @@ import com.example.octatunes.TrackPreviewAdapter;
 import com.example.octatunes.TrackPreviewModel;
 import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.common.images.ImageManager;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -383,6 +385,23 @@ public class TrackService {
             }
         });
         return future;
+    }
+
+    public void removeTrack(String trackId, OnTrackRemovedListener listener) {
+        getTracksRef().child(trackId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    listener.onTrackRemoved();
+                } else {
+                    Log.e("TrackService", "Failed to remove track.", task.getException());
+                }
+            }
+        });
+    }
+
+    public interface OnTrackRemovedListener {
+        void onTrackRemoved();
     }
 
     public interface OnArtistNameLoadedListener {
