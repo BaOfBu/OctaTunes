@@ -48,7 +48,6 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     private FragmentListener listener;
     private PlaylistsModel playList;
 
-
     public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
         this.songList = songList;
@@ -86,8 +85,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TracksModel track = songList.get(holder.getAdapterPosition());
-        holder.itemNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
+        TracksModel track = songList.get(position);
+        holder.itemNumber.setText(String.valueOf(position + 1));
         holder.itemTitle.setText(track.getName());
 
         // Load image for the track
@@ -109,6 +108,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                 }
             }
         }
+
 
         holder.itemView.setOnClickListener(v -> {
             if (context instanceof FragmentActivity) {
@@ -232,7 +232,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         trackService.getImageForTrack(track, new TrackService.OnImageLoadedListener() {
             @Override
             public void onImageLoaded(String imageUrl) {
-                if (imageUrl != null && imageUrl!="") {
+                if (imageUrl != null && !imageUrl.isEmpty()) {
                     Picasso.get().load(imageUrl).into(imageView);
                 } else {
                 }
@@ -264,9 +264,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             itemNumber = itemView.findViewById(R.id.item_number);
-            itemTitle = itemView.findViewById(R.id.item_title_tbin);
-            itemArtist = itemView.findViewById(R.id.item_artist_tbin);
-            itemImage = itemView.findViewById(R.id.item_image_tbin);
+            itemTitle = itemView.findViewById(R.id.item_title);
+            itemArtist = itemView.findViewById(R.id.item_artist);
+            itemImage = itemView.findViewById(R.id.item_image);
             songMoreInfo = itemView.findViewById(R.id.song_more_info);
             check_icon_liked_song=itemView.findViewById(R.id.check_icon_liked_song);
         }
