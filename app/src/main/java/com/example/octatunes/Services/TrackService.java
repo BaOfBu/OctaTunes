@@ -11,8 +11,10 @@ import com.example.octatunes.TrackPreviewAdapter;
 import com.example.octatunes.TrackPreviewModel;
 import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.common.images.ImageManager;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
@@ -77,11 +79,13 @@ public class TrackService {
                             }
                         });
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
             }
         });
     }
+
     public void getTracksByPlaylistId(final Integer playlistId, final OnTracksLoadedListener listener) {
         Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
         Log.i("TrackService", "Query playlistTrackQuery success!");
@@ -125,6 +129,7 @@ public class TrackService {
             }
         });
     }
+
     public void getImageForTrack(final TracksModel track, final OnImageLoadedListener listener) {
         final int albumId = track.getAlubumID();
         Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
@@ -146,6 +151,29 @@ public class TrackService {
             }
         });
     }
+
+    public void getAlbumNameForTrack(final TracksModel track, final OnAlbumNameLoadedListener listener) {
+        final int albumId = track.getAlubumID();
+        Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String albumName = snapshot.child("name").getValue(String.class);
+                        listener.onAlbumNameLoaded(albumName);
+                        return;
+                    }
+                }
+                listener.onAlbumNameLoaded(null);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
     public void getArtistNameByAlbumId(int albumId, final OnArtistNameLoadedListener listener) {
         Query query = albumsRef.orderByChild("albumID").equalTo(albumId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -160,12 +188,14 @@ public class TrackService {
                 }
                 listener.onArtistNameLoaded(null); // No artist found
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 // Handle errors
             }
         });
     }
+
     private void getArtistNameById(int artistId, final OnArtistNameLoadedListener listener) {
         Query query = artistRef.orderByChild("artistID").equalTo(artistId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -177,8 +207,7 @@ public class TrackService {
                         listener.onArtistNameLoaded(artistName);
                         return;
                     }
-                }
-                else{
+                } else {
                     listener.onArtistNameLoaded(null);
                 }
 
@@ -190,6 +219,7 @@ public class TrackService {
             }
         });
     }
+
     public void findTrackByName(String trackName, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("name");
         String finalTrackName = StringUtil.removeAccents(trackName);
@@ -201,7 +231,7 @@ public class TrackService {
                     String input = StringUtil.removeAccents(Objects.requireNonNull(snapshot.child("name").getValue(String.class)));
 
                     Log.e("TrackService", "search keyword: " + input + " track name: " + finalTrackName);
-                    if(input.toLowerCase().contains(finalTrackName.toLowerCase())){
+                    if (input.toLowerCase().contains(finalTrackName.toLowerCase())) {
                         trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                     }
                 }
@@ -220,8 +250,7 @@ public class TrackService {
                             }
                             if (count.decrementAndGet() == 0) {
                                 listener.onTracksLoaded(tracks);
-                            }
-                            else{
+                            } else {
                                 listener.onTracksLoaded(null);
                             }
                         }
@@ -239,6 +268,7 @@ public class TrackService {
             }
         });
     }
+
     public void findTrackByID(final List<UserSongModel> trackIDs, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("trackID");
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -283,7 +313,8 @@ public class TrackService {
             }
         });
     }
-    public CompletableFuture<List<TracksModel>> getTracksByPlaylistId(int playlistId){
+
+    public CompletableFuture<List<TracksModel>> getTracksByPlaylistId(int playlistId) {
         CompletableFuture<List<TracksModel>> future = new CompletableFuture<>();
 
         Query playlistTrackQuery = playlistTracksRef.orderByChild("playlistID").equalTo(playlistId);
@@ -328,7 +359,8 @@ public class TrackService {
         });
         return future;
     }
-    public CompletableFuture<List<TracksModel>> getTracksByAlbumId(int albumId){
+
+    public CompletableFuture<List<TracksModel>> getTracksByAlbumId(int albumId) {
         CompletableFuture<List<TracksModel>> future = new CompletableFuture<>();
 
         Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
@@ -346,6 +378,7 @@ public class TrackService {
                     }
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 future.complete(null);
@@ -353,13 +386,41 @@ public class TrackService {
         });
         return future;
     }
+
+    public void removeTrack(String trackId, OnTrackRemovedListener listener) {
+        getTracksRef().child(trackId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    listener.onTrackRemoved();
+                } else {
+                    Log.e("TrackService", "Failed to remove track.", task.getException());
+                }
+            }
+        });
+    }
+
+    public interface OnTrackRemovedListener {
+        void onTrackRemoved();
+    }
+
     public interface OnArtistNameLoadedListener {
         void onArtistNameLoaded(String artistName);
     }
+
     public interface OnTracksLoadedListener {
         void onTracksLoaded(List<TracksModel> tracks);
     }
+
     public interface OnImageLoadedListener {
         void onImageLoaded(String imageUrl);
+    }
+
+    public interface OnAlbumNameLoadedListener {
+        void onAlbumNameLoaded(String nameAlbum);
+    }
+
+    public DatabaseReference getTracksRef() {
+        return tracksRef;
     }
 }
