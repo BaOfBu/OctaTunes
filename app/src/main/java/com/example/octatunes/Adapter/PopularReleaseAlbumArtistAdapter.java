@@ -39,7 +39,10 @@ public class PopularReleaseAlbumArtistAdapter extends RecyclerView.Adapter<Popul
         AlbumsModel album = albumList.get(position);
 
         // Load album image using Picasso
-        Picasso.get().load(album.getImage()).into(holder.albumImageView);
+        if (album.getImage()!="" && album.getImage()!=null){
+            Picasso.get().load(album.getImage()).into(holder.albumImageView);
+        }
+
 
         // Set album name
         holder.albumNameTextView.setText(album.getName());
