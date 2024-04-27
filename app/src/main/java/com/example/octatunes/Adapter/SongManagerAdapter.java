@@ -24,9 +24,11 @@ import java.util.List;
 
 public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.SongViewHolder> {
     private List<SongManagerModel> songsList = new ArrayList<>();
+    private List<SongManagerModel> totalSongs = new ArrayList<>();
 
     public void setSongs(List<SongManagerModel> songsList) {
         this.songsList = songsList;
+        this.totalSongs = songsList;
         filter(songsList);
     }
 
@@ -47,6 +49,10 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
     @Override
     public int getItemCount() {
         return songsList.size();
+    }
+
+    public int getTotal(){
+        return totalSongs.size();
     }
 
     public static class SongViewHolder extends RecyclerView.ViewHolder {

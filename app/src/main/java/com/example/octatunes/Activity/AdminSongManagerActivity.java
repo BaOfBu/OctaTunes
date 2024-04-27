@@ -101,6 +101,7 @@ public class AdminSongManagerActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdminSongManagerActivity.this, AdminAddSongActivity.class);
+                intent.putExtra("TOTAL_TRACKS_CUR", String.valueOf(adapter.getTotal()));
                 startActivity(intent);
             }
         });
@@ -133,7 +134,7 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         dashboard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminSongManagerActivity.this, MainActivity.class);
+                Intent intent = new Intent(AdminSongManagerActivity.this, AdminDashboardActivity.class);
                 startActivity(intent);
             }
         });
