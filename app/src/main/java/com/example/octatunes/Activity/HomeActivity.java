@@ -48,6 +48,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 public class HomeActivity extends Fragment {
     ToggleButton toggleAll, toggleMusic;
@@ -80,6 +81,17 @@ public class HomeActivity extends Fragment {
         MainActivity.lastFrag=this;
 
         View rootView = inflater.inflate(R.layout.layout_home, container, false);
+
+        //PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+        //
+        //for (int i = 0 ;i<=7;i++){
+        //    Random random = new Random();
+        //    int trackId = random.nextInt(59);
+        //    int playlistId = 11;
+        //    playlistTrackService.addPlaylistTrack(new Playlist_TracksModel(
+        //        playlistId,trackId,i
+        //    ));
+        //}
 
         setupToggleButtons(rootView);
 
