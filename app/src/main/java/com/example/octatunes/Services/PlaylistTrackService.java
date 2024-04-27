@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.Playlist_TracksModel;
+import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.UsersModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -96,6 +98,125 @@ public class PlaylistTrackService {
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
                 Log.e("TAG", "Error fetching existing tracks", databaseError.toException());
+            }
+        });
+    }
+
+    public void addLovePlaylistTrack(int userId,int trackId){
+
+        PlaylistService playlistService = new PlaylistService();
+        playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+            @Override
+            public void onPlaylistRetrieved(PlaylistsModel likedPlaylist) {
+                if (likedPlaylist != null) {
+                    Playlist_TracksModel playlistTrack = new Playlist_TracksModel(likedPlaylist.getPlaylistID(), trackId, 0);
+                    PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                    playlistTrackService.addPlaylistTrack(playlistTrack);
+
+                } else {
+                    Log.e("addLovePlaylistTrack", "Liked Songs playlist not found for user: " + userId);
+                }
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle error
+                Log.e("addLovePlaylistTrack", errorMessage);
+            }
+        });
+    }
+    //public void addLovePlaylistTrack(int trackId) {
+    //    UserService userService = new UserService();
+    //    userService.getCurrentUserModel(new UserService.UserModelCallback() {
+    //        @Override
+    //        public void onUserModelRetrieved(UsersModel currentUser) {
+    //            if (currentUser != null) {
+    //                // Current user found, get user ID
+    //                int userId = currentUser.getUserID();
+    //
+    //                // Get the "Liked Songs" playlist associated with the user
+    //                PlaylistService playlistService = new PlaylistService();
+    //                playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+    //                    @Override
+    //                    public void onPlaylistRetrieved(PlaylistsModel likedPlaylist) {
+    //                        if (likedPlaylist != null) {
+    //                            // Playlist found, add the track to the playlist
+    //                            Playlist_TracksModel playlistTrack = new Playlist_TracksModel(likedPlaylist.getPlaylistID(), trackId, 0);
+    //                            PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+    //                            playlistTrackService.addPlaylistTrack(playlistTrack);
+    //                        } else {
+    //                            Log.e("addLovePlaylistTrack", "Liked Songs playlist not found for user: " + userId);
+    //                        }
+    //                    }
+    //
+    //                    @Override
+    //                    public void onError(String errorMessage) {
+    //                        // Handle error
+    //                        Log.e("addLovePlaylistTrack", errorMessage);
+    //                    }
+    //                });
+    //            } else {
+    //                // Current user not found
+    //                Log.e("addLovePlaylistTrack", "Current user not found");
+    //            }
+    //        }
+    //    });
+    //}
+    public void addLovePlaylistTrack(int trackId) {
+        UserService userService = new UserService();
+        userService.getCurrentUserModel(new UserService.UserModelCallback() {
+            @Override
+            public void onUserModelRetrieved(UsersModel currentUser) {
+                if (currentUser != null) {
+                    // Current user found, get user ID
+                    int userId = currentUser.getUserID();
+
+                    // Get the "Liked Songs" playlist associated with the user
+                    PlaylistService playlistService = new PlaylistService();
+                    playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+                        @Override
+                        public void onPlaylistRetrieved(PlaylistsModel likedPlaylist) {
+                            if (likedPlaylist != null) {
+                                // Playlist found, add the track to the playlist
+                                Playlist_TracksModel playlistTrack = new Playlist_TracksModel(likedPlaylist.getPlaylistID(), trackId, 0);
+                                PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                                playlistTrackService.addPlaylistTrack(playlistTrack);
+                            } else {
+                                // Liked Songs playlist not found, add it and then add the track
+                                addTrackToNewLikedPlaylist(userId, trackId);
+                            }
+                        }
+
+                        @Override
+                        public void onError(String errorMessage) {
+                            // Handle error
+                            Log.e("addLovePlaylistTrack", errorMessage);
+                        }
+                    });
+                } else {
+                    // Current user not found
+                    Log.e("addLovePlaylistTrack", "Current user not found");
+                }
+            }
+        });
+    }
+
+    private void addTrackToNewLikedPlaylist(int userId, int trackId) {
+        // Add Liked Songs playlist
+        PlaylistService playlistService = new PlaylistService();
+        playlistService.addPlaylistsLiked(userId, new PlaylistService.PlaylistAddedCallback() {
+            @Override
+            public void onPlaylistAdded(int newPlaylistId) {
+                // Playlist added successfully, now add the track to it
+                Playlist_TracksModel playlistTrack = new Playlist_TracksModel(newPlaylistId, trackId, 0);
+                PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                playlistTrackService.addPlaylistTrack(playlistTrack);
+            }
+
+            @Override
+            public void onError(String errorMessage) {
+                // Handle error
+                Log.e("addTrackToNewLikedPlaylist", errorMessage);
             }
         });
     }

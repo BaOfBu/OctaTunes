@@ -29,9 +29,11 @@ import com.example.octatunes.Services.UserService;
 
 import java.util.List;
 
-public class LikedSongFragment extends Fragment {
+public class LikedSongFragment extends Fragment implements SongAdapter.OnSongRemoveListener {
 
     private FragmentListener listener;
+
+    View rootViews;
     private Handler handler = new Handler();
     @Override
     public void onAttach(@android.support.annotation.NonNull Context context) {
@@ -52,6 +54,7 @@ public class LikedSongFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.liked_song_layout, container, false);
+        rootViews=rootView;
 
         MainActivity.lastFrag=this;
 
@@ -68,7 +71,7 @@ public class LikedSongFragment extends Fragment {
 
         // Adapter
         UserService userService = new UserService();
-        TextView number = rootView.findViewById(R.id.number_liked_songs);
+            TextView number = rootView.findViewById(R.id.number_liked_songs);
         userService.getCurrentUserId(new UserService.UserIdCallback() {
             @Override
             public void onUserIdRetrieved(int userId) {
@@ -76,18 +79,21 @@ public class LikedSongFragment extends Fragment {
                 playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
                     @Override
                     public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
-                        TrackService trackService = new TrackService();
-                        trackService.getTracksByPlaylistId(playlistModel.getPlaylistID()).thenAccept(tracks -> {
-                            number.setText(tracks.size() + " songs");
-                            if (tracks.size()>0){
-                                setupRecyclerViewPopularSong(rootView,tracks,userId,playlistModel.getPlaylistID());
-                                setupPlayButton(rootView,tracks.get(0),playlistModel.getPlaylistID());
+                        if (playlistModel!=null){
+                            TrackService trackService = new TrackService();
+                            trackService.getTracksByPlaylistId(playlistModel.getPlaylistID()).thenAccept(tracks -> {
+                                number.setText(tracks.size() + " songs");
+                                if (tracks.size()>0){
+                                    setupRecyclerViewPopularSong(rootView,tracks,userId,playlistModel.getPlaylistID());
+                                    setupPlayButton(rootView,tracks.get(0),playlistModel.getPlaylistID());
 
-                            }
+                                }
 
-                        });
-
-
+                            });
+                        }
+                        else{
+                            number.setText(0 + " songs");
+                        }
                     }
 
                     @Override
@@ -121,7 +127,30 @@ public class LikedSongFragment extends Fragment {
         RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewLove);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(layoutManager);
-        SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userID,playlistId);
+        SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userID,playlistId,this);
         recyclerView.setAdapter(adapter);
+    }
+
+    @Override
+    public void onSongRemoved() {
+        TextView number = rootViews.findViewById(R.id.number_liked_songs);
+        int songCount = 0;
+        String text = number.getText().toString(); // Get the text from the TextView
+
+        // Remove any non-numeric characters from the string
+        String numericPart = text.replaceAll("[^0-9]", "");
+
+        try {
+            // Parse the numeric part to an integer
+            songCount = Integer.parseInt(numericPart);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+        }
+
+        // Decrement the song count by 1
+        songCount--;
+
+        // Set the updated song count back to the TextView
+        number.setText(String.valueOf(songCount) + " songs");
     }
 }

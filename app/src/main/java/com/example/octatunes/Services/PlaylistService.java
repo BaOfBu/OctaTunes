@@ -178,7 +178,7 @@ public class PlaylistService {
         return future;
     }
     public void getPlaylistModelLiked(int userId, PlaylistCallback callback) {
-        String playlistName = "Liked Songs";
+        String playlistName = "Liked songs";
         playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -190,8 +190,7 @@ public class PlaylistService {
                         return;
                     }
                 }
-                // If playlist not found, invoke onError callback
-                callback.onError("Playlist not found");
+                callback.onPlaylistRetrieved(null);
             }
 
             @Override
@@ -258,5 +257,74 @@ public class PlaylistService {
             }
         });
     }
+
+    public void addPlaylistsLiked(int userId, PlaylistAddedCallback callback) {
+        String name = "Liked songs";
+
+        // Get the current maximum playlistId from the database
+        playlistsRef.orderByChild("playlistId").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int maxPlaylistId = 0; // Default if no playlist exists yet
+
+                // Check if there are playlists in the database
+                if (dataSnapshot.exists()) {
+                    // Get the maximum playlistId
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        PlaylistsModel playlist = snapshot.getValue(PlaylistsModel.class);
+                        maxPlaylistId = playlist.getPlaylistID();
+                    }
+                }
+
+                // Increment the maxPlaylistId to generate a new playlistId
+                int newPlaylistId = maxPlaylistId + 1;
+
+                // Generate a new unique random key for the node
+                String playlistNodeId = playlistsRef.push().getKey();
+
+                // Create a new PlaylistModel object with the provided playlistId, userId, and name
+                PlaylistsModel newPlaylist = new PlaylistsModel(newPlaylistId, userId, name,"","");
+
+                // Set the new playlist under the generated key directly under the 'playlists' node
+                playlistsRef.child(playlistNodeId).setValue(newPlaylist)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                // Playlist added successfully
+                                Log.d(TAG, "Playlist added successfully.");
+                                if(callback != null) {
+                                    callback.onPlaylistAdded(newPlaylistId);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Failed to add playlist
+                                Log.e(TAG, "Failed to add playlist.", e);
+                                if(callback != null) {
+                                    callback.onError(e.getMessage());
+                                }
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+                Log.e(TAG, "Database error: " + databaseError.getMessage());
+                if(callback != null) {
+                    callback.onError(databaseError.getMessage());
+                }
+            }
+        });
+    }
+
+    // Callback interface for notifying when playlist is added or an error occurs
+    public interface PlaylistAddedCallback {
+        void onPlaylistAdded(int newPlaylistId);
+        void onError(String errorMessage);
+    }
+
 
 }

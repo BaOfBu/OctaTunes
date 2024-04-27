@@ -42,7 +42,6 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.3.1")
     implementation("com.google.firebase:firebase-firestore:24.11.1")
     implementation("com.google.firebase:firebase-auth:22.3.1")
-    implementation(files("C:\\Users\\Dolphin\\Downloads\\mpandroidchartlibrary-2-2-4.jar"))
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
@@ -53,7 +52,6 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.12.0")
     implementation("com.google.firebase:firebase-storage:20.3.0")
     implementation("com.google.code.gson:gson:2.10.1")
-    //implementation("com.github.albfernandez:juniversalchardet:2.4.0")
     implementation("com.github.zhengken:LyricViewDemo:v1.2"){
         exclude(group = "com.android.support")
     }

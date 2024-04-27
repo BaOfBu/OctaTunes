@@ -194,13 +194,24 @@ public class ArtistDetailFragment extends Fragment {
                         playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
                             @Override
                             public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
+
                                 LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
                                 recyclerView.setLayoutManager(layoutManager);
-                                SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,playlistModel.getPlaylistID());
-                                setupPlayIcon(rootView,tracks.get(0),adapter);
-                                recyclerView.setAdapter(adapter);
+                                if (playlistModel!=null){
+                                    SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,playlistModel.getPlaylistID());
+                                    setupPlayIcon(rootView,tracks.get(0),adapter);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                                else{
+                                    SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,-1);
+                                    setupPlayIcon(rootView,tracks.get(0),adapter);
+                                    recyclerView.setAdapter(adapter);
+                                }
+
+
                                 setupRecyclerViewPopularRelease(rootView, artistId);
                                 setupRecyclerViewFeaturing(rootView, artistId);
+
                             }
                             @Override
                             public void onError(String errorMessage) {

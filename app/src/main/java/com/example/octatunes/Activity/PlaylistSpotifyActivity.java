@@ -138,11 +138,19 @@ public class PlaylistSpotifyActivity extends Fragment {
                          public void onUserIdRetrieved(int userId) {
                              playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
                                  @Override
-                                 public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
+                                 public void onPlaylistRetrieved(PlaylistsModel playlistLikeModel) {
                                      RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
                                      recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                                     SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,playlistModel.getPlaylistID());
-                                     recyclerView.setAdapter(adapter);
+                                     if (playlistLikeModel!=null){
+                                         SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,playlistLikeModel.getPlaylistID());
+                                         recyclerView.setAdapter(adapter);
+                                     }
+                                     else{
+                                         SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,-1);
+                                         recyclerView.setAdapter(adapter);
+                                     }
+
+
                                  }
                                  @Override
                                  public void onError(String errorMessage) {

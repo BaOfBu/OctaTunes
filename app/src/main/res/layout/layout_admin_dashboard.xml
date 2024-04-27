@@ -25,13 +25,6 @@
         android:padding="8dp"
         android:text="Tổng số bài hát: 5000" />
 
-    <!-- Biểu đồ -->
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/chart"
-        android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:padding="8dp" />
-
     <!-- Danh sách các sự kiện gần đây -->
     <TextView
         android:id="@+id/text_recent_activity_title"
