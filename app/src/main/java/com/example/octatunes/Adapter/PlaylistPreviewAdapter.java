@@ -62,9 +62,9 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
     private FragmentListener listener;
 
 
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            listener.onSignalReceived(tracksModels, trackID, -1, from, belong, mode);
         }
     }
 
@@ -172,7 +172,7 @@ public class PlaylistPreviewAdapter extends RecyclerView.Adapter<PlaylistPreview
                             holder.play_button_home_playlist_preview.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                                    sendSignalToMainActivity(tracks, trackFirstId, albumId, from, belong, mode);
                                 }
                             });
                         }

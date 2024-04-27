@@ -256,6 +256,7 @@ public class MusicService extends Service {
         if (songList == null) {
             Log.e(TAG, "Song list is null");
         } else {
+            Log.e(TAG, songList.toString());
             if (!MainActivity.isServiceBound()) {
                 songService = new SongService();
                 musicBinder.setMediaPlayer(pos);

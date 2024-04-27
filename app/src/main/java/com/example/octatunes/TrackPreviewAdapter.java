@@ -38,9 +38,9 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
         this.belong = belong;
     }
 
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
         if (fragmentListener != null) {
-            fragmentListener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            fragmentListener.onSignalReceived(tracksModels, trackID, albumID, from, belong, mode);
         }
     }
 
@@ -78,7 +78,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
                 UserSongModel userSongModel = new UserSongModel(10, tracksModel.getTrackID(), new Date());
                 userSong.addUserSong(userSongModel);
-                sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", belong, mode);
+                sendSignalToMainActivity(null, tracksModel.getTrackID(), tracksModel.getAlubumID(), "PLAYING FROM SEARCH", belong, mode);
             }
         });
     }

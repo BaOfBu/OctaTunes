@@ -56,12 +56,17 @@ public class PlaylistSpotifyActivity extends Fragment {
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            listener.onSignalReceived(tracksModels, trackID, albumID, from, belong, mode);
         }
     }
 
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(tracksModels, trackID, -1, from, belong, mode);
+        }
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -126,7 +131,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 String belong = playlistsModel.getName();
                 ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
                 playButton.setOnClickListener(v -> {
-                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                    sendSignalToMainActivity(tracks, trackFirstId, from, belong, mode);
                 });
 
                 /* Adapter for track */

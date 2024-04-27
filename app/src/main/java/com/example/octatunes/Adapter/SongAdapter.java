@@ -52,9 +52,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         this.playList = playList;
     }
 
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            listener.onSignalReceived(tracksModels, trackID, albumID, from, belong, mode);
         }
     }
 
@@ -90,7 +90,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                         String from = "PLAYING FROM PLAYLIST";
                         String belong = playList.getName();
                         int playlistId = playList.getPlaylistID();
-                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                        sendSignalToMainActivity(songList, trackFirstId, albumId, from, belong, mode);
                     } else if (fragment instanceof ArtistDetailFragment) {
 
                     }

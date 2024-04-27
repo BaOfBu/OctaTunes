@@ -82,9 +82,9 @@ public class SearchActivity extends Fragment implements ListCategoriesButtonAdap
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            listener.onSignalReceived(tracksModels, trackID, albumID, from, belong, mode);
         }
     }
     @Override
