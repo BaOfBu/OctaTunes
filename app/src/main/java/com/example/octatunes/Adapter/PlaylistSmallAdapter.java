@@ -36,7 +36,9 @@ public class PlaylistSmallAdapter extends RecyclerView.Adapter<PlaylistSmallAdap
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         PlaylistsModel playlist = playlistList.get(position);
-        Picasso.get().load(playlist.getImage()).into(holder.playlistImage);
+        if (playlist.getImage()!="" && playlist.getImage()!=null){
+            Picasso.get().load(playlist.getImage()).into(holder.playlistImage);
+        }
         holder.playlistName.setText(playlist.getName());
     }
 

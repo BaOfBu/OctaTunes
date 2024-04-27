@@ -1,4 +1,6 @@
 package com.example.octatunes.Services;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.text.Normalizer;
 import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
@@ -41,9 +43,9 @@ public class ArtistService {
 
     private DatabaseReference artistsRef;
 
-   private DatabaseReference playlistRef;
+    private DatabaseReference playlistRef;
 
-   private DatabaseReference playlistTrackRef;
+    private DatabaseReference playlistTrackRef;
 
     public ArtistService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
@@ -240,13 +242,71 @@ public class ArtistService {
             }
         });
     }
-    public void getRandomTracksByArtistId(int artistId, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+    //public void getRandomTracksByArtistId(int artistId, OnSuccessListener<List<TracksModel>> successListener, OnFailureListener failureListener) {
+    //    List<TracksModel> tracksList = new ArrayList<>();
+    //    Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
+    //    query.addListenerForSingleValueEvent(new ValueEventListener() {
+    //        @Override
+    //        public void onDataChange(DataSnapshot dataSnapshot) {
+    //            if (dataSnapshot.exists()) {
+    //                for (DataSnapshot albumSnapshot : dataSnapshot.getChildren()) {
+    //                    int albumId = albumSnapshot.child("albumID").getValue(Integer.class);
+    //                    Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
+    //                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+    //                        @Override
+    //                        public void onDataChange(DataSnapshot dataSnapshot) {
+    //                            if (dataSnapshot.exists()) {
+    //                                for (DataSnapshot trackSnapshot : dataSnapshot.getChildren()) {
+    //                                    TracksModel track = trackSnapshot.getValue(TracksModel.class);
+    //                                    if (track != null) {
+    //                                        tracksList.add(track);
+    //                                    }
+    //                                }
+    //
+    //                                // Shuffle the list of tracks
+    //                                Collections.shuffle(tracksList);
+    //
+    //                                // Select the first 5 tracks
+    //                                List<TracksModel> randomTracks = tracksList.subList(0, Math.min(tracksList.size(), 5));
+    //
+    //                                successListener.onSuccess(randomTracks);
+    //                            }
+    //                            else {
+    //                                successListener.onSuccess(tracksList); // Return empty list if no albums found
+    //                            }
+    //                        }
+    //
+    //                        @Override
+    //                        public void onCancelled(DatabaseError databaseError) {
+    //                            failureListener.onFailure(databaseError.toException());
+    //                        }
+    //                    });
+    //                }
+    //            }
+    //            else {
+    //                successListener.onSuccess(tracksList); // Return empty list if no albums found
+    //            }
+    //        }
+    //
+    //        @Override
+    //        public void onCancelled(DatabaseError databaseError) {
+    //            failureListener.onFailure(databaseError.toException());
+    //        }
+    //    });
+    //}
+
+
+    public CompletableFuture<List<TracksModel>> getRandomTracksByArtistId(int artistId) {
+        CompletableFuture<List<TracksModel>> future = new CompletableFuture<>();
         List<TracksModel> tracksList = new ArrayList<>();
+        AtomicInteger count = new AtomicInteger(0);
+
         Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
         query.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
+                    int albumCount = (int) dataSnapshot.getChildrenCount();
                     for (DataSnapshot albumSnapshot : dataSnapshot.getChildren()) {
                         int albumId = albumSnapshot.child("albumID").getValue(Integer.class);
                         Query trackQuery = tracksRef.orderByChild("alubumID").equalTo(albumId);
@@ -260,38 +320,44 @@ public class ArtistService {
                                             tracksList.add(track);
                                         }
                                     }
+                                }
 
+                                // Increment the count of completed asynchronous tasks
+                                int completedTasks = count.incrementAndGet();
+
+                                // If all albums have been processed, resolve the CompletableFuture
+                                if (completedTasks == albumCount) {
                                     // Shuffle the list of tracks
                                     Collections.shuffle(tracksList);
 
                                     // Select the first 5 tracks
                                     List<TracksModel> randomTracks = tracksList.subList(0, Math.min(tracksList.size(), 5));
 
-                                    successListener.onSuccess(randomTracks);
-                                }
-                                else {
-                                    successListener.onSuccess(tracksList); // Return empty list if no albums found
+                                    future.complete(randomTracks);
                                 }
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                failureListener.onFailure(databaseError.toException());
+                                future.completeExceptionally(databaseError.toException());
                             }
                         });
                     }
-                }
-                else {
-                    successListener.onSuccess(tracksList); // Return empty list if no albums found
+                } else {
+                    // If no albums found, resolve the CompletableFuture with an empty list
+                    future.complete(tracksList);
                 }
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                failureListener.onFailure(databaseError.toException());
+                future.completeExceptionally(databaseError.toException());
             }
         });
+
+        return future;
     }
+
     public void getRandomAlbumByArtistId(int artistId, OnSuccessListener<List<AlbumsModel>> successListener, OnFailureListener failureListener) {
         List<AlbumsModel> albumsList = new ArrayList<>();
         Query query = albumsRef.orderByChild("artistID").equalTo(artistId);
@@ -393,11 +459,14 @@ public class ArtistService {
                                                     if (playlistSnapshot.exists()) {
                                                         for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
                                                             int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
-                                                            if (!playlistIdSet.contains(playlistId)) {
-                                                                playlistIdSet.add(playlistId);
-                                                                PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);
-                                                                if (playlist != null) {
-                                                                    playlistSet.add(playlist);
+                                                            String playlistName = playlistDataSnapshot.child("name").getValue(String.class);
+                                                            if (!Objects.equals(playlistName, "Liked songs")){
+                                                                if (!playlistIdSet.contains(playlistId)) {
+                                                                    playlistIdSet.add(playlistId);
+                                                                    PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);
+                                                                    if (playlist != null) {
+                                                                        playlistSet.add(playlist);
+                                                                    }
                                                                 }
                                                             }
                                                         }
@@ -413,7 +482,6 @@ public class ArtistService {
                                             });
                                         }
                                     }
-
                                     @Override
                                     public void onCancelled(DatabaseError databaseError) {
                                         failureListener.onFailure(databaseError.toException());
