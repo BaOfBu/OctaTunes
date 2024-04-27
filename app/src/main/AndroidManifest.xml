@@ -1,49 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" />
-    <uses-permission
-        android:name="android.permission.FOREGROUND_SERVICE"
-        tools:ignore="ManifestOrder" />
-    <uses-permission
-        android:name="android.permission.WAKE_LOCK"
-        tools:ignore="ManifestOrder" />
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:networkSecurityConfig="@xml/networksecurityconfig"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OctaTunes"
+        android:networkSecurityConfig="@xml/networksecurityconfig"
         tools:targetApi="31">
-        <activity
-            android:name=".Activity.AdminAddSongActivity"
-            android:exported="false" />
-        <activity
-            android:name=".Activity.AdminDashboardActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name=".Activity.AdminSongManagerActivity"
-            android:exported="false" />
-
         <service
             android:name=".Services.MusicService"
             android:enabled="true"
@@ -55,6 +32,7 @@
             android:exported="false"
             android:label="ListenToMusicActivity"
             android:theme="@style/Theme.OctaTunes" />
+
         <activity
             android:name=".TrackView"
             android:exported="false"
@@ -72,10 +50,23 @@
             android:theme="@style/Theme.OctaTunes" />
         <activity
             android:name=".LoginActivity"
-            android:exported="true" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".Activity.PlaylistSpotifyActivity"
-            android:label="PlaylistSpotifyActivity" />
+            android:label="PlaylistSpotifyActivity">
+        </activity>
+        <service android:name=".Services.DownloadMusicService"/>
     </application>
 
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
+        tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.WAKE_LOCK"
+        tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 </manifest>
