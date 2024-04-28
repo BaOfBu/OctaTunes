@@ -87,8 +87,7 @@ public class LoginFormFragment extends Fragment {
                                         main.setLoginTime();
                                         //move to home
                                         main.stopProgressDialog();
-                                        Intent intent = new Intent(getActivity(), MainActivity.class);
-                                        startActivity(intent);
+                                        main.moveToLoggedActivity(UE, pass);
                                     } else {
                                         // Authentication failed
                                         main.stopProgressDialog();
@@ -139,8 +138,7 @@ public class LoginFormFragment extends Fragment {
                                             main.setLoginTime();
 
                                             main.stopProgressDialog();
-                                            Intent intent = new Intent(main.getApplicationContext(), MainActivity.class);
-                                            startActivity(intent);
+                                            main.moveToLoggedActivity(username, password);
                                         } else {
                                             // Authentication failed
                                             main.stopProgressDialog();
