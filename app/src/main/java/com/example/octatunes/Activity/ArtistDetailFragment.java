@@ -59,9 +59,9 @@ public class ArtistDetailFragment extends Fragment {
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
         }
     }
 

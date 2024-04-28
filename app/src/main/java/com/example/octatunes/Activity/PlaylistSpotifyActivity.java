@@ -62,6 +62,11 @@ public class PlaylistSpotifyActivity extends Fragment {
         }
     }
 
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
+        }
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -126,7 +131,7 @@ public class PlaylistSpotifyActivity extends Fragment {
                 String belong = playlistsModel.getName();
                 ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
                 playButton.setOnClickListener(v -> {
-                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                    sendSignalToMainActivity(tracks, trackFirstId, from, belong, mode);
                 });
 
                 /* Adapter for track */

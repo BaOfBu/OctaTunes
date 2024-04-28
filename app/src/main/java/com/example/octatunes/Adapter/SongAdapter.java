@@ -91,6 +91,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
 
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
+        }
+    }
     private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
@@ -138,11 +143,9 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     if (fragment instanceof PlaylistSpotifyActivity) {
                         String mode = "sequencePlay";
                         int trackFirstId = track.getTrackID();
-                        int albumId = -1;
                         String from =  "PLAYING FROM PLAYLIST";
                         String belong = playList.getName();
-                        int playlistId = playList.getPlaylistID();
-                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                        sendSignalToMainActivity(songList, trackFirstId, from, belong, mode);
                     }
                     else if (fragment instanceof ArtistDetailFragment) {
                         extracted(track);
