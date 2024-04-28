@@ -1,7 +1,6 @@
 package com.example.octatunes.Services;
 
 import android.annotation.SuppressLint;
-import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -11,12 +10,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -27,9 +24,8 @@ import android.widget.RemoteViews;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
+import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.octatunes.Activity.ListenToMusicActivity;
@@ -64,6 +60,7 @@ public class MusicService extends Service {
     }
     public static void setPos(int currentPos) {
         pos = currentPos;
+        Log.i("SET POS", "SUCCESS");
     }
     public static List<SongModel> getSongList(){
         return songList;
@@ -188,8 +185,6 @@ public class MusicService extends Service {
                 } else {
                     mediaPlayer.start();
                 }
-                updateNotification();
-
             }
         }
         public void previousMusic(){
@@ -233,7 +228,6 @@ public class MusicService extends Service {
                     setMediaPlayer(pos);
                 }
                 updateNotification();
-
             }
         }
 
@@ -268,6 +262,7 @@ public class MusicService extends Service {
     @SuppressLint({"RemoteViewLayout", "ForegroundServiceType"})
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
+        Log.i(TAG, "START SERVICE");
         Intent clickIntent = new Intent(this, MainActivity.class);
         PendingIntent pi = PendingIntent.getActivity(this,0, clickIntent, PendingIntent.FLAG_IMMUTABLE);
 
@@ -308,6 +303,8 @@ public class MusicService extends Service {
             updateNotification();
             views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
         }
+
+        updateNotification();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
@@ -362,6 +359,7 @@ public class MusicService extends Service {
     }
     private void updateNotification(){
         if (notificationManager == null) {
+//            return;
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         }
 
@@ -378,6 +376,7 @@ public class MusicService extends Service {
                                 @Override
                                 public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                                     // Đặt Bitmap vào ImageView trong RemoteViews
+                                    Log.i("ON RESOURCE READY", String.valueOf(pos));
                                     views.setImageViewBitmap(R.id.imageAlbum, resource);
                                 }
 

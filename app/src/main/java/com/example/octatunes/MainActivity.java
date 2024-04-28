@@ -40,7 +40,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int UPDATE = 1;
     public ActivityMainBinding binding;
     public static List<SongModel> songList;
-    private int pos = -1;
+    private static int pos = -1;
+    public static void setPos(int p){
+        pos = p;
+    }
     private MusicService.MusicBinder binder;
     private static boolean isServiceBound = false;
     private TrackService trackService;
@@ -242,6 +245,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             myThread.start();
 
                             MusicService.setPos(pos);
+
                             isServiceBound = false;
                             intent = new Intent(MainActivity.this, MusicService.class);
                             startService(intent);
