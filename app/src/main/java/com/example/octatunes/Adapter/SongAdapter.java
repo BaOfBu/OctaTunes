@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
@@ -236,6 +237,20 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                             add_to_liked_song.setVisibility(View.GONE);
                             bottomSheetDialog.dismiss();
                         });
+                        // Set click listener for the TextView share
+                        TextView shareSong = bottomSheetDialog.findViewById(R.id.share);
+                        shareSong.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Download the song
+                                try {
+                                    downloadFile(track.getFile(), track.getName(), context);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
+
                         bottomSheetDialog.show();
                     }
                     else{
@@ -265,8 +280,22 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                                 bottomSheetDialogLiked.dismiss();
                             }
                         });
+                        // Set click listener for the TextView share
+                        TextView shareSong = bottomSheetDialogLiked.findViewById(R.id.share);
+                        shareSong.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                // Download the song
+                                try {
+                                    downloadFile(track.getFile(), track.getName(), context);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        });
 
                         bottomSheetDialogLiked.show();
+
                     }
                 }
             }
@@ -354,31 +383,38 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
 
     public void copyFileToExternalStorageAndShare(File mp3File) {
-        File externalStorageDir = Environment.getExternalStorageDirectory(); // Get external storage directory
-        File newFile = new File(externalStorageDir, mp3File.getName()); // Create a new file in external storage directory
-        Log.d("Download", "New file path: " + newFile.getAbsolutePath());
-        try {
-            Log.d("Download", "In Try block...");
-            FileInputStream inStream = new FileInputStream(mp3File);
-            FileOutputStream outStream = new FileOutputStream(newFile);
-            byte[] buffer = new byte[4096];
-            int length;
-            while ((length = inStream.read(buffer)) > 0) {
-                Log.d("Download", "Copying file...");
-                outStream.write(buffer, 0, length);
-            }
-            inStream.close();
-            outStream.close();
-            // Share the copied file
-            Intent share = new Intent(Intent.ACTION_SEND);
-            share.setType("audio/mp3");
-            share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(newFile));
-            share.putExtra(Intent.EXTRA_SUBJECT, "Sharing File...");
-            share.setPackage("com.google.android.gm");
-            context.startActivity(Intent.createChooser(share, "Share Sound File"));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+//        File externalStorageDir = Environment.getExternalStorageDirectory(); // Get external storage directory
+//        File newFile = new File(externalStorageDir, mp3File.getName()); // Create a new file in external storage directory
+//        Log.d("Download", "New file path: " + newFile.getAbsolutePath());
+//        try {
+//            Log.d("Download", "In Try block...");
+//            FileInputStream inStream = new FileInputStream(mp3File);
+//            FileOutputStream outStream = new FileOutputStream(newFile);
+//            byte[] buffer = new byte[4096];
+//            int length;
+//            while ((length = inStream.read(buffer)) > 0) {
+//                Log.d("Download", "Copying file...");
+//                outStream.write(buffer, 0, length);
+//            }
+//            inStream.close();
+//            outStream.close();
+//            // Share the copied file
+//            Intent share = new Intent(Intent.ACTION_SEND);
+//            share.setType("audio/mp3");
+//            share.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(mp3File));
+//            share.putExtra(Intent.EXTRA_SUBJECT, "Sharing File...");
+//            share.setPackage("com.google.android.gm");
+//            context.startActivity(Intent.createChooser(share, "Share Sound File"));
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("audio/mp3");
+        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".fileprovider", mp3File);
+        share.putExtra(Intent.EXTRA_STREAM, uri);
+        share.putExtra(Intent.EXTRA_SUBJECT, "Sharing File...");
+        share.setPackage("com.google.android.gm");
+        context.startActivity(Intent.createChooser(share, "Share Sound File"));
     }
 
 

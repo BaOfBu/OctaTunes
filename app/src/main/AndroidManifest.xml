@@ -77,6 +77,16 @@
             android:label="PlaylistSpotifyActivity">
         </activity>
         <service android:name=".Services.DownloadMusicService"/>
+        <provider
+            android:authorities="com.example.octatunes.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="android.permission.READ_EXTERNAL_STORAGE">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
