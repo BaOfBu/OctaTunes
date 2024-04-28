@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/background_color"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="vertical"
+            android:layout_height="wrap_content">
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <!-- Image View for the background image -->
+                <ImageView
+                    android:id="@+id/background_liked_song"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerCrop" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_gravity="top"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="110dp"
+                    android:gravity="left"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textStyle="bold"
+                        android:text="Liked Songs"
+                        android:textColor="#FFFFFF"
+                        android:textSize="45sp" />
+                    <TextView
+                        android:id="@+id/number_liked_songs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="2 songs"
+                        android:textColor="#a7a7a7"
+                        android:textSize="14sp"/>
+                </LinearLayout>
+
+                <!-- ImageView for the back icon -->
+                <ImageView
+                    android:id="@+id/back_icon_liked_song"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|top"
+                    android:src="@drawable/ic_back_arrow"
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+            </FrameLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_gravity="center"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="10dp">
+
+                <ImageView
+                    android:id="@+id/more_info"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#a7a7a7"
+                    android:background="@drawable/baseline_arrow_circle_down_24"
+                    />
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"/>
+                <ImageView
+                    android:id="@+id/artist_shuffle_icon"
+                    android:layout_width="36dp"
+                    android:layout_gravity="center"
+                    android:layout_height="36dp"
+                    android:layout_marginRight="5dp"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_shuffle_24"
+                    />
+                <ImageView
+                    android:id="@+id/play_button_liked_display"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
+                    android:layout_gravity="center"
+                    android:backgroundTint="#1ed760"
+                    android:background="@drawable/baseline_play_circle_filled_24"
+                    />
+            </LinearLayout>
+
+            <!-- No Music -->
+            <TextView
+                android:layout_marginTop="20dp"
+                android:layout_marginLeft="20dp"
+                android:id="@+id/no_music_text_liked"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="An playlist does not have any music"
+                android:textColor="#a7a7a7"
+                android:textSize="18sp"
+                android:layout_gravity="left"
+                android:visibility="gone" />
+
+
+
+            <RelativeLayout
+                android:layout_marginLeft="15dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerViewLove"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    tools:listitem="@layout/layout_playlist_spotify_item" />
+            </RelativeLayout>
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

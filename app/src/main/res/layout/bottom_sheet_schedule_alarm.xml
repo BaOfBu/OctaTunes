@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottomSheetContainer"
+    android:layout_width="match_parent"
+    android:layout_height="800dp"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_background"
+    android:backgroundTint="#242424"
+    android:clipChildren="false"
+    >
+
+    <View
+        android:layout_width="50dp"
+        android:layout_height="5dp"
+        android:background="@drawable/line_radius"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="20dp"
+        android:padding="14dp"
+        >
+    </View>
+
+    <TextView
+        android:id="@+id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginBottom="20dp"
+        android:fontFamily="@font/main_font"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:textSize="24sp"
+        android:text="Hẹn giờ đi ngủ"/>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/five_minutes"
+            android:layout_width="match_parent"
+            android:textColor="#fff"
+            android:textSize="16sp"
+            android:fontFamily="@font/main_font"
+            android:layout_height="wrap_content"
+            android:text="5 phút"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/ten_minutes"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:fontFamily="@font/main_font"
+            android:layout_height="wrap_content"
+            android:text="10 phút"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/fifteen_minutes"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="15 phút"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/thirty_minutes"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="30 phút"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/fortyfive_minutes"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="45 phút"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/one_hour"
+            android:textSize="16sp"
+            android:layout_width="match_parent"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="1 giờ"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/end_track"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="Cuối bản nhạc"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:padding="14dp">
+
+        <TextView
+            android:id="@+id/off_mode"
+            android:layout_width="match_parent"
+            android:textSize="16sp"
+            android:textColor="@color/white"
+            android:layout_height="wrap_content"
+            android:text="Tắt hẹn giờ"
+            android:fontFamily="@font/main_font"
+            android:layout_marginStart="16dp"
+            android:clickable="true"
+            android:focusable="true" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/close"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/main_font"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:text="Đóng"/>
+
+
+</LinearLayout>

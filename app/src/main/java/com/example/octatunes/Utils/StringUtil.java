@@ -15,4 +15,7 @@ public class StringUtil {
         }
         return sb.toString();
     }
+    public static String replaceSpaceWithPlus(String input) {
+        return removeAccents(input.replace(" ", "+").toLowerCase());
+    }
 }

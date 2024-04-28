@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/light_black_color"
+    android:orientation="vertical">
+
+    <!-- Header -->
+    <include layout="@layout/layout_toolbar_admin" />
+
+    <!-- Thống kê tổng quan -->
+    <TextView
+        android:id="@+id/text_total_users"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Tổng số người dùng: 1000" />
+
+    <TextView
+        android:id="@+id/text_total_songs"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        android:text="Tổng số bài hát: 5000" />
+
+    <!-- Danh sách các sự kiện gần đây -->
+    <TextView
+        android:id="@+id/text_recent_activity_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        android:text="Hoạt động gần đây"
+        android:textSize="20sp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recycler_recent_activity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp" />
+
+</LinearLayout>
