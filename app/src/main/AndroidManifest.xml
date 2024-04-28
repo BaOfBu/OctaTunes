@@ -11,6 +11,10 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="32"
         tools:ignore="ScopedStorage" />
+    <uses-permission android:name="android.permission.READ_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_INTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.WRITE_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.DOWNLOAD_WITHOUT_NOTIFICATION" />
     <application
         android:allowBackup="true"
@@ -73,10 +77,22 @@
             android:label="PlaylistSpotifyActivity">
         </activity>
         <service android:name=".Services.DownloadMusicService"/>
+        <provider
+            android:authorities="com.example.octatunes.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true"
+            android:readPermission="android.permission.READ_EXTERNAL_STORAGE">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
     </application>
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"
         tools:ignore="ManifestOrder" />
     <uses-permission android:name="android.permission.WAKE_LOCK"
         tools:ignore="ManifestOrder" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
 </manifest>

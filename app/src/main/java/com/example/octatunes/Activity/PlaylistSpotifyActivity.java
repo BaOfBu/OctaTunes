@@ -35,6 +35,9 @@ import com.example.octatunes.Services.UserService;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
+
+import org.w3c.dom.Text;
+
 import java.time.LocalDateTime;
 
 
