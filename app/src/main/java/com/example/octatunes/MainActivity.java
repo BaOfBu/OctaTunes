@@ -265,6 +265,70 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadDataFromPlaylist(int playlistID, int trackID){
+        final boolean flag = !songList.isEmpty();
+        if(!songList.isEmpty()) songList.clear();
+        trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
+            int totalTracks = tracksModels.size();
+            AtomicInteger processedTracks = new AtomicInteger(0);
+            for (int i = 0; i < tracksModels.size(); i++) {
+                TracksModel track = tracksModels.get(i);
+                SongModel songModel = new SongModel();
+                if(track != null){
+                    Log.i("TRACK SERVICE IN MAIN", track.toString());
+                    songModel.setTitle(track.getName());
+                    songModel.setFile(track.getFile());
+                    songModel.setDuration(track.getDuration());
+                    songModel.setSongID(track.getTrackID());
+                    // Fetch album asynchronously and set properties of songModel
+                    albumService.findAlbumById(track.getAlubumID()).thenAccept(albumsModel -> {
+                        songModel.setAlbum(albumsModel.getName());
+                        songModel.setImage(albumsModel.getImage());
+
+                        Log.i("ALBUM SERVICE IN MAIN", "Fetch album asynchronously and set properties of songModel");
+                        // Fetch artist asynchronously and set properties of songModel
+                        artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
+                            songModel.setArtist(artistsModel.getName());
+                            songModel.setGenre(artistsModel.getGenre());
+
+                            // Add songModel to MainActivity.songList after all data is loaded
+                            songList.add(songModel);
+                            int processed = processedTracks.incrementAndGet();
+                            if (processed == totalTracks) {
+                                // All tracks have been processed
+                                if(songList != null) Log.i(TAG, songList.toString());
+                                List<SongModel> songsTmp = songList;
+                                for(int j = 0; j < tracksModels.size(); j++){
+                                    for(int z = 0; z < songsTmp.size(); z++){
+                                        if(songsTmp.get(z).getSongID() == tracksModels.get(j).getTrackID()){
+                                            songList.set(j, songsTmp.get(z));
+                                            if(songsTmp.get(z).getSongID() == trackID) {
+                                                pos = j;
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                myThread = new Thread(new MainActivity.MyThread());
+                                myThread.start();
+
+                                MusicService.setPos(pos);
+                                isServiceBound = false;
+                                intent = new Intent(MainActivity.this, MusicService.class);
+                                startService(intent);
+                                bindService(intent, connection, BIND_AUTO_CREATE);
+
+                                if(flag){
+                                    MusicService.setPos(pos - 1);
+                                    binder.nextMusic();
+                                }
+                                initNowPlayingBar();
+                            }
+                        });
+                    });
+                }
+            }
+        });
     }
     @Override
     public void onClick(View v) {
