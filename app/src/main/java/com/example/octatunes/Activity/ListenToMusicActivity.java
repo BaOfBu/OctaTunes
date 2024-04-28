@@ -340,7 +340,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 }
             }
         }, 500);
-
     }
     private Runnable updateProgress = new Runnable() {
         @Override

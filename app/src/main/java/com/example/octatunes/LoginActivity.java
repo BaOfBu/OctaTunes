@@ -15,6 +15,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import com.example.octatunes.Activity.AdminDashboardActivity;
 import com.example.octatunes.Activity.LoginHomeFragment;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -46,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+        //Uncommend saveAutoLoginAccount to disable auto login
+        //saveAutoLoginAccount("", "");
         //auto login after user logged in
         autoLogin();
     }
@@ -126,9 +129,7 @@ public class LoginActivity extends AppCompatActivity {
                                 setLoginTime();
 
                                 stopProgressDialog();
-                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                startActivity(intent);
-
+                                moveToLoggedActivity(UE, pass);
                             } else {
                                 stopProgressDialog();
                             }
@@ -152,8 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                                                 setLoginTime();
 
                                                 stopProgressDialog();
-                                                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                                                startActivity(intent);
+                                                moveToLoggedActivity(UE, pass);
                                             } else {
                                                 stopProgressDialog();
                                             }
@@ -190,5 +190,14 @@ public class LoginActivity extends AppCompatActivity {
         if (progressDialog != null && progressDialog.isShowing()) {
             progressDialog.dismiss();
         }
+    }
+    public void moveToLoggedActivity(String UE, String pass){
+        Intent intent;
+        if((UE.equals("sonsung2003@gmail.com") || UE.equals("Dolphin")) && pass.equals("1234567890")){
+            intent = new Intent(getApplicationContext(), AdminDashboardActivity.class);
+        }else{
+            intent = new Intent(getApplicationContext(), MainActivity.class);
+        }
+        startActivity(intent);
     }
 }
