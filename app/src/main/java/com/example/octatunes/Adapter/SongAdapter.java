@@ -30,6 +30,7 @@ import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.LoveService;
 import com.example.octatunes.Services.PlaylistTrackService;
+import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
@@ -119,7 +120,19 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         loadImageForTrack(track, holder.itemImage);
 
         // Load artist name for the track
-        loadArtistName(track.getAlubumID(), holder.itemArtist);
+        if (context instanceof FragmentActivity) {
+            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+            if (fragment != null) {
+                if (!(fragment instanceof ArtistDetailFragment)) {
+                    loadArtistName(track.getAlubumID(), holder.itemArtist);
+                }
+                else{
+                    loadCountListenOfTrack(track.getName(),holder.itemArtist);
+                }
+            }
+        }
+        
 
         if(listener == null) {
             listener = (FragmentListener) context;
@@ -242,6 +255,22 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             }
 
 
+        });
+    }
+
+    private void loadCountListenOfTrack(String trackName, TextView itemArtist) {
+        final SongService songService = new SongService();
+        songService.countSongsWithTitle(trackName, new SongService.OnSongCountListener() {
+            @Override
+            public void onSongCountRetrieved(int count) {
+                // Update the TextView with the count of listeners
+                itemArtist.setText("Listeners: " + count);
+            }
+
+            @Override
+            public void onSongCountFailed(String errorMessage) {
+                Log.e("loadCountListenOfTrack", "Failed to retrieve count: " + errorMessage);
+            }
         });
     }
 

@@ -245,7 +245,7 @@ public class ArtistDetailFragment extends Fragment {
             public void onSuccess(List<AlbumsModel> albumList) {
                 RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopularRelease);
                 if (!albumList.isEmpty()&&albumList!=null) {
-                    PopularReleaseAlbumArtistAdapter adapter = new PopularReleaseAlbumArtistAdapter(getContext(), albumList);
+                    PopularReleaseAlbumArtistAdapter adapter = new PopularReleaseAlbumArtistAdapter(getContext(), albumList,listener);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
                     recyclerView.setAdapter(adapter);
                 } else {

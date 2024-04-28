@@ -58,4 +58,24 @@ public class SongService {
     public interface OnSongLoadedListener {
         void onSongLoaded();
     }
+    public void countSongsWithTitle(final String trackName, final OnSongCountListener listener) {
+        songRef.orderByChild("title").equalTo(trackName).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int count = (int) dataSnapshot.getChildrenCount();
+                listener.onSongCountRetrieved(count);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // Handle error
+                Log.e("SongService", "Failed to count songs with title: " + trackName, databaseError.toException());
+                listener.onSongCountFailed(databaseError.getMessage());
+            }
+        });
+    }
+    public interface OnSongCountListener {
+        void onSongCountRetrieved(int count);
+        void onSongCountFailed(String errorMessage);
+    }
 }
