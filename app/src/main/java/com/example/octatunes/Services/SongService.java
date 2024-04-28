@@ -11,7 +11,13 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class SongService {
     private DatabaseReference songRef;
@@ -70,10 +76,29 @@ public class SongService {
             public void onCancelled(DatabaseError databaseError) {
                 // Handle error
                 Log.e("SongService", "Failed to count songs with title: " + trackName, databaseError.toException());
+            }
+        });
+    }
+
+    public void countSongWithArtistName(final String artistName, final OnSongCountListener listener) {
+        // Query songs with artistName and playDate within the current month
+        Query query = songRef.orderByChild("artist").equalTo(artistName);
+
+        query.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                int count = (int) dataSnapshot.getChildrenCount();
+                listener.onSongCountRetrieved(count);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("SongService", "Failed to count songs with artist name: " + artistName, databaseError.toException());
                 listener.onSongCountFailed(databaseError.getMessage());
             }
         });
     }
+
     public interface OnSongCountListener {
         void onSongCountRetrieved(int count);
         void onSongCountFailed(String errorMessage);

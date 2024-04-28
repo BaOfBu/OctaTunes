@@ -16,6 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -94,6 +95,28 @@ public class UserSongService {
             return null;
         });
         return future;
+    }
+
+    public void addUserSongTBIN(UserSongModel userSong) {
+        // Set play date to current date if not provided
+        if (userSong.getPlayDate() == null) {
+            userSong.setPlayDate(new Date());
+        }
+
+        String key = userSongRef.push().getKey();
+        userSongRef.child(key).setValue(userSong)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("UserSongService", "User song added successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("UserSongService", "Error adding user song", e);
+                    }
+                });
     }
 
 }
