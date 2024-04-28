@@ -19,7 +19,7 @@
         android:textStyle="bold"/>
 
     <ImageView
-        android:id="@+id/item_image"
+        android:id="@+id/item_image_tbin"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="centerCrop" />
@@ -28,13 +28,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:layout_marginRight="10dp"
         android:layout_marginLeft="10dp"
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/item_title"
+            android:id="@+id/item_title_tbin"
             android:text="Chúng Ta Của Tương Lai"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:textColor="@android:color/white"
@@ -42,7 +43,7 @@
             android:ellipsize="end"/>
 
         <TextView
-            android:id="@+id/item_artist"
+            android:id="@+id/item_artist_tbin"
             android:text="Sơn Tùng M-TP"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -50,8 +51,16 @@
             android:textColor="@android:color/darker_gray"
             android:maxLines="1"
             android:ellipsize="end"/>
+
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/check_icon_liked_song"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:visibility="gone"
+        android:background="@drawable/baseline_check_circle_24"
+        />
     <ImageView
         android:id="@+id/song_more_info"
         android:layout_width="24dp"

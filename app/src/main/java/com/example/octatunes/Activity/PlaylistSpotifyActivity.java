@@ -65,6 +65,11 @@ public class PlaylistSpotifyActivity extends Fragment {
         }
     }
 
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
+        }
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -129,16 +134,41 @@ public class PlaylistSpotifyActivity extends Fragment {
                 String belong = playlistsModel.getName();
                 ImageView playButton = view.findViewById(R.id.play_button_playlist_display);
                 playButton.setOnClickListener(v -> {
-                    sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                    sendSignalToMainActivity(tracks, trackFirstId, from, belong, mode);
                 });
 
                 /* Adapter for track */
                 allTracks.addAll(tracks);
                 if (getContext() != null) {
-                    RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
-                    recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
-                    SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel);
-                    recyclerView.setAdapter(adapter);
+                    UserService userService = new UserService();
+                    userService.getCurrentUserId(new UserService.UserIdCallback() {
+                         @Override
+                         public void onUserIdRetrieved(int userId) {
+                             playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+                                 @Override
+                                 public void onPlaylistRetrieved(PlaylistsModel playlistLikeModel) {
+                                     RecyclerView recyclerView = view.findViewById(R.id.recyclerViewSong);
+                                     recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+                                     if (playlistLikeModel!=null){
+                                         SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,playlistLikeModel.getPlaylistID());
+                                         recyclerView.setAdapter(adapter);
+                                     }
+                                     else{
+                                         SongAdapter adapter = new SongAdapter(getContext(), tracks,listener,playlistsModel,userId,-1);
+                                         recyclerView.setAdapter(adapter);
+                                     }
+
+
+                                 }
+                                 @Override
+                                 public void onError(String errorMessage) {
+                                     // Handle error if any
+                                 }
+                             });
+
+                         }
+                     });
+
                 }
             });
 

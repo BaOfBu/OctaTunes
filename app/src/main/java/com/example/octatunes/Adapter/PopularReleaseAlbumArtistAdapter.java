@@ -1,16 +1,22 @@
 package com.example.octatunes.Adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
+import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.R; // Replace this with your actual package name
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
@@ -20,9 +26,16 @@ import java.util.Locale;
 public class PopularReleaseAlbumArtistAdapter extends RecyclerView.Adapter<PopularReleaseAlbumArtistAdapter.ViewHolder> {
 
     private Context context;
+    private FragmentListener listener;
     private List<AlbumsModel> albumList;
 
-    public PopularReleaseAlbumArtistAdapter(Context context, List<AlbumsModel> albumList) {
+    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+
+    public PopularReleaseAlbumArtistAdapter(Context context, List<AlbumsModel> albumList,FragmentListener listener) {
         this.context = context;
         this.albumList = albumList;
     }
@@ -39,7 +52,10 @@ public class PopularReleaseAlbumArtistAdapter extends RecyclerView.Adapter<Popul
         AlbumsModel album = albumList.get(position);
 
         // Load album image using Picasso
-        Picasso.get().load(album.getImage()).into(holder.albumImageView);
+        if (album.getImage()!="" && album.getImage()!=null){
+            Picasso.get().load(album.getImage()).into(holder.albumImageView);
+        }
+
 
         // Set album name
         holder.albumNameTextView.setText(album.getName());
@@ -51,6 +67,17 @@ public class PopularReleaseAlbumArtistAdapter extends RecyclerView.Adapter<Popul
             String releaseYear = dateFormat.format(album.getReleaseDate());
             holder.releaseYearTextView.setText(releaseYear + " - Single");
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(listener == null) {
+                    listener = (FragmentListener) context;
+                }
+                String mode = "sequencePlay";
+                //sendSignalToMainActivity(track.getTrackID(), -1, album.getAlbumID(), "PLAYING FROM SEARCH", "Track", mode);
+            }
+        });
     }
 
     @Override
