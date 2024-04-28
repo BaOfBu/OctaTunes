@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ToggleButton;
 
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,17 +24,15 @@ import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.PlaylistsModel;
-import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.FollowerService;
-import com.example.octatunes.Services.PlaylistLibraryUserService;
 import com.example.octatunes.Services.PlaylistService;
+import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.UserService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.firestore.auth.User;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -159,9 +156,28 @@ public class ArtistDetailFragment extends Fragment {
             // Set up click event for shuffle icon
             setupShuffleIcon(rootView);
 
+            // Set up number count listen of artist
+            setupNumberCountArtist(rootView,artistModel.getName());
+
         }
 
         return rootView;
+    }
+
+    private void setupNumberCountArtist(View rootView, String name) {
+        final TextView count_number_artist_listen = rootView.findViewById(R.id.count_number_artist_listen);
+        final SongService songService = new SongService();
+        songService.countSongWithArtistName(name, new SongService.OnSongCountListener() {
+            @Override
+            public void onSongCountRetrieved(int count) {
+                // Update the TextView with the count of listeners
+                count_number_artist_listen.setText(("Lượt nghe" + " " + String.valueOf(count)));
+            }
+
+            @Override
+            public void onSongCountFailed(String errorMessage) {
+            }
+        });
     }
 
     private void setupPlayIcon(View rootView,TracksModel tracksModels,SongAdapter songAdapter) {
