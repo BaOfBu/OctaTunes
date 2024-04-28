@@ -31,6 +31,7 @@ import com.example.octatunes.R;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.FollowerService;
 import com.example.octatunes.Services.PlaylistLibraryUserService;
+import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.UserService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -47,6 +48,7 @@ public class ArtistDetailFragment extends Fragment {
 
     private FollowerService followerService = new FollowerService();
     private FragmentListener listener;
+    SongAdapter songAdapter;
 
     @Override
     public void onAttach(@NonNull Context context) {
@@ -57,9 +59,9 @@ public class ArtistDetailFragment extends Fragment {
             throw new ClassCastException(context.toString() + " must implement FragmentListener");
         }
     }
-    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived(tracksModels, trackID, -1, from, belong, mode);
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
         }
     }
 
@@ -83,7 +85,10 @@ public class ArtistDetailFragment extends Fragment {
             // Artist Image
             if (artistModel != null) {
                 ImageView imageView = rootView.findViewById(R.id.artist_detail_image);
-                Picasso.get().load(artistModel.getImage()).into(imageView);
+                if (artistModel.getImage()!=null && artistModel.getImage()!=""){
+                    Picasso.get().load(artistModel.getImage()).into(imageView);
+                }
+
             }
 
             /* Check following */
@@ -91,6 +96,7 @@ public class ArtistDetailFragment extends Fragment {
             userService.getCurrentUserId(new UserService.UserIdCallback() {
                 @Override
                 public void onUserIdRetrieved(int userId) {
+
                     followerService.checkIfUserFollowsArtist(userId, artistModel.getArtistID(), new FollowerService.OnFollowCheckListener() {
                         @Override
                         public void onFollowCheck(boolean isFollowing) {
@@ -101,6 +107,8 @@ public class ArtistDetailFragment extends Fragment {
                                 following.setText("Follow");
 
                             }
+                            // Set up RecyclerView for popular songs
+                            setupRecyclerViewPopularSong(rootView, artistModel.getArtistID(),userId);
                         }
                     });
                 }
@@ -146,50 +154,88 @@ public class ArtistDetailFragment extends Fragment {
             ImageView backIcon = rootView.findViewById(R.id.back_icon);
             backIcon.setOnClickListener(v -> requireActivity().onBackPressed());
 
-            // Set up RecyclerView for popular songs
-            setupRecyclerViewPopularSong(rootView, artistModel.getArtistID());
 
-            //setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
-            //
-            //setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
+
+            // Set up click event for shuffle icon
+            setupShuffleIcon(rootView);
+
         }
 
         return rootView;
     }
 
-    private void setupRecyclerViewPopularSong(View rootView, int artistId) {
-        ArtistService artistService = new ArtistService();
-        artistService.getRandomTracksByArtistId(artistId, new OnSuccessListener<List<TracksModel>>() {
+    private void setupPlayIcon(View rootView,TracksModel tracksModels,SongAdapter songAdapter) {
+        ImageView playIcon = rootView.findViewById(R.id.play_button_artist_display);
+        playIcon.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onSuccess(List<TracksModel> tracks) {
-                RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopular);
-                if (!tracks.isEmpty()) {
-                    LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
-                    recyclerView.setLayoutManager(layoutManager);
-                    SongAdapter adapter = new SongAdapter(getActivity(), tracks,listener);
-                    recyclerView.setAdapter(adapter);
-                    setupRecyclerViewPopularRelease(rootView, artistModel.getArtistID());
-                    setupRecyclerViewFeaturing(rootView, artistModel.getArtistID());
-                } else {
-                    TextView popular_song_title=rootView.findViewById(R.id.popular_song_title);
-                    popular_song_title.setVisibility(View.GONE);
-                    TextView featuring_title=rootView.findViewById(R.id.featuring_titlte);
-                    featuring_title.setVisibility(View.GONE);
-                    TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
-                    popular_release_title.setVisibility(View.GONE);
-                    TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
-                    fan_also_like.setVisibility(View.GONE);
-                    noMusicTextView.setVisibility(View.VISIBLE);
-                }
-            }
-        }, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                Log.e("ArtistDetailFragment", "Error fetching tracks: " + e.getMessage());
+            public void onClick(View v) {
+                songAdapter.extracted(tracksModels);
             }
         });
     }
+
+    private void setupShuffleIcon(View rootView) {
+        ImageView shuffleIcon = rootView.findViewById(R.id.artist_shuffle_icon);
+        shuffleIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setupRecyclerViewPopularSong(View rootView, int artistId,int userId) {
+        ArtistService artistService = new ArtistService();
+        artistService.getRandomTracksByArtistId(artistId)
+                .thenAccept(tracks -> {
+                    RecyclerView recyclerView = rootView.findViewById(R.id.recyclerViewSongPopular);
+                    if (!tracks.isEmpty()) {
+                        PlaylistService playlistService = new PlaylistService();
+                        playlistService.getPlaylistModelLiked(userId, new PlaylistService.PlaylistCallback() {
+                            @Override
+                            public void onPlaylistRetrieved(PlaylistsModel playlistModel) {
+
+                                LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
+                                recyclerView.setLayoutManager(layoutManager);
+                                if (playlistModel!=null){
+                                    SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,playlistModel.getPlaylistID());
+                                    setupPlayIcon(rootView,tracks.get(0),adapter);
+                                    recyclerView.setAdapter(adapter);
+                                }
+                                else{
+                                    SongAdapter adapter = new SongAdapter(getActivity(), tracks, listener,userId,-1);
+                                    setupPlayIcon(rootView,tracks.get(0),adapter);
+                                    recyclerView.setAdapter(adapter);
+                                }
+
+
+                                setupRecyclerViewPopularRelease(rootView, artistId);
+                                setupRecyclerViewFeaturing(rootView, artistId);
+
+                            }
+                            @Override
+                            public void onError(String errorMessage) {
+                                // Handle error if any
+                            }
+                        });
+
+                    } else {
+                        TextView popularSongTitle = rootView.findViewById(R.id.popular_song_title);
+                        popularSongTitle.setVisibility(View.GONE);
+                        TextView featuringTitle = rootView.findViewById(R.id.featuring_titlte);
+                        featuringTitle.setVisibility(View.GONE);
+                        TextView popularReleaseTitle = rootView.findViewById(R.id.popular_release_title);
+                        popularReleaseTitle.setVisibility(View.GONE);
+                        TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
+                        noMusicTextView.setVisibility(View.VISIBLE);
+                    }
+                })
+                .exceptionally(e -> {
+                    Log.e("ArtistDetailFragment", "Error fetching tracks: " + e.getMessage());
+                    return null;
+                });
+    }
+
 
 
     private void setupRecyclerViewPopularRelease(View rootView, int artistId) {
@@ -210,8 +256,6 @@ public class ArtistDetailFragment extends Fragment {
                     TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
                     popular_release_title.setVisibility(View.GONE);
                     TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
-                    fan_also_like.setVisibility(View.GONE);
                     noMusicTextView.setVisibility(View.VISIBLE);
                 }
             }
@@ -242,8 +286,6 @@ public class ArtistDetailFragment extends Fragment {
                     TextView popular_release_title=rootView.findViewById(R.id.popular_release_title);
                     popular_release_title.setVisibility(View.GONE);
                     TextView noMusicTextView = rootView.findViewById(R.id.no_music_text);
-                    TextView fan_also_like=rootView.findViewById(R.id.fan_also_like);
-                    fan_also_like.setVisibility(View.GONE);
                     noMusicTextView.setVisibility(View.VISIBLE);
                 }
 

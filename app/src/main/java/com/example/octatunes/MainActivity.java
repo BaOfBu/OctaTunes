@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Search(26, 11, 4, "PLAYING FROM SEARCH", "\"Như+ngày+hôm+qua\" in Search", null);
     }
 
-    public void Search(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode){
+    public void Search(List<TracksModel> tracksModels, int trackID, int playlistID, int albumID, String from, String belong, String mode){
         setFrom(from);
         setBelong(belong);
 
@@ -147,24 +147,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(from.equals("PLAYING FROM SEARCH")){
             loadDataFromAlbum(albumID, trackID);
         }else if(from.equals("PLAYING FROM PLAYLIST")){
-            loadData(tracksModels, trackID);
+            if(belong.equals("Liked Songs")){
+                loadDataFromPlaylist(playlistID, trackID);
+            }else{
+                loadData(tracksModels, trackID);
+            }
         }
     }
-    public void Search(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode){
-        setFrom(from);
-        setBelong(belong);
 
-//        if (mode != null && mode.equals("shuffle")){
-//            binder.setRandomPlay();
-//        }
-        Log.i(TAG, "RECEIVE FROM PLAYLIST: " + tracksModels.toString());
-        final boolean flag = !songList.isEmpty();
-        if(!songList.isEmpty()) songList.clear();
-
-        if(from.equals("PLAYING FROM PLAYLIST")){
-
-        }
-    }
     private void loadDataFromAlbum(int albumID, int trackID){
         final boolean flag = !songList.isEmpty();
         if(!songList.isEmpty()) songList.clear();
@@ -274,6 +264,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    private void loadDataFromPlaylist(int playlistID, int trackID){
+    }
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -294,7 +286,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSignalReceived(List<TracksModel> tracksModels, int trackID, int albumID, String from, String belong, String mode) {
+    public void onSignalReceived2(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
         Log.i("SIGNAL RECEIVED IN MAIN", "SUCCESS");
         if (myThread != null) {
             myThread.interrupt();
@@ -304,7 +296,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(tracksModels, trackID, albumID, from, belong, mode);
+        Search(tracksModels, trackID, -1, -1, from, belong, mode);
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }
@@ -312,7 +304,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSignalReceived(List<TracksModel> tracksModelList, int trackID, String albumID, String from, String belong, String mode) {
+    public void onSignalReceived(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         Log.i("SIGNAL RECEIVED IN MAIN", "SUCCESS");
         if (myThread != null) {
             myThread.interrupt();
@@ -322,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(tracksModelList, trackID, from, belong, mode);
+        Search(null, trackID, playlistID, albumID, from, belong, mode);
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }

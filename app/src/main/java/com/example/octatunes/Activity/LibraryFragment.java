@@ -6,11 +6,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.ToggleButton;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,6 +27,7 @@ import com.example.octatunes.Services.AlbumLibraryUserService;
 import com.example.octatunes.Services.FollowerService;
 import com.example.octatunes.Services.PlaylistLibraryUserService;
 import com.example.octatunes.Services.UserService;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,7 +71,27 @@ public class LibraryFragment extends Fragment {
         setupAdapter();
         getAllItems();
 
+        // Liked Song click
+        setUpLikedSong(rootView);
+
         return rootView;
+    }
+
+    private void setUpLikedSong(View rootView) {
+        LinearLayout library_liked_song=rootView.findViewById(R.id.library_liked_song);
+        library_liked_song.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LikedSongFragment fragment = new LikedSongFragment();
+                Bundle bundle = new Bundle();
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((FragmentActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
     }
 
     private void setupAdapter() {
