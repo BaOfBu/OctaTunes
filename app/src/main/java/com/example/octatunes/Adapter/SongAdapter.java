@@ -264,7 +264,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             @Override
             public void onSongCountRetrieved(int count) {
                 // Update the TextView with the count of listeners
-                itemArtist.setText("Listeners: " + count);
+                itemArtist.setText(count);
             }
 
             @Override
@@ -280,6 +280,7 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         }
         String mode = "sequencePlay";
         sendSignalToMainActivity(track.getTrackID(), -1, track.getAlubumID(), "PLAYING FROM SEARCH", "Track", mode);
+        notifyDataSetChanged();
     }
 
     private void loadImageForTrack(TracksModel track, ImageView imageView) {
