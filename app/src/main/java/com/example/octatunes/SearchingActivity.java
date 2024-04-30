@@ -23,11 +23,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
+import com.example.octatunes.Model.HistoryModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.Services.AlbumService;
 import com.example.octatunes.Services.ArtistService;
+import com.example.octatunes.Services.HistoryService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
@@ -57,7 +59,7 @@ public class SearchingActivity extends Fragment {
     private AlbumService albumService = new AlbumService();
     private ArtistService artistService = new ArtistService();
     private TrackService trackService = new TrackService();
-    private UserSongService userSongService = new UserSongService();
+    private HistoryService historyService = new HistoryService();
     private UserService userService = new UserService();
     //public static Integer currentUserID;
 
@@ -166,13 +168,13 @@ public class SearchingActivity extends Fragment {
         // Display the search history in the search box
         text.setVisibility(View.VISIBLE);
         //Log.e("SearchingActivity", "current user: " + currentUser.getDisplayName());
-        List<UserSongModel> userSongs = new ArrayList<>();
-        userSongService.getHistory(userID).thenAccept(userSongs1 -> {
-            Log.e("SearchingActivity", "UserSongs: " + userSongs1.size());
-            userSongs.addAll(userSongs1);
+        List<HistoryModel> historyModels = new ArrayList<>();
+        historyService.getHistory(userID).thenAccept(userSongs1 -> {
+            Log.e("SearchingActivity", "History size: " + userSongs1.size());
+            historyModels.addAll(userSongs1);
         });
 
-        trackService.findTrackByID(userSongs, new TrackService.OnTracksLoadedListener() {
+        trackService.findTrackByID(historyModels, new TrackService.OnTracksLoadedListener() {
             @Override
             public void onTracksLoaded(List<TracksModel> tracks) {
                 Log.e("SearchActivity", "Tracks: " + tracks.size());

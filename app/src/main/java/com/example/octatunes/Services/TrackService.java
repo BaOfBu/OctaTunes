@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.octatunes.Model.HistoryModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
@@ -267,15 +268,15 @@ public class TrackService {
         });
     }
 
-    public void findTrackByID(final List<UserSongModel> trackIDs, final OnTracksLoadedListener listener) {
+    public void findTrackByID(final List<HistoryModel> trackIDs, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("trackID");
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    for (UserSongModel trackID : trackIDs) {
-                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getSongID())) {
+                    for (HistoryModel trackID : trackIDs) {
+                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getTrackID())) {
                             trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                             break;
                         }

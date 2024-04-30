@@ -11,8 +11,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Model.HistoryModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
+import com.example.octatunes.Services.HistoryService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserSongService;
 import com.example.octatunes.Utils.StringUtil;
@@ -29,7 +31,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     private String mode = "sequencePlay";
     private FragmentListener fragmentListener;
 
-    UserSongService userSong = new UserSongService();
+    HistoryService historyService = new HistoryService();
 
     public TrackPreviewAdapter(List<TracksModel> trackPreviewModels, Context context, FragmentListener fragmentListener, String belong) {
         this.trackPreviewModels = trackPreviewModels;
@@ -76,8 +78,8 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
 
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getTrackID()));
                 Log.i("TRACK ADAPTER", String.valueOf(tracksModel.getAlubumID()));
-                UserSongModel userSongModel = new UserSongModel(10, tracksModel.getTrackID(), new Date());
-                userSong.addUserSong(userSongModel);
+                HistoryModel historyModel = new HistoryModel(10, tracksModel.getTrackID(), new Date());
+                historyService.addHistory(historyModel);
                 sendSignalToMainActivity(tracksModel.getTrackID(), -1, tracksModel.getAlubumID(), "PLAYING FROM SEARCH", belong, mode);
             }
         });
