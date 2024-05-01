@@ -1,5 +1,4 @@
 package com.example.octatunes.Services;
-
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationChannel;
@@ -20,7 +19,6 @@ import android.os.IBinder;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
-
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import com.example.octatunes.Activity.ListenToMusicActivity;
@@ -38,7 +36,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -159,8 +156,6 @@ public class MusicService extends Service {
                             updateTrackView();
                         }
                     });
-
-                    //updateNotification();
                 } catch (IOException e) {
                     Log.i(TAG, Objects.requireNonNull(e.getMessage()));
                 }
@@ -178,8 +173,10 @@ public class MusicService extends Service {
             if(mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
                     mediaPlayer.pause();
+                    views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_play_white_70);
                 } else {
                     mediaPlayer.start();
+                    views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
                 }
                 updateNotification();
             }
@@ -199,7 +196,7 @@ public class MusicService extends Service {
                 }
                 setMediaPlayer(pos);
                 updateNotification();
-
+                updateTrackView();
             }
         }
         public void nextMusic(){
@@ -227,6 +224,7 @@ public class MusicService extends Service {
 
                 Log.i("NEXT MUSIC", songList.get(pos).toString());
                 updateNotification();
+                updateTrackView();
             }
         }
 
@@ -302,8 +300,6 @@ public class MusicService extends Service {
             Log.i("MUSIC SERVICE", "SUCCESS CREATE NOTIFICATION");
             views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
         }
-
-        //updateNotification();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
