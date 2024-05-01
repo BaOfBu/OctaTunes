@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        //Uncommend saveAutoLoginAccount to disable auto login
+        //Uncomment saveAutoLoginAccount to disable auto login
         //saveAutoLoginAccount("", "");
         //auto login after user logged in
         autoLogin();
