@@ -21,13 +21,8 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.RemoteViews;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
@@ -41,6 +36,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -163,13 +160,12 @@ public class MusicService extends Service {
                         }
                     });
 
-                    updateNotification();
+                    //updateNotification();
                 } catch (IOException e) {
                     Log.i(TAG, Objects.requireNonNull(e.getMessage()));
                 }
             }
         }
-
         public void pauseMusic(){
             if(mediaPlayer != null) {
                 if (mediaPlayer.isPlaying()) {
@@ -185,6 +181,7 @@ public class MusicService extends Service {
                 } else {
                     mediaPlayer.start();
                 }
+                updateNotification();
             }
         }
         public void previousMusic(){
@@ -227,6 +224,8 @@ public class MusicService extends Service {
                     }
                     setMediaPlayer(pos);
                 }
+
+                Log.i("NEXT MUSIC", songList.get(pos).toString());
                 updateNotification();
             }
         }
@@ -299,12 +298,12 @@ public class MusicService extends Service {
                     .setAutoCancel(true)
                     .build();
 
-            Log.i("MUSIC SERVICE", "SUCCESS CREATE NOTIFICATION");
             updateNotification();
+            Log.i("MUSIC SERVICE", "SUCCESS CREATE NOTIFICATION");
             views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
         }
 
-        updateNotification();
+        //updateNotification();
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             startForeground(notificationId, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_MEDIA_PLAYBACK);
@@ -359,8 +358,8 @@ public class MusicService extends Service {
     }
     private void updateNotification(){
         if (notificationManager == null) {
-//            return;
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+            return;
         }
 
         if(notification != null){
@@ -368,28 +367,25 @@ public class MusicService extends Service {
                 if(songList != null && !songList.isEmpty() && pos >= 0 && pos < songList.size()){
                     views.setTextViewText(R.id.textView_trackTitle,songList.get(pos).getTitle());
                     views.setTextViewText(R.id.textView_artistName,songList.get(pos).getArtist());
+                    Picasso.get().load(songList.get(pos).getImage()).into(new Target() {
+                        @Override
+                        public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
+                            Log.i("ON RESOURCE READY", songList.get(pos).toString());
+                            views.setImageViewBitmap(R.id.imageAlbum, bitmap);
+                        }
 
-                    Glide.with(this)
-                            .asBitmap()
-                            .load(songList.get(pos).getImage())
-                            .into(new CustomTarget<Bitmap>() {
-                                @Override
-                                public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                                    // Đặt Bitmap vào ImageView trong RemoteViews
-                                    Log.i("ON RESOURCE READY", String.valueOf(pos));
-                                    views.setImageViewBitmap(R.id.imageAlbum, resource);
-                                }
+                        @Override
+                        public void onBitmapFailed(Exception e, Drawable errorDrawable) {
+                        }
 
-                                @Override
-                                public void onLoadCleared(@Nullable Drawable placeholder) {
-                                    // Handle case where Glide clears the Bitmap
-                                }
-                            });
+                        @Override
+                        public void onPrepareLoad(Drawable placeHolderDrawable) {
+                        }
+                    });
                 }
             }
             notificationManager.notify(notificationId, notification);
         }else {
-            // Handle the case where notification is null
             Log.e(TAG, "Notification is null");
         }
     }
