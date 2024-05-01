@@ -22,6 +22,7 @@ import com.bumptech.glide.Glide;
 import com.example.octatunes.Activity.HomeActivity;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Activity.LibraryFragment;
+import com.example.octatunes.Activity.UserActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Services.AlbumService;
@@ -120,7 +121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }else if(itemID == R.id.library){
                 replaceFragment(new LibraryFragment());
             }else if(itemID == R.id.Premium){
-
+                replaceFragment(new UserActivity());
             }
             return true;
         });
