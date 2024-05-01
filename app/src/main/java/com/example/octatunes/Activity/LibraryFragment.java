@@ -73,6 +73,7 @@ public class LibraryFragment extends Fragment {
 
         // Liked Song click
         setUpLikedSong(rootView);
+        setUpDeviceSong(rootView);
 
         return rootView;
     }
@@ -83,6 +84,23 @@ public class LibraryFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 LikedSongFragment fragment = new LikedSongFragment();
+                Bundle bundle = new Bundle();
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((FragmentActivity) getContext()).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
+    }
+
+    private void setUpDeviceSong(View rootView){
+        LinearLayout library_device_song = rootView.findViewById(R.id.library_device_song);
+        library_device_song.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DeviceSongFragment fragment = new DeviceSongFragment();
                 Bundle bundle = new Bundle();
                 fragment.setArguments(bundle);
 
