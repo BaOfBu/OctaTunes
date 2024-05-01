@@ -4,7 +4,9 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.octatunes.Model.HistoryModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
+import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.TrackPreviewAdapter;
@@ -36,6 +38,7 @@ public class TrackService {
     private DatabaseReference tracksRef;
     private DatabaseReference albumsRef;
     private DatabaseReference artistRef;
+    private DatabaseReference songsRef;
 
 
     public TrackService() {
@@ -44,6 +47,7 @@ public class TrackService {
         tracksRef = database.getReference("tracks");
         albumsRef = database.getReference("albums");
         artistRef = database.getReference("artists");
+        songsRef = database.getReference("songs");
     }
 
     // Method to add a new track
@@ -267,15 +271,15 @@ public class TrackService {
         });
     }
 
-    public void findTrackByID(final List<UserSongModel> trackIDs, final OnTracksLoadedListener listener) {
+    public void findTrackByID(final List<HistoryModel> trackIDs, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("trackID");
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 final List<Integer> trackIds = new ArrayList<>();
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    for (UserSongModel trackID : trackIDs) {
-                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getSongID())) {
+                    for (HistoryModel trackID : trackIDs) {
+                        if (snapshot.child("trackID").getValue(Integer.class).equals(trackID.getTrackID())) {
                             trackIds.add(snapshot.child("trackID").getValue(Integer.class));
                             break;
                         }
@@ -296,6 +300,52 @@ public class TrackService {
                             }
                             if (count.decrementAndGet() == 0) {
                                 listener.onTracksLoaded(tracks);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
+    public void findTrackByIDUserSong(final List<UserSongModel> trackIDs, final OnSongLoadedListener listener) {
+        Query songsQuery = songsRef.orderByChild("songID");
+        songsQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    for(UserSongModel trackID : trackIDs){
+                        if (snapshot.child("songID").getValue(Integer.class).equals(trackID.getSongID())) {
+                            trackIds.add(snapshot.child("songID").getValue(Integer.class));
+                            break;
+                        }
+                    }
+                }
+                Log.e("SongService", "SongIDs: " + trackIds.size());
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<SongModel> songs = new ArrayList<>();
+                for (Integer songId : trackIds) {
+                    Query trackQuery = songsRef.orderByChild("songID").equalTo(songId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                SongModel song = snapshot.getValue(SongModel.class);
+                                songs.add(song);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                listener.onSongLoaded(songs);
                             }
                         }
 
@@ -404,6 +454,10 @@ public class TrackService {
 
     public interface OnTracksLoadedListener {
         void onTracksLoaded(List<TracksModel> tracks);
+    }
+
+    public interface OnSongLoadedListener {
+        void onSongLoaded(List<SongModel> song);
     }
 
     public interface OnImageLoadedListener {

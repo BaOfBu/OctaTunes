@@ -1,6 +1,7 @@
 package com.example.octatunes.Adapter;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,10 +9,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.R;
+import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -40,6 +45,21 @@ public class PlaylistSmallAdapter extends RecyclerView.Adapter<PlaylistSmallAdap
             Picasso.get().load(playlist.getImage()).into(holder.playlistImage);
         }
         holder.playlistName.setText(playlist.getName());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PlaylistSpotifyActivity fragment = new PlaylistSpotifyActivity();
+                Bundle bundle = new Bundle();
+                bundle.putString("playlistItem", new Gson().toJson(playlist));
+                fragment.setArguments(bundle);
+
+                FragmentTransaction transaction = ((FragmentActivity) context).getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.fragment_container, fragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+            }
+        });
     }
 
     @Override

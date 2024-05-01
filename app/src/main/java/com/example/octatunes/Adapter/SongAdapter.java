@@ -25,11 +25,13 @@ import com.example.octatunes.FragmentListener;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.LoveService;
 import com.example.octatunes.Services.PlaylistTrackService;
+import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
@@ -49,7 +51,8 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     private PlaylistsModel playList;
 
     private OnSongRemoveListener onSongRemoveListener;
-
+    private List<SongModel> songModelList;
+    private boolean isDeviceSong = false;
 
     public SongAdapter(Context context, List<TracksModel> songList, FragmentListener listener) {
         this.context = context;
@@ -89,11 +92,27 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
         this.playlistLoveId = playlistLoveId;
         this.onSongRemoveListener = onSongRemoveListener;
     }
+    public SongAdapter(Context context, List<SongModel> songModelList, FragmentListener listener, boolean isDeviceSong){
+        this.context = context;
+        this.songModelList = songModelList;
+        this.listener = listener;
+        this.isDeviceSong = isDeviceSong;
+    }
 
 
+    private void sendSignalToMainActivity(List<TracksModel> tracksModels, int trackID, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived2(tracksModels, trackID, from, belong, mode);
+        }
+    }
     private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
         if (listener != null) {
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+        }
+    }
+    private void sendSignalToMainActivity(List<SongModel> songModels, int songID, String from, String belong, String mode, int nothing) {
+        if (listener != null) {
+            listener.onSignalReceived3(songModels, songID, from, belong, mode);
         }
     }
 
@@ -106,141 +125,197 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        TracksModel track = songList.get(holder.getAdapterPosition());
-        holder.itemNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
-        holder.itemTitle.setText(track.getName());
+        if(!isDeviceSong) {
+            TracksModel track = songList.get(holder.getAdapterPosition());
+            holder.itemNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
+            holder.itemTitle.setText(track.getName());
 
-        // Load image for the track
-        loadImageForTrack(track, holder.itemImage);
+            // Load image for the track
+            loadImageForTrack(track, holder.itemImage);
 
-        // Load artist name for the track
-        loadArtistName(track.getAlubumID(), holder.itemArtist);
+            // Load artist name for the track
+            if (context instanceof FragmentActivity) {
+                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (fragment != null) {
+                    if (!(fragment instanceof ArtistDetailFragment)) {
+                        loadArtistName(track.getAlubumID(), holder.itemArtist);
+                    } else {
+                        loadCountListenOfTrack(track.getName(), holder.itemArtist);
+                    }
+                }
+            }
 
-        if(listener == null) {
-            listener = (FragmentListener) context;
-        }
 
-        if (context instanceof FragmentActivity) {
-            FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-            Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
-            if (fragment != null) {
-                if (fragment instanceof LikedSongFragment) {
+            if (listener == null) {
+                listener = (FragmentListener) context;
+            }
+
+            if (context instanceof FragmentActivity) {
+                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (fragment != null) {
+                    if (fragment instanceof LikedSongFragment) {
+                        holder.itemNumber.setVisibility(View.GONE);
+                    }
+                }
+            }
+
+            holder.itemView.setOnClickListener(v -> {
+                if (context instanceof FragmentActivity) {
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                    if (fragment != null) {
+                        if (fragment instanceof PlaylistSpotifyActivity) {
+                            String mode = "sequencePlay";
+                            int trackFirstId = track.getTrackID();
+                            String from = "PLAYING FROM PLAYLIST";
+                            String belong = playList.getName();
+                            sendSignalToMainActivity(songList, trackFirstId, from, belong, mode);
+                        } else if (fragment instanceof ArtistDetailFragment) {
+                            extracted(track);
+                        } else if (fragment instanceof LikedSongFragment) {
+                            String mode = "sequencePlay";
+                            int trackFirstId = track.getTrackID();
+                            int albumId = -1;
+                            String from = "PLAYING FROM PLAYLIST";
+                            String belong = "Liked Songs";
+                            int playlistId = playlistLoveId;
+                            sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
+                        }
+                    }
+                }
+            });
+
+            holder.songMoreInfo.setOnClickListener(v -> {
+
+                // Checking if a song is already loved
+                LoveService loveService = new LoveService();
+
+                if (context instanceof FragmentActivity) {
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                    if (fragment != null) {
+                        if (!(fragment instanceof LikedSongFragment)) {
+                            //// Creating the BottomSheetDialog
+                            BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
+                            bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
+
+                            ImageView tbin_playlist_bottom_sheet_image = bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
+                            TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
+                            TextView add_to_liked_song = bottomSheetDialog.findViewById(R.id.add_to_liked_song);
+                            TextView item_artist = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
+                            tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
+                            titleBottomSheet.setText(track.getName());
+                            item_artist.setText(holder.itemArtist.getText());
+                            loveService.isLoved(userId, track.getTrackID(), new LoveService.LoveCheckCallback() {
+                                @Override
+                                public void onLoveChecked(boolean isLoved) {
+                                    if (isLoved) {
+                                        holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                                        add_to_liked_song.setVisibility(View.GONE);
+                                    } else {
+                                        holder.check_icon_liked_song.setVisibility(View.GONE);
+                                        add_to_liked_song.setVisibility(View.VISIBLE);
+                                    }
+                                }
+                            });
+                            // Set click listener for the TextView add_to_liked_song
+                            add_to_liked_song.setOnClickListener(view -> {
+                                loveService.addLove(userId, track.getTrackID());
+                                PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                                playlistTrackService.addLovePlaylistTrack(track.getTrackID());
+                                //playlistTrackService.addPlaylistTrack(new Playlist_TracksModel(playlistLoveId, track.getTrackID(),0));
+                                holder.check_icon_liked_song.setVisibility(View.VISIBLE);
+                                add_to_liked_song.setVisibility(View.GONE);
+                                bottomSheetDialog.dismiss();
+                            });
+                            bottomSheetDialog.show();
+                        } else {
+                            BottomSheetDialog bottomSheetDialogLiked = new BottomSheetDialog(context);
+                            bottomSheetDialogLiked.setContentView(R.layout.bottom_sheet_song_liked);
+
+                            ImageView song_liked_item_image_bottom_sheet = bottomSheetDialogLiked.findViewById(R.id.song_liked_item_image_bottom_sheet);
+                            TextView song_liked_bottom_sheet_item_title = bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_title);
+                            TextView song_liked_bottom_sheet_item_artist = bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_artist);
+                            TextView song_liked_remove_liked = bottomSheetDialogLiked.findViewById(R.id.song_liked_remove_liked);
+
+                            song_liked_item_image_bottom_sheet.setImageDrawable(holder.itemImage.getDrawable());
+                            song_liked_bottom_sheet_item_title.setText(track.getName());
+                            song_liked_bottom_sheet_item_artist.setText(holder.itemArtist.getText());
+
+                            song_liked_remove_liked.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                                    playlistTrackService.removePlaylistTrack(playlistLoveId, track.getTrackID());
+                                    loveService.removeLove(userId, track.getTrackID());
+                                    songList.remove(holder.getAdapterPosition());
+                                    notifyDataSetChanged();
+                                    if (onSongRemoveListener != null) {
+                                        onSongRemoveListener.onSongRemoved();
+                                    }
+                                    bottomSheetDialogLiked.dismiss();
+                                }
+                            });
+
+                            bottomSheetDialogLiked.show();
+                        }
+                    }
+                }
+
+
+            });
+        } else {
+            SongModel song = songModelList.get(holder.getAdapterPosition());
+            holder.itemNumber.setText(String.valueOf(holder.getAdapterPosition() + 1));
+            holder.itemTitle.setText(song.getTitle());
+            holder.itemImage.setImageResource(R.drawable.song_chacaidoseve);
+
+            if (context instanceof FragmentActivity) {
+                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                if (fragment != null) {
+                    holder.itemArtist.setText(song.getArtist());
                     holder.itemNumber.setVisibility(View.GONE);
                 }
             }
+            if (listener == null) {
+                listener = (FragmentListener) context;
+            }
+            holder.itemView.setOnClickListener(v -> {
+                if (context instanceof FragmentActivity) {
+                    FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
+                    Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
+                    if (fragment != null) {
+                        String mode = "sequencePlay";
+                        int songFirstId = song.getSongID();
+                        String from = "PLAYING FROM PLAYLIST";
+                        String belong = "Device Songs";
+                        sendSignalToMainActivity(songModelList, songFirstId, from, belong, mode, 0);
+                    }
+                }
+            });
+
         }
+    }
 
-        holder.itemView.setOnClickListener(v -> {
-            if (context instanceof FragmentActivity) {
-                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (fragment != null) {
-                    if (fragment instanceof PlaylistSpotifyActivity) {
-                        String mode = "sequencePlay";
-                        int trackFirstId = track.getTrackID();
-                        int albumId = -1;
-                        String from =  "PLAYING FROM PLAYLIST";
-                        String belong = playList.getName();
-                        int playlistId = playList.getPlaylistID();
-                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
-                    }
-                    else if (fragment instanceof ArtistDetailFragment) {
-                        extracted(track);
-                    }
-                    else if (fragment instanceof LikedSongFragment) {
-                        String mode = "sequencePlay";
-                        int trackFirstId = track.getTrackID();
-                        int albumId = -1;
-                        String from =  "PLAYING FROM PLAYLIST";
-                        String belong = "Liked Songs";
-                        int playlistId = playlistLoveId;
-                        sendSignalToMainActivity(trackFirstId, playlistId, albumId, from, belong, mode);
-                    }
-                }
-            }
-        });
-
-        holder.songMoreInfo.setOnClickListener(v -> {
-
-            // Checking if a song is already loved
-            LoveService loveService = new LoveService();
-
-            if (context instanceof FragmentActivity) {
-                FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
-                Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
-                if (fragment != null) {
-                    if (!(fragment instanceof LikedSongFragment)){
-                        //// Creating the BottomSheetDialog
-                        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(context);
-                        bottomSheetDialog.setContentView(R.layout.layout_bottom_sheet_song);
-
-                        ImageView tbin_playlist_bottom_sheet_image=bottomSheetDialog.findViewById(R.id.song_item_image_bottom_sheet);
-                        TextView titleBottomSheet = bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_title);
-                        TextView add_to_liked_song=bottomSheetDialog.findViewById(R.id.add_to_liked_song);
-                        TextView item_artist=bottomSheetDialog.findViewById(R.id.song_bottom_sheet_item_artist);
-                        tbin_playlist_bottom_sheet_image.setImageDrawable(holder.itemImage.getDrawable());
-                        titleBottomSheet.setText(track.getName());
-                        item_artist.setText(holder.itemArtist.getText());
-                        loveService.isLoved(userId, track.getTrackID(), new LoveService.LoveCheckCallback() {
-                            @Override
-                            public void onLoveChecked(boolean isLoved) {
-                                if (isLoved) {
-                                    holder.check_icon_liked_song.setVisibility(View.VISIBLE);
-                                    add_to_liked_song.setVisibility(View.GONE);
-                                } else {
-                                    holder.check_icon_liked_song.setVisibility(View.GONE);
-                                    add_to_liked_song.setVisibility(View.VISIBLE);
-                                }
-                            }
-                        });
-                        // Set click listener for the TextView add_to_liked_song
-                        add_to_liked_song.setOnClickListener(view -> {
-                            loveService.addLove(userId, track.getTrackID());
-                            PlaylistTrackService playlistTrackService = new PlaylistTrackService();
-                            playlistTrackService.addLovePlaylistTrack(track.getTrackID());
-                            //playlistTrackService.addPlaylistTrack(new Playlist_TracksModel(playlistLoveId, track.getTrackID(),0));
-                            holder.check_icon_liked_song.setVisibility(View.VISIBLE);
-                            add_to_liked_song.setVisibility(View.GONE);
-                            bottomSheetDialog.dismiss();
-                        });
-                        bottomSheetDialog.show();
-                    }
-                    else{
-                        BottomSheetDialog bottomSheetDialogLiked = new BottomSheetDialog(context);
-                        bottomSheetDialogLiked.setContentView(R.layout.bottom_sheet_song_liked);
-
-                        ImageView song_liked_item_image_bottom_sheet=bottomSheetDialogLiked.findViewById(R.id.song_liked_item_image_bottom_sheet);
-                        TextView song_liked_bottom_sheet_item_title = bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_title);
-                        TextView song_liked_bottom_sheet_item_artist=bottomSheetDialogLiked.findViewById(R.id.song_liked_bottom_sheet_item_artist);
-                        TextView song_liked_remove_liked = bottomSheetDialogLiked.findViewById(R.id.song_liked_remove_liked);
-
-                        song_liked_item_image_bottom_sheet.setImageDrawable(holder.itemImage.getDrawable());
-                        song_liked_bottom_sheet_item_title.setText(track.getName());
-                        song_liked_bottom_sheet_item_artist.setText(holder.itemArtist.getText());
-
-                        song_liked_remove_liked.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                PlaylistTrackService playlistTrackService = new PlaylistTrackService();
-                                playlistTrackService.removePlaylistTrack(playlistLoveId,track.getTrackID());
-                                loveService.removeLove(userId,track.getTrackID());
-                                songList.remove(holder.getAdapterPosition());
-                                notifyDataSetChanged();
-                                if (onSongRemoveListener != null) {
-                                    onSongRemoveListener.onSongRemoved();
-                                }
-                                bottomSheetDialogLiked.dismiss();
-                            }
-                        });
-
-                        bottomSheetDialogLiked.show();
-                    }
-                }
+    private void loadCountListenOfTrack(String trackName, final TextView itemArtist) {
+        final SongService songService = new SongService();
+        songService.countSongsWithTitle(trackName, new SongService.OnSongCountListener() {
+            @Override
+            public void onSongCountRetrieved(int count) {
+                // Convert the count to String before setting it as text to the TextView
+                itemArtist.setText("Lượt nghe" + " " + String.valueOf(count));
             }
 
-
+            @Override
+            public void onSongCountFailed(String errorMessage) {
+                Log.e("loadCountListenOfTrack", "Failed to retrieve count: " + errorMessage);
+            }
         });
     }
+
 
     public void extracted(TracksModel track) {
         if(listener == null) {
@@ -277,7 +352,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
     }
     @Override
     public int getItemCount() {
-        return songList.size();
+        if(!isDeviceSong){
+            return songList.size();
+        }else{
+            return songModelList.size();
+        }
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

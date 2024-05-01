@@ -340,7 +340,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 }
             }
         }, 500);
-
     }
     private Runnable updateProgress = new Runnable() {
         @Override
@@ -388,11 +387,11 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
 
 
-    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
-        if (listener != null) {
-            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
-        }
-    }
+//    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
+//        if (listener != null) {
+//            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
+//        }
+//    }
 
 
 

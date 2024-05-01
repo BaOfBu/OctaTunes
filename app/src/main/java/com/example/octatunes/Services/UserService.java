@@ -2,6 +2,7 @@ package com.example.octatunes.Services;
 import android.util.Log;
 
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -58,6 +59,29 @@ public class UserService {
         } else {
             callback.onUserModelRetrieved(null);
         }
+    }
+
+    public void EditUserName(String name) {
+        usersRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                UsersModel userModel = dataSnapshot.getValue(UsersModel.class);
+                if (userModel != null) {
+                    userModel.setName(name);
+                    usersRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue(userModel);
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(name)
+                            .build();
+                    user.updateProfile(profileUpdates);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+
     }
 
     public interface UserModelCallback {

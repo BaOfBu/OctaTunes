@@ -4,6 +4,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.AlbumsModel;
+import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.TrackPreviewAdapter;
@@ -16,6 +17,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -84,16 +86,84 @@ public class UserSongService {
         getAllUserSongs().thenAccept(albums -> {
             List<UserSongModel> foundUserSongs = new ArrayList<>();
             for (UserSongModel userSong : albums) {
-                if (userSong.getUserID() == userID) {
+                if (userSong.getUserID() == userID && !containsSong(foundUserSongs, userSong)) {
                     foundUserSongs.add(userSong);
                 }
             }
-            future.complete(foundUserSongs);
+            // Sort by newest date
+            foundUserSongs.sort((o1, o2) -> o2.getPlayDate().compareTo(o1.getPlayDate()));
+            future.complete(foundUserSongs.subList(0, Math.min(20, foundUserSongs.size())));
         }).exceptionally(throwable -> {
             future.completeExceptionally(throwable);
             return null;
         });
         return future;
+    }
+
+    private boolean containsSong(List<UserSongModel> userSongs, UserSongModel userSong) {
+        for (UserSongModel song : userSongs) {
+            if (song.getSongID() == userSong.getSongID()) {
+                return true;
+            }
+        }
+        return false;
+//        DatabaseReference songRef = FirebaseDatabase.getInstance().getReference("songs");
+//        final boolean[] exists = {false};
+//        songRef.child(String.valueOf(userSong.getSongID())).addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot1) {
+//                for (UserSongModel song : userSongs) {
+//                    songRef.child(String.valueOf(song.getSongID())).addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot snapshot2) {
+//                            if (snapshot2.exists()) {
+//                                SongModel songModel = snapshot2.getValue(SongModel.class);
+//                                SongModel userSongModel = snapshot1.getValue(SongModel.class);
+//                                if (songModel != null && userSongModel != null) {
+//                                    if (songModel.getTitle() == userSongModel.getTitle()) {
+//                                        exists[0] = true;
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Log.e("UserSongService", "Error checking if song exists", error.toException());
+//                        }
+//                    });
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Log.e("UserSongService", "Error checking if song exists", error.toException());
+//            }
+//        });
+//
+//        return exists[0];
+    }
+
+    public void addUserSongTBIN(UserSongModel userSong) {
+        // Set play date to current date if not provided
+        if (userSong.getPlayDate() == null) {
+            userSong.setPlayDate(new Date());
+        }
+
+        String key = userSongRef.push().getKey();
+        userSongRef.child(key).setValue(userSong)
+                .addOnSuccessListener(new OnSuccessListener<Void>() {
+                    @Override
+                    public void onSuccess(Void aVoid) {
+                        Log.d("UserSongService", "User song added successfully");
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.e("UserSongService", "Error adding user song", e);
+                    }
+                });
     }
 
 }

@@ -165,8 +165,7 @@ public class SignUpNameFragment extends Fragment {
                                                             main.setLoginTime();
                                                             //Move to home
                                                             main.stopProgressDialog();
-                                                            Intent intent = new Intent(getActivity(), MainActivity.class);
-                                                            startActivity(intent);
+                                                            main.moveToLoggedActivity(email, pass);
                                                         } else {
                                                             main.stopProgressDialog();
                                                             Toast.makeText(context.getApplicationContext(), "Failed to save user data"
