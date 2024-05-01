@@ -197,6 +197,50 @@
                 </LinearLayout>
 
             </LinearLayout>
+
+            <!-- Liked Song -->
+            <LinearLayout
+                android:id="@+id/library_device_song"
+                android:layout_width="match_parent"
+                android:layout_marginTop="30dp"
+                android:layout_marginLeft="15dp"
+                android:layout_height="wrap_content">
+                <ImageView
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/liked_song"
+                    android:layout_centerInParent="true"
+                    android:backgroundTint="#a7a7a7" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:gravity="center_vertical"
+                    android:layout_gravity="center_vertical"
+                    android:layout_height="match_parent">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_marginBottom="10dp"
+                        android:text="Device Song"
+                        android:layout_gravity="center"
+                        android:textSize="18dp"
+                        android:layout_marginLeft="10dp"
+                        android:textColor="#fff"
+                        android:layout_height="wrap_content"/>
+                    <TextView
+                        android:id="@+id/library_device_description"
+                        android:layout_width="match_parent"
+                        android:text="Playlist - Device"
+                        android:layout_gravity="center"
+                        android:textSize="16dp"
+                        android:layout_marginStart="10dp"
+                        android:textColor="#a0a0a0"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
             <!--  List of playlist, album and artist  -->
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recyclerView"
