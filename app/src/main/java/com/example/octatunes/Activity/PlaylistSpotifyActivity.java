@@ -90,6 +90,9 @@ public class PlaylistSpotifyActivity extends Fragment {
             if (!playlistsModel.getImage().isEmpty()) {
                 Picasso.get().load(playlistsModel.getImage()).into(imageView);
             }
+            else{
+                imageView.setImageResource(R.drawable.ic_spotify);
+            }
 
             description.setText(playlistsModel.getDescription());
 

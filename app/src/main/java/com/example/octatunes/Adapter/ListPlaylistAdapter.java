@@ -1,9 +1,7 @@
 package com.example.octatunes.Adapter;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,7 +10,6 @@ import android.widget.TextView;
 
 import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
-import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
@@ -69,6 +66,9 @@ public class ListPlaylistAdapter extends RecyclerView.Adapter<ListPlaylistAdapte
         holder.descriptionTextView.setText(item.getDescription());
         if (!Objects.equals(item.getImage(), "")){
             Picasso.get().load(item.getImage()).into(holder.imageView);
+        }
+        else{
+            holder.imageView.setImageResource(R.drawable.ic_spotify);
         }
         // Set click listener
         holder.itemView.setOnClickListener(v -> {

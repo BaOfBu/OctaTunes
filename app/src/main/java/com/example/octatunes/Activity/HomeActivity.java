@@ -9,46 +9,33 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
-import android.widget.ScrollView;
 import android.widget.ToggleButton;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Adapter.ArtistSectionAdapter;
-import com.example.octatunes.Adapter.ListPlaylistAdapter;
 import com.example.octatunes.Adapter.PlaylistPreviewAdapter;
 import com.example.octatunes.Adapter.PlaylistSectionAdapter;
 import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
-import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.ArtistsModel;
-import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
 import com.example.octatunes.Model.TracksModel;
-import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.R;
-import com.example.octatunes.Services.AlbumService;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.PlaylistService;
-import com.example.octatunes.Services.PlaylistTrackService;
+import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
+import com.example.octatunes.Services.UserSongService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 public class HomeActivity extends Fragment {
     ToggleButton toggleAll, toggleMusic;
@@ -133,11 +120,63 @@ public class HomeActivity extends Fragment {
         });
     }
     private void getRecommendedPlaylists(List<String> sectionTitles) {
+        List<PlaylistsModel> recommendedPlaylists = new ArrayList<>();
+        UserSongService userSongService = new UserSongService();
+
         playlistService.getRandomPlaylists(5).thenAccept(playlists -> {
-            List<PlaylistsModel> recommendedPlaylists = new ArrayList<>();
             for (PlaylistsModel playlist : playlists) {
                 recommendedPlaylists.add(playlist);
             }
+            userSongService.getAllSongIdsForUser(new UserSongService.SongIdListCallback() {
+                @Override
+                public void onSongIdsRetrieved(List<Integer> songIds) {
+                    if (songIds != null) {
+                        SongService songService = new SongService();
+                        songService.getTopTitlesForSongIds(songIds, new SongService.TitleListCallback() {
+                            @Override
+                            public void onTitlesRetrieved(List<String> titles) {
+                                if (titles != null) {
+                                    TrackService trackService = new TrackService();
+                                    trackService.getTrackModels(titles, new TrackService.TrackModelListCallback() {
+                                        @Override
+                                        public void onTrackModelsRetrieved(List<TracksModel> trackModels) {
+                                            if (trackModels != null) {
+                                                UserService userService = new UserService();
+                                                userService.getCurrentUserId(new UserService.UserIdCallback() {
+                                                    @Override
+                                                    public void onUserIdRetrieved(int userId) {
+                                                        PlaylistService playlistService = new PlaylistService();
+                                                        playlistService.createNewPlaylistWithTracks(trackModels, userId, new PlaylistService.PlaylistCreationCallback() {
+                                                            @Override
+                                                            public void onPlaylistCreated(PlaylistsModel playlist) {
+                                                                recommendedPlaylists.add(playlist);
+                                                                playlistsBySection.add(recommendedPlaylists);
+                                                                setupPlaylistSectionAdapter(sectionTitles);
+                                                            }
+
+                                                            @Override
+                                                            public void onPlaylistCreationFailed(String errorMessage) {
+                                                                Log.e("TAG", "Failed to create playlist: " + errorMessage);
+                                                            }
+                                                        });
+                                                    }
+                                                });
+
+                                            } else {
+                                                Log.e("TAG", "Failed to retrieve track models.");
+                                            }
+                                        }
+                                    });
+                                } else {
+                                    Log.e("TAG", "Failed to retrieve top titles.");
+                                }
+                            }
+                        });
+                    } else {
+                        Log.e("TAG", "Failed to retrieve song IDs.");
+                    }
+                }
+            });
             playlistsBySection.add(recommendedPlaylists);
             setupPlaylistSectionAdapter(sectionTitles);
         }).exceptionally(throwable -> {

@@ -1,6 +1,5 @@
 package com.example.octatunes.Services;
 
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -9,18 +8,15 @@ import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
-import com.example.octatunes.TrackPreviewAdapter;
-import com.example.octatunes.TrackPreviewModel;
 import com.example.octatunes.Utils.StringUtil;
-import com.google.android.gms.common.images.ImageManager;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
@@ -28,10 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.text.Normalizer;
-import java.util.regex.Pattern;
 
 public class TrackService {
     private DatabaseReference playlistTracksRef;
@@ -482,5 +475,46 @@ public class TrackService {
 
     public DatabaseReference getTracksRef() {
         return tracksRef;
+    }
+    public void getTrackModels(List<String> trackNames, TrackModelListCallback callback) {
+        List<TracksModel> trackModels = new ArrayList<>();
+        AtomicInteger completedQueries = new AtomicInteger(0);
+
+        for (String trackName : trackNames) {
+            tracksRef.orderByChild("name").equalTo(trackName).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        Integer trackId = snapshot.child("trackID").getValue(Integer.class);
+                        String name = snapshot.child("name").getValue(String.class);
+                        Integer albumId = snapshot.child("alubumID").getValue(Integer.class);
+                        Integer duration = snapshot.child("duration").getValue(Integer.class);
+                        String file = snapshot.child("file").getValue(String.class);
+                        // You can extract other relevant data here
+
+                        // Construct TrackModel object
+                        TracksModel trackModel = new TracksModel(trackId, albumId, name, duration, file);
+                        trackModels.add(trackModel);
+                    }
+
+                    int count = completedQueries.incrementAndGet();
+                    if (count == trackNames.size()) {
+                        callback.onTrackModelsRetrieved(trackModels);
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // Handle errors
+                    System.out.println("Error: " + databaseError.getMessage());
+                    callback.onTrackModelsRetrieved(null);
+                }
+            });
+        }
+    }
+
+
+    public interface TrackModelListCallback {
+        void onTrackModelsRetrieved(List<TracksModel> trackModels);
     }
 }

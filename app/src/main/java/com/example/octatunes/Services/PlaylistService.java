@@ -4,25 +4,23 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
+import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.Utils.StringUtil;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
 
 public class PlaylistService {
 
@@ -31,11 +29,13 @@ public class PlaylistService {
     private DatabaseReference playlistsRef;
 
     private DatabaseReference usersRef;
+    private DatabaseReference playlistTracksRef;
 
     public PlaylistService() {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         playlistsRef = database.getReference("playlists");
         usersRef = database.getReference("users");
+        playlistTracksRef = database.getReference("playlist_track");
     }
     public void addPlaylists(List<PlaylistsModel> playlists) {
         playlistsRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -325,6 +325,66 @@ public class PlaylistService {
         void onPlaylistAdded(int newPlaylistId);
         void onError(String errorMessage);
     }
+    public void createNewPlaylistWithTracks(List<TracksModel> trackIds, int userId, PlaylistCreationCallback callback) {
+        playlistsRef.orderByChild("playlistId").limitToLast(1).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                int maxPlaylistId = 0; // Default if no playlist exists yet
 
+                // Check if there are playlists in the database
+                if (dataSnapshot.exists()) {
+                    // Get the maximum playlistId
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        PlaylistsModel playlist = snapshot.getValue(PlaylistsModel.class);
+                        maxPlaylistId = playlist.getPlaylistID();
+                    }
+                }
 
+                // Increment the maxPlaylistId to generate a new playlistId
+                int newPlaylistId = maxPlaylistId + 1;
+
+                // Generate a new unique random key for the node
+                String playlistNodeId = playlistsRef.push().getKey();
+
+                // Create a new PlaylistModel object with the provided playlistId, userId, and name
+                PlaylistsModel newPlaylist = new PlaylistsModel(newPlaylistId, userId, "Made For You","","This is playlist made for you");
+
+                // Set the new playlist under the generated key directly under the 'playlists' node
+                playlistsRef.child(playlistNodeId).setValue(newPlaylist)
+                        .addOnSuccessListener(new OnSuccessListener<Void>() {
+                            @Override
+                            public void onSuccess(Void aVoid) {
+                                for (int i =0;i<trackIds.size();i++){
+                                    PlaylistTrackService playlistTrackService = new PlaylistTrackService();
+                                    playlistTrackService.addPlaylistTrack(new Playlist_TracksModel(
+                                            newPlaylistId,trackIds.get(i).getTrackID(),0
+                                    ));
+                                }
+
+                                // Invoke the callback with the created playlist model
+                                callback.onPlaylistCreated(newPlaylist);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                // Failed to add playlist
+                                Log.e(TAG, "Failed to add playlist.", e);
+                                callback.onPlaylistCreationFailed(e.getMessage());
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                // Handle error
+                callback.onPlaylistCreationFailed(databaseError.getMessage());
+            }
+        });
+    }
+    // Define the PlaylistCreationCallback interface
+    public interface PlaylistCreationCallback {
+        void onPlaylistCreated(PlaylistsModel playlist);
+        void onPlaylistCreationFailed(String errorMessage);
+    }
 }

@@ -3,17 +3,14 @@ package com.example.octatunes.Services;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.example.octatunes.Model.AlbumsModel;
-import com.example.octatunes.Model.SongModel;
-import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
-import com.example.octatunes.TrackPreviewAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -164,6 +161,39 @@ public class UserSongService {
                         Log.e("UserSongService", "Error adding user song", e);
                     }
                 });
+    }
+
+    public void getAllSongIdsForUser(SongIdListCallback songIdListCallback) {
+        UserService userService = new UserService();
+        userService.getCurrentUserId(new UserService.UserIdCallback() {
+            @Override
+            public void onUserIdRetrieved(int userID) {
+                Query query = userSongRef.orderByChild("userID").equalTo(userID);
+
+                // Add a listener to retrieve the data
+                query.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        List<Integer> songIds = new ArrayList<>();
+                        for (DataSnapshot userSongSnapshot : dataSnapshot.getChildren()) {
+                            int songID = userSongSnapshot.child("songID").getValue(Integer.class);
+                            songIds.add(songID);
+                        }
+                        songIdListCallback.onSongIdsRetrieved(songIds);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        // Handle errors
+                        System.out.println("Error: " + databaseError.getMessage());
+                        songIdListCallback.onSongIdsRetrieved(null);
+                    }
+                });
+            }
+        });
+    }
+    public interface SongIdListCallback {
+        void onSongIdsRetrieved(List<Integer> songIds);
     }
 
 }

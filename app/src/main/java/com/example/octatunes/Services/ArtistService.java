@@ -460,7 +460,7 @@ public class ArtistService {
                                                         for (DataSnapshot playlistDataSnapshot : playlistSnapshot.getChildren()) {
                                                             int playlistId = playlistDataSnapshot.child("playlistID").getValue(Integer.class);
                                                             String playlistName = playlistDataSnapshot.child("name").getValue(String.class);
-                                                            if (!Objects.equals(playlistName, "Liked songs")){
+                                                            if (!Objects.equals(playlistName, "Liked songs") && !Objects.equals(playlistName, "Made For You") ){
                                                                 if (!playlistIdSet.contains(playlistId)) {
                                                                     playlistIdSet.add(playlistId);
                                                                     PlaylistsModel playlist = playlistDataSnapshot.getValue(PlaylistsModel.class);

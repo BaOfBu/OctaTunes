@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.octatunes.Model.SongModel;
-import com.example.octatunes.Model.TracksModel;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
@@ -14,10 +13,11 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class SongService {
     private DatabaseReference songRef;
@@ -102,5 +102,63 @@ public class SongService {
     public interface OnSongCountListener {
         void onSongCountRetrieved(int count);
         void onSongCountFailed(String errorMessage);
+    }
+    public void getTopTitlesForSongIds(List<Integer> songIds, TitleListCallback titleListCallback) {
+        Map<String, Integer> titleCounts = new HashMap<>();
+        AtomicInteger processedCount = new AtomicInteger(0);
+
+        // Loop through each song ID
+        for (Integer songId : songIds) {
+            songRef.orderByChild("songID").equalTo(songId).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    // Process each song ID's data
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                        String title = snapshot.child("title").getValue(String.class);
+                        if (title != null) {
+                            // Increment the count for the title
+                            titleCounts.put(title, titleCounts.getOrDefault(title, 0) + 1);
+                        }
+                    }
+                    // Increment the processed count
+                    int count = processedCount.incrementAndGet();
+
+                    // After processing all song IDs, retrieve the top titles and pass them to the callback
+                    if (count == songIds.size()) {
+                        titleListCallback.onTitlesRetrieved(getTopTitles(titleCounts));
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    System.out.println("Error: " + databaseError.getMessage());
+                    titleListCallback.onTitlesRetrieved(null);
+                }
+            });
+        }
+    }
+
+
+    private List<String> getTopTitles(Map<String, Integer> titleCounts) {
+        // Sort the titles by their counts in descending order
+        List<Map.Entry<String, Integer>> sortedTitles = new ArrayList<>(titleCounts.entrySet());
+        sortedTitles.sort((a, b) -> b.getValue().compareTo(a.getValue()));
+
+        // Get the top 76 titles
+        List<String> topTitles = new ArrayList<>();
+        for (int i = 0; i < Math.min(7, sortedTitles.size()); i++) {
+            topTitles.add(sortedTitles.get(i).getKey());
+        }
+        return topTitles;
+    }
+
+
+
+
+
+
+
+    public interface TitleListCallback {
+        void onTitlesRetrieved(List<String> titles);
     }
 }
