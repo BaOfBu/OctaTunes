@@ -22,9 +22,12 @@ import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
@@ -37,7 +40,7 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
     private List<SongManagerModel> totalSongs = new ArrayList<>();
 
     public SongManagerAdapter() {
-        
+
     }
 
     public void setSongs(List<SongManagerModel> songsList) {
@@ -106,22 +109,134 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
                         if (position != RecyclerView.NO_POSITION && song != null) {
                             String trackId = String.valueOf(song.getTrackID());
 
-                            // Delete the track from the Firebase database
-                            DatabaseReference trackRef = FirebaseDatabase.getInstance().getReference("tracks").child(trackId);
-                            trackRef.removeValue(new DatabaseReference.CompletionListener() {
+                            // Khởi tạo đường dẫn
+                            DatabaseReference Ref = FirebaseDatabase.getInstance().getReference();
+
+                            // Xóa thông tin track trong tracks
+                            Query queryTrack = Ref.child("tracks").orderByChild("trackID").equalTo(Integer.parseInt(trackId));
+
+                            queryTrack.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
-                                public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                                    Toast.makeText(itemView.getContext(), "Track đã được xóa.", Toast.LENGTH_SHORT).show();
+                                public void onDataChange(DataSnapshot trackSnapshot) {
+                                    if (trackSnapshot.exists()) {
+                                        for (DataSnapshot Tracksnapshot : trackSnapshot.getChildren()) {
+                                            Tracksnapshot.getRef().removeValue() // Remove the node from Firebase Realtime Database
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Thành công xóa tracks
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        // Thất bại xóa tracks
+                                                        Toast.makeText(itemView.getContext(), "Lỗi không thể xóa thông tin trong tracks", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                    // Handle any errors
+                                    Toast.makeText(itemView.getContext(), "Lỗi khi thực hiện truy vấn", Toast.LENGTH_SHORT).show();
+                                }
+                            });
+
+                            // Xóa thông tin track trong playlist_track
+                            Query queryPlaylist = Ref.child("playlist_track").orderByChild("trackID").equalTo(Integer.parseInt(trackId));
+
+                            queryPlaylist.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot playlistSnapshot) {
+                                    if (playlistSnapshot.exists()) {
+                                        for (DataSnapshot Playlistsnapshot : playlistSnapshot.getChildren()) {
+                                            Playlistsnapshot.getRef().removeValue()
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Thành công xóa playlist
+
+
+                                                    }).addOnFailureListener(e -> {
+                                                        // Thất bại xóa playlist
+                                                        Toast.makeText(itemView.getContext(), "Lỗi không thể xóa thông tin trong playlist", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
                                 }
                             });
 
-                            // Delete the file from Firebase Storage
+                            // Xóa thông tin track trong history
+                            Query queryHistory = Ref.child("history").orderByChild("trackID").equalTo(Integer.parseInt(trackId));
+
+                            queryHistory.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot historySnapshot) {
+                                    if (historySnapshot.exists()) {
+                                        for (DataSnapshot Historysnapshot : historySnapshot.getChildren()) {
+                                            Historysnapshot.getRef().removeValue()
+                                                    .addOnSuccessListener(aVoid -> {
+                                                        // Thành công xóa history
+
+                                                    }).addOnFailureListener(e -> {
+                                                        // Thất bại xóa history
+                                                        Toast.makeText(itemView.getContext(), "Lỗi không thể xóa thông tin trong history", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                            // Xóa thông tin track trong lyrics
+                            Query queryLyric = Ref.child("lyrics").orderByChild("trackId").equalTo(Integer.parseInt(trackId));
+
+                            queryLyric.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot lyricSnapshot) {
+                                    if(lyricSnapshot.exists()){
+                                        for (DataSnapshot Lyricsnapshot : lyricSnapshot.getChildren()){
+                                            String lyricURL = Lyricsnapshot.child("lyric").getValue(String.class);
+
+                                            Lyricsnapshot.getRef().removeValue()
+                                                    .addOnSuccessListener(aVoid->{
+                                                        // Thành công xóa lyrics
+                                                        // Xóa file lyric
+                                                        StorageReference lyricStorage = FirebaseStorage.getInstance().getReferenceFromUrl(lyricURL);
+
+                                                        lyricStorage.delete()
+                                                                .addOnSuccessListener(aVoid1->{
+                                                                    // Thành công xóa file
+                                                                    Toast.makeText(itemView.getContext(), "Xóa track thành công", Toast.LENGTH_SHORT).show();
+                                                                }).addOnFailureListener(e->{
+                                                                    // Thất bại xóa file
+                                                                    Toast.makeText(itemView.getContext(), "Lỗi không thể xóa file lyric", Toast.LENGTH_SHORT).show();
+                                                                });
+                                                    })
+                                                    .addOnFailureListener(e -> {
+                                                        // Thất bại xóa lyrics
+                                                        Toast.makeText(itemView.getContext(), "Lỗi không thể xóa thông tin trong lyrics", Toast.LENGTH_SHORT).show();
+                                                    });
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
+
+                            // Xóa file mp3 của track
                             StorageReference storageRef = FirebaseStorage.getInstance().getReferenceFromUrl(song.getFile());
                             storageRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                                 @Override
                                 public void onSuccess(Void aVoid) {
-                                    Toast.makeText(itemView.getContext(), "File đã được xóa.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(itemView.getContext(), "Xóa track thành công", Toast.LENGTH_SHORT).show();
 
                                 }
                             }).addOnFailureListener(new OnFailureListener() {

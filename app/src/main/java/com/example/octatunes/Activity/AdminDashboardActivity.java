@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.PopupWindow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.octatunes.R;
 
 public class AdminDashboardActivity extends AppCompatActivity {
     ImageButton _btn_more;
+    Button _btn_user_manager, _btn_track_manager;
     TextView _textTitleAdmin;
     LayoutInflater _inflater;
     PopupWindow _popupWindow;
@@ -28,6 +31,8 @@ public class AdminDashboardActivity extends AppCompatActivity {
 
         _textTitleAdmin = findViewById(R.id.text_title_admin);
         _btn_more = findViewById(R.id.menu_admin);
+        _btn_user_manager = findViewById(R.id.btn_user_manager);
+        _btn_track_manager = findViewById(R.id.btn_track_manager);
 
         _textTitleAdmin.setText("Dashboard");
 
@@ -35,6 +40,19 @@ public class AdminDashboardActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 togglePopupMenu();
+            }
+        });
+        _btn_user_manager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(AdminDashboardActivity.this, "Coming soon...", Toast.LENGTH_SHORT).show();
+            }
+        });
+        _btn_track_manager.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AdminDashboardActivity.this, AdminSongManagerActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -74,8 +92,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         userManager.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdminDashboardActivity.this, AdminUserManagerActivity.class);
-                startActivity(intent);
+                Toast.makeText(AdminDashboardActivity.this, "Coming soon...", Toast.LENGTH_SHORT).show();
             }
         });
 
