@@ -1,6 +1,9 @@
 package com.example.octatunes.Activity;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.text.SpannableStringBuilder;
@@ -17,6 +20,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.FragmentListener;
+import com.example.octatunes.LoginActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.HistoryModel;
 import com.example.octatunes.Model.SongModel;
@@ -28,9 +32,11 @@ import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
 import com.example.octatunes.TrackPreviewAdapter;
 import com.example.octatunes.TrackPreviewAdapterForUser;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class UserActivity extends Fragment {
     Button btnLogout;
@@ -86,6 +92,21 @@ public class UserActivity extends Fragment {
     }
 
     private void logout() {
+        String test = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
+        //logout firebase
+        FirebaseAuth.getInstance().signOut();
+
+        //clear auto login account
+        SharedPreferences preferences = getActivity().getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("logged_account", "");
+        editor.putString("logged_password", "");
+        editor.putInt("logged_time", 0);
+        editor.apply();
+
+        //move to login home
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
     }
 
     private void editProfile() {
