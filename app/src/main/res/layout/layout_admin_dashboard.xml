@@ -10,35 +10,22 @@
     <!-- Header -->
     <include layout="@layout/layout_toolbar_admin" />
 
-    <!-- Thống kê tổng quan -->
-    <TextView
-        android:id="@+id/text_total_users"
+    <Button
+        android:id="@+id/btn_user_manager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Tổng số người dùng: 1000" />
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:text="User Manager (Coming soon...)"/>
 
-    <TextView
-        android:id="@+id/text_total_songs"
+    <Button
+        android:id="@+id/btn_track_manager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="8dp"
-        android:text="Tổng số bài hát: 5000" />
-
-    <!-- Danh sách các sự kiện gần đây -->
-    <TextView
-        android:id="@+id/text_recent_activity_title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Hoạt động gần đây"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_recent_activity"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp" />
+        android:layout_marginStart="30dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginTop="30dp"
+        android:text="Track Manager"/>
 
 </LinearLayout>
