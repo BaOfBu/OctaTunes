@@ -49,7 +49,8 @@
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border"
-        android:paddingHorizontal="15dp"/>
+        android:paddingHorizontal="15dp"
+        android:singleLine="true"/>
     <TextView
         android:id="@+id/tv2"
         android:layout_width="match_parent"

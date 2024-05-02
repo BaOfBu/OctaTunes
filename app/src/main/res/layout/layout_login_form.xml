@@ -31,7 +31,8 @@
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border"
-        android:paddingHorizontal="15dp"/>
+        android:paddingHorizontal="15dp"
+        android:singleLine="true"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +55,8 @@
         android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
-        android:background="@drawable/login_edit_border" />
+        android:background="@drawable/login_edit_border"
+        android:singleLine="true"/>
     </com.google.android.material.textfield.TextInputLayout>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
