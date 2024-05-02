@@ -225,13 +225,7 @@ public class MusicService extends Service {
                     setPos(newList.size() - 1);
                     setMediaPlayer(pos);
                 } else if (singlePlay) {
-                    ListenToMusicActivity.repeat.setImageResource(R.drawable.ic_repeat_clicked_one_green_24);
-                    ListenToMusicActivity.chosenRepeatOneSong = false;
-                    if(ListenToMusicActivity.chosenShuffle){
-                        setRandomPlay();
-                    }else{
-                        setSequencePlay();
-                    }
+                    setMediaPlayer(pos);
                 } else {
                     pos = 0;
                     List<SongModel> newList = loadSongQueue(pos);

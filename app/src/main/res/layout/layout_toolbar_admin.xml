@@ -25,6 +25,7 @@
             android:layout_gravity="center"
             android:text="Dashboard"
             android:textSize="20sp"
+            android:fontFamily="@font/main_font"
             android:textStyle="bold"
             android:textColor="@color/white"/>
 

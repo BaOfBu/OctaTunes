@@ -18,10 +18,12 @@ import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Activity.ArtistDetailFragment;
+import com.example.octatunes.Activity.DeviceSongFragment;
 import com.example.octatunes.Activity.LikedSongFragment;
 import com.example.octatunes.Activity.NowPlayingBarFragment;
 import com.example.octatunes.Activity.PlaylistSpotifyActivity;
 import com.example.octatunes.FragmentListener;
+import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.AlbumsModel;
 import com.example.octatunes.Model.Playlist_TracksModel;
 import com.example.octatunes.Model.PlaylistsModel;
@@ -30,6 +32,7 @@ import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.LoveService;
+import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Services.PlaylistTrackService;
 import com.example.octatunes.Services.SongService;
 import com.example.octatunes.Services.TrackService;
@@ -110,11 +113,11 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
             listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
         }
     }
-    private void sendSignalToMainActivity(List<SongModel> songModels, int songID, String from, String belong, String mode, int nothing) {
-        if (listener != null) {
-            listener.onSignalReceived3(songModels, songID, from, belong, mode);
-        }
-    }
+//    private void sendSignalToMainActivity(List<SongModel> songModels, int songID, String from, String belong, String mode, int nothing) {
+//        if (listener != null) {
+//            listener.onSignalReceived3(songModels, songID, from, belong, mode);
+//        }
+//    }
 
     @NonNull
     @Override
@@ -288,18 +291,24 @@ public class SongAdapter extends RecyclerView.Adapter<SongAdapter.ViewHolder> {
                     FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                     Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
                     if (fragment != null) {
+                        Log.e("SONG ADAPTER", "LOAD SUCCESS");
                         String mode = "sequencePlay";
-                        int songFirstId = song.getSongID();
+                        int clickedPosition = holder.getAdapterPosition();
                         String from = "PLAYING FROM PLAYLIST";
                         String belong = "Device Songs";
-                        sendSignalToMainActivity(songModelList, songFirstId, from, belong, mode, 0);
+
+                        sendSignalToMainActivity2(songModelList, clickedPosition, from, belong, mode);
                     }
                 }
             });
 
         }
     }
-
+    private void sendSignalToMainActivity2(List<SongModel> songModels, int pos, String from, String belong, String mode) {
+        if (listener != null) {
+            listener.onSignalReceived3(songModels, pos, from, belong, mode);
+        }
+    }
     private void loadCountListenOfTrack(String trackName, final TextView itemArtist) {
         final SongService songService = new SongService();
         songService.countSongsWithTitle(trackName, new SongService.OnSongCountListener() {

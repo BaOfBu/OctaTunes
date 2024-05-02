@@ -25,12 +25,13 @@ import com.example.octatunes.Adapter.SongAdapter;
 import com.example.octatunes.FragmentListener;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
-import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
+import com.example.octatunes.Services.ArtistService;
+import com.example.octatunes.Services.MusicService;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class DeviceSongFragment extends Fragment {
     private FragmentListener listener;
@@ -70,7 +71,7 @@ public class DeviceSongFragment extends Fragment {
         List<SongModel> deviceSongs = getDeviceSongs();
         if (deviceSongs != null && !deviceSongs.isEmpty()) {
             number.setText(deviceSongs.size() + " songs");
-            setupPlayButton(rootView, deviceSongs, deviceSongs.get(0));
+            setupPlayButton(rootView, deviceSongs);
             setupRecyclerViewSong(rootView, deviceSongs);
         } else {
             number.setText("0 song");
@@ -135,23 +136,23 @@ public class DeviceSongFragment extends Fragment {
         recyclerView.setAdapter(adapter);
     }
 
-    private void setupPlayButton(View rootView, List<SongModel> deviceSongs, SongModel song){
+    private void setupPlayButton(View rootView, List<SongModel> deviceSongs){
         ImageView play_button_device_display = rootView.findViewById(R.id.play_button_device_display);
         play_button_device_display.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String mode = "sequencePlay";
-                int songFirstId = song.getSongID();
                 String from = "PLAYING FROM PLAYLIST";
                 String belong = "Device Songs";
-                sendSignalToMainActivity(deviceSongs, songFirstId, from, belong, mode, 0);
+
+                sendSignalToMainActivity(deviceSongs, 0, from, belong, mode);
             }
         });
     }
 
-    private void sendSignalToMainActivity(List<SongModel> songModels, int songID, String from, String belong, String mode, int nothing) {
+    private void sendSignalToMainActivity(List<SongModel> songModels, int pos, String from, String belong, String mode) {
         if (listener != null) {
-            listener.onSignalReceived3(songModels, songID, from, belong, mode);
+            listener.onSignalReceived3(songModels, pos, from, belong, mode);
         }
     }
 }
