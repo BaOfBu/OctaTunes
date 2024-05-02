@@ -5,8 +5,10 @@ import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -87,8 +89,9 @@ public class DeviceSongFragment extends Fragment {
                 MediaStore.Audio.Media.DURATION
         };
 
-        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0";
-        String[] selectionArgs = null; // No selection arguments needed
+        String selection = MediaStore.Audio.Media.IS_MUSIC + " != 0" +
+                " AND " + MediaStore.Audio.Media.DATA + " LIKE ?";
+        String[] selectionArgs = new String[]{"%" + Environment.DIRECTORY_MUSIC + "%"}; // Filter for files in the music directory
         String sortOrder = null; // You can specify sorting if needed
 
         // Querying the media content provider
@@ -96,7 +99,7 @@ public class DeviceSongFragment extends Fragment {
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI, // URI for audio files
                 projection,
                 selection,
-                null,
+                selectionArgs,
                 null
         );
         if(cursor != null){
@@ -109,6 +112,11 @@ public class DeviceSongFragment extends Fragment {
                 String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
                 int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)) / 1000;
                 String image = "https://firebasestorage.googleapis.com/v0/b/octatunes-495d2.appspot.com/o/images%2Falbums%2F001.jpg?alt=media&token=d802b4c3-b59e-4c76-85a5-2cd34f9892b5";
+
+                // Handle unknown artist
+                if (artist == null || artist.isEmpty()) {
+                    artist = "Unknown Artist";
+                }
 
                 // Check if the file is in the music folder
                 list.add(new SongModel(i, title, artist, null, null, image, filePath, duration));

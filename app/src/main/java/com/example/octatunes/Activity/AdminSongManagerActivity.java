@@ -45,8 +45,8 @@ public class AdminSongManagerActivity extends AppCompatActivity {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private TextView _textTitleAdmin, _textTotalSongs;
     private EditText _editTextSearch;
-    private Button _btnSearch, _btnAddSong;
-    private ImageView _btnRemoveSearch, _btnEditSong, _btnDeleteSong;
+    private Button _btnAddSong;
+    private ImageView _btnRemoveSearch, _btnEditSong, _btnDeleteSong, _btnSearch;
     private RecyclerView _recyclerViewSongList;
     private ImageButton _btn_menu;
     private LayoutInflater _inflater;
