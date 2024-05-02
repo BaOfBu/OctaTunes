@@ -1,5 +1,8 @@
 package com.example.octatunes.Activity;
 
+import static com.example.octatunes.MainActivity.isServiceBound;
+import static com.example.octatunes.MainActivity.songList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -92,19 +95,23 @@ public class UserActivity extends Fragment {
     }
 
     private void logout() {
-        String test = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         //logout firebase
         FirebaseAuth.getInstance().signOut();
 
         //clear auto login account
-        SharedPreferences preferences = getActivity().getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        SharedPreferences preferences = requireActivity().getSharedPreferences("auto_login", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("logged_account", "");
         editor.putString("logged_password", "");
         editor.putInt("logged_time", 0);
         editor.apply();
 
-        //move to login home
+        //interrupt music thread
+        MainActivity main = (MainActivity) requireActivity();
+        songList.clear();
+        if(!main.myThread.isInterrupted()) main.myThread.interrupt();
+
+        // Move to login home
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
     }
