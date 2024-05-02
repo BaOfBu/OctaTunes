@@ -127,56 +127,56 @@ public class HomeActivity extends Fragment {
             for (PlaylistsModel playlist : playlists) {
                 recommendedPlaylists.add(playlist);
             }
-            userSongService.getAllSongIdsForUser(new UserSongService.SongIdListCallback() {
-                @Override
-                public void onSongIdsRetrieved(List<Integer> songIds) {
-                    if (songIds != null) {
-                        SongService songService = new SongService();
-                        songService.getTopTitlesForSongIds(songIds, new SongService.TitleListCallback() {
-                            @Override
-                            public void onTitlesRetrieved(List<String> titles) {
-                                if (titles != null) {
-                                    TrackService trackService = new TrackService();
-                                    trackService.getTrackModels(titles, new TrackService.TrackModelListCallback() {
-                                        @Override
-                                        public void onTrackModelsRetrieved(List<TracksModel> trackModels) {
-                                            if (trackModels != null) {
-                                                UserService userService = new UserService();
-                                                userService.getCurrentUserId(new UserService.UserIdCallback() {
-                                                    @Override
-                                                    public void onUserIdRetrieved(int userId) {
-                                                        PlaylistService playlistService = new PlaylistService();
-                                                        playlistService.createNewPlaylistWithTracks(trackModels, userId, new PlaylistService.PlaylistCreationCallback() {
-                                                            @Override
-                                                            public void onPlaylistCreated(PlaylistsModel playlist) {
-                                                                recommendedPlaylists.add(playlist);
-                                                                playlistsBySection.add(recommendedPlaylists);
-                                                                setupPlaylistSectionAdapter(sectionTitles);
-                                                            }
-
-                                                            @Override
-                                                            public void onPlaylistCreationFailed(String errorMessage) {
-                                                                Log.e("TAG", "Failed to create playlist: " + errorMessage);
-                                                            }
-                                                        });
-                                                    }
-                                                });
-
-                                            } else {
-                                                Log.e("TAG", "Failed to retrieve track models.");
-                                            }
-                                        }
-                                    });
-                                } else {
-                                    Log.e("TAG", "Failed to retrieve top titles.");
-                                }
-                            }
-                        });
-                    } else {
-                        Log.e("TAG", "Failed to retrieve song IDs.");
-                    }
-                }
-            });
+            //userSongService.getAllSongIdsForUser(new UserSongService.SongIdListCallback() {
+            //    @Override
+            //    public void onSongIdsRetrieved(List<Integer> songIds) {
+            //        if (songIds != null) {
+            //            SongService songService = new SongService();
+            //            songService.getTopTitlesForSongIds(songIds, new SongService.TitleListCallback() {
+            //                @Override
+            //                public void onTitlesRetrieved(List<String> titles) {
+            //                    if (titles != null) {
+            //                        TrackService trackService = new TrackService();
+            //                        trackService.getTrackModels(titles, new TrackService.TrackModelListCallback() {
+            //                            @Override
+            //                            public void onTrackModelsRetrieved(List<TracksModel> trackModels) {
+            //                                if (trackModels != null) {
+            //                                    UserService userService = new UserService();
+            //                                    userService.getCurrentUserId(new UserService.UserIdCallback() {
+            //                                        @Override
+            //                                        public void onUserIdRetrieved(int userId) {
+            //                                            PlaylistService playlistService = new PlaylistService();
+            //                                            playlistService.createNewPlaylistWithTracks(trackModels, userId, new PlaylistService.PlaylistCreationCallback() {
+            //                                                @Override
+            //                                                public void onPlaylistCreated(PlaylistsModel playlist) {
+            //                                                    recommendedPlaylists.add(playlist);
+            //                                                    playlistsBySection.add(recommendedPlaylists);
+            //                                                    setupPlaylistSectionAdapter(sectionTitles);
+            //                                                }
+            //
+            //                                                @Override
+            //                                                public void onPlaylistCreationFailed(String errorMessage) {
+            //                                                    Log.e("TAG", "Failed to create playlist: " + errorMessage);
+            //                                                }
+            //                                            });
+            //                                        }
+            //                                    });
+            //
+            //                                } else {
+            //                                    Log.e("TAG", "Failed to retrieve track models.");
+            //                                }
+            //                            }
+            //                        });
+            //                    } else {
+            //                        Log.e("TAG", "Failed to retrieve top titles.");
+            //                    }
+            //                }
+            //            });
+            //        } else {
+            //            Log.e("TAG", "Failed to retrieve song IDs.");
+            //        }
+            //    }
+            //});
             playlistsBySection.add(recommendedPlaylists);
             setupPlaylistSectionAdapter(sectionTitles);
         }).exceptionally(throwable -> {
