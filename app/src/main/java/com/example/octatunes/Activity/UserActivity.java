@@ -96,7 +96,8 @@ public class UserActivity extends Fragment {
         InputMethodManager imm = (InputMethodManager)
                 requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (imm != null) {
-            imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
+            if(getActivity().getCurrentFocus() != null)
+                imm.hideSoftInputFromWindow(getActivity().getCurrentFocus().getWindowToken(), 0);
         }
         Toast.makeText(getContext(), "Profile updated", Toast.LENGTH_SHORT).show();
     }
