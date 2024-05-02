@@ -443,21 +443,9 @@ public class TrackService {
         return future;
     }
 
-    public void removeTrack(String trackId, OnTrackRemovedListener listener) {
-        getTracksRef().child(trackId).removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-                if (task.isSuccessful()) {
-                    listener.onTrackRemoved();
-                } else {
-                    Log.e("TrackService", "Failed to remove track.", task.getException());
-                }
-            }
-        });
-    }
-
     public interface OnTrackRemovedListener {
         void onTrackRemoved();
+        void onTrackRemovedFailed(String message);
     }
 
     public interface OnArtistNameLoadedListener {
