@@ -116,10 +116,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     Handler handlerAlarm = new Handler();
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    public ListenToMusicActivity(String from, String belong, SongModel song){
-        this.from = from;
-        this.belong = belong;
-        currentSong = song;
+    public ListenToMusicActivity(String From, String Belong, SongModel Song){
+        from = From;
+        belong = Belong;
+        currentSong = Song;
     }
 
     @Nullable
@@ -655,14 +655,16 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     }
 
     public static void initMediaPlayer(){
-        Glide.with(rootView).load(currentSong.getImage()).into(imageView);
-        songName.setText(currentSong.getTitle());
-        singer.setText(currentSong.getArtist());
-        int totalTime = currentSong.getDuration() * 1000; //miliseconds
+        if(rootView != null) {
+            Glide.with(rootView).load(currentSong.getImage()).into(imageView);
+            songName.setText(currentSong.getTitle());
+            singer.setText(currentSong.getArtist());
+            int totalTime = currentSong.getDuration() * 1000; //miliseconds
 
-        String time = MusicUtils.formatTime(totalTime);
-        duration.setText(time);
+            String time = MusicUtils.formatTime(totalTime);
+            duration.setText(time);
 
-        seekBar.setMax(totalTime);
+            seekBar.setMax(totalTime);
+        }
     }
 }

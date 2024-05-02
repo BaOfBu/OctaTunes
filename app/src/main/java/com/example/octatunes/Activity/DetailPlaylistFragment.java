@@ -87,11 +87,17 @@ public class DetailPlaylistFragment extends Fragment {
             RecyclerView recyclerView = rootView.findViewById(R.id.recyclerview_track_in_playlist);
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
-            SongInQueueAdapter adapter = new SongInQueueAdapter(getContext(), listener, MusicService.loadSongQueue(MusicService.getPos()));
+            List<SongModel> newQueue = MusicService.loadSongQueue(MusicService.getPos());
+
+            SongInQueueAdapter adapter = new SongInQueueAdapter(getContext(), listener, newQueue);
+
+            MusicService.setSongList(newQueue);
+            MusicService.setPos(newQueue.size() - 1);
+
             for(int i = 0; i < MusicService.getSongList().size(); i++){
-                Log.i("SONG LIST " + i, MusicService.getSongList().get(i).toString());
+                Log.i("DETAIL PLAYLIST - SONG LIST " + i, MusicService.getSongList().get(i).toString());
             }
-            Log.i("SONG LIST POS: ", String.valueOf(MusicService.getPos()));
+            Log.i("DETAIL PLAYLIST - SONG LIST POS: ", String.valueOf(MusicService.getPos()));
 
             recyclerView.setAdapter(adapter);
         }

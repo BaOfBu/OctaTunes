@@ -56,11 +56,19 @@ public class SongInQueueAdapter extends RecyclerView.Adapter<SongInQueueAdapter.
             public void onClick(View v) {
                 int clickedPosition = holder.getAdapterPosition();
 
-                MusicService.loadSongQueue(clickedPosition);
+                List<SongModel> newList = MusicService.loadSongQueue(clickedPosition);
+
+                MusicService.setSongList(newList);
+                MusicService.setPos(newList.size() - 1);
 
                 FragmentManager fragmentManager = ((FragmentActivity) context).getSupportFragmentManager();
                 Fragment fragment = new DetailPlaylistFragment(ListenToMusicActivity.from, ListenToMusicActivity.belong, ListenToMusicActivity.mode, songCurrent);
                 fragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit();
+
+                for(int i = 0; i < MusicService.getSongList().size(); i++){
+                    Log.i("QUEUE ADAPTER - SONG LIST " + i, MusicService.getSongList().get(i).toString());
+                }
+                Log.i("QUEUE ADAPTER - SONG LIST POS: ", String.valueOf(MusicService.getPos()));
 
                 sendSignalToMainActivity();
             }

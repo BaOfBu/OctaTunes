@@ -1,9 +1,13 @@
 package com.example.octatunes;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -13,6 +17,7 @@ import android.view.View;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -141,10 +146,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         setFrom(from);
         setBelong(belong);
 
-//        if (mode != null && mode.equals("shuffle")){
-//            binder.setRandomPlay();
-//        }
-
         if(from.equals("PLAYING FROM ALBUM")){
             loadDataFromAlbum(albumID, trackID);
         }else if(from.equals("PLAYING FROM SEARCH")){
@@ -258,21 +259,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                             if(songList != null) Log.i("SONG LIST MAIN AFTER", songList.toString());
 
-//                            if(MusicService.getSongList() != null && !MusicService.getSongList().isEmpty()){
-//                                Log.i(TAG, "MUSIC SERVICE: " + MusicService.getSongList());
-//                            }else{
-//                                Log.i(TAG, "MUSIC SERVICE: Don't receive song list");
-//                            }
                             if(flag){
-                                MusicService.loadSongQueue(pos);
-                                songList = MusicService.getSongList();
-                                setPos(MusicService.getPos());
+                                List<SongModel> newList = MusicService.loadSongQueue(pos);
+
+                                MusicService.setSongList(newList);
+                                MusicService.setPos(newList.size() - 1);
+
+                                songList = newList;
+
+                                setPos(newList.size() - 1);
+
                                 binder.setMediaPlayer(pos);
 
                                 initNowPlayingBar();
                                 Log.i("FLAG", songList.toString());
                             }
-                            //initNowPlayingBar();
                         }
                     });
                 });
@@ -382,10 +383,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             super.handleMessage(msg);
             switch (msg.what){
                 case UPDATE:
-                    if(pos!=msg.arg1){
-                        pos=msg.arg1;
-                        initNowPlayingBar();
-                    }
+                    initNowPlayingBar();
+
                     if(MusicService.mediaPlayer.isPlaying()){
                         binding.trackPlayPause.setImageResource(R.drawable.ic_pause_white_24);
                     }else{
@@ -407,7 +406,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         songList = MusicService.getSongList();
         Log.i("INIT NOW PLAYING BAR", songList.toString());
         if(songList!=null) {
-            //Log.i("SONG LIST", songList);
             Glide.with(MainActivity.this).load(songList.get(pos).getImage()).into(binding.trackImage);
             binding.trackName.setText(songList.get(pos).getTitle());
             binding.trackArtist.setText(songList.get(pos).getArtist());
