@@ -391,6 +391,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binder.setMediaPlayer(pos);
 
         initNowPlayingBar();
+        binder.updateTrackView();
     }
 
     @Override
