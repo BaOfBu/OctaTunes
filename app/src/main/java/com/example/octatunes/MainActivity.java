@@ -166,10 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         for (int i = 0; i < songModels.size(); i++){
             SongModel song = songModels.get(i);
             if(song != null){
-                if(song.getSongID() == songID) pos = i;
                 songList.add(song);
+                if(song.getSongID() == songID) pos = i;
             }
-
         }
         myThread = new Thread(new MainActivity.MyThread());
         myThread.start();
@@ -201,23 +200,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                            SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
                            songList.add(songModel);
                        }
+
+                       myThread = new Thread(new MainActivity.MyThread());
+                       myThread.start();
+
+                       MusicService.setPos(pos);
+
+                       intent = new Intent(MainActivity.this, MusicService.class);
+                       startService(intent);
+
+                       bindService(intent, connection, BIND_AUTO_CREATE);
+                       if(flag){
+                           MusicService.setPos(pos - 1);
+                           binder.nextMusic();
+                       }
+                       initNowPlayingBar();
                    }
-
-                   myThread = new Thread(new MainActivity.MyThread());
-                   myThread.start();
-
-                   MusicService.setPos(pos);
-
-                   intent = new Intent(MainActivity.this, MusicService.class);
-                   startService(intent);
-
-                   bindService(intent, connection, BIND_AUTO_CREATE);
-                   if(flag){
-                       MusicService.setPos(pos - 1);
-                       binder.nextMusic();
-                   }
-                   initNowPlayingBar();
-
                }) ;
             });
         });
