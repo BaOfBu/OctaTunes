@@ -1,5 +1,8 @@
 package com.example.octatunes.Activity;
 
+import static com.example.octatunes.MainActivity.isServiceBound;
+import static com.example.octatunes.MainActivity.songList;
+
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -92,7 +95,6 @@ public class UserActivity extends Fragment {
     }
 
     private void logout() {
-        String test = Objects.requireNonNull(FirebaseAuth.getInstance().getCurrentUser()).getEmail();
         //logout firebase
         FirebaseAuth.getInstance().signOut();
 
@@ -104,9 +106,21 @@ public class UserActivity extends Fragment {
         editor.putInt("logged_time", 0);
         editor.apply();
 
-        //move to login home
-        Intent intent = new Intent(getActivity(), LoginActivity.class);
-        startActivity(intent);
+        MainActivity main = (MainActivity) getActivity();
+
+        if (main != null) {
+            songList.clear();
+            main.myThread.interrupt();
+            if (isServiceBound) {
+                main.unbindService(main.connection);
+                main.stopService(main.intent);
+                isServiceBound = false;
+            }
+
+            // Move to login home
+            Intent intent = new Intent(getActivity(), LoginActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void editProfile() {

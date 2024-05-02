@@ -46,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pos = p;
     }
     private MusicService.MusicBinder binder;
-    private static boolean isServiceBound = false;
+    public static boolean isServiceBound = false;
     private TrackService trackService;
     private AlbumService albumService;
     private ArtistService artistService;
@@ -54,8 +54,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String from;
     private static String belong;
     public static Fragment lastFrag;
-    private Thread myThread;
-    private Intent intent;
+    public Thread myThread;
+    public Intent intent;
     public static List<SongModel> getSongList(){
         return songList;
     }
@@ -488,7 +488,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         songList.clear();
         myThread.interrupt();
