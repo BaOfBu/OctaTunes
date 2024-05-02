@@ -68,14 +68,14 @@ public class DeviceSongFragment extends Fragment {
         TextView number = rootView.findViewById(R.id.number_device_songs);
 
         List<SongModel> deviceSongs = getDeviceSongs();
-        if(deviceSongs != null){
+        if (deviceSongs != null && !deviceSongs.isEmpty()) {
             number.setText(deviceSongs.size() + " songs");
             setupPlayButton(rootView, deviceSongs, deviceSongs.get(0));
             setupRecyclerViewSong(rootView, deviceSongs);
-
-        }else{
+        } else {
             number.setText("0 song");
         }
+
         return rootView;
     }
 
