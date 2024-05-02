@@ -112,7 +112,12 @@ public class DeviceSongFragment extends Fragment {
                 String artist = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST));
                 int duration = cursor.getInt(cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DURATION)) / 1000;
                 String image = "https://firebasestorage.googleapis.com/v0/b/octatunes-495d2.appspot.com/o/images%2Falbums%2F001.jpg?alt=media&token=d802b4c3-b59e-4c76-85a5-2cd34f9892b5";
-                Log.i("AKVKUBALBLANLAVKSVKBALB", filePath + ", " + title + ", " + artist + ", " + duration + ", " + image);
+
+                // Handle unknown artist
+                if (artist == null || artist.isEmpty()) {
+                    artist = "Unknown Artist";
+                }
+
                 // Check if the file is in the music folder
                 list.add(new SongModel(i, title, artist, null, null, image, filePath, duration));
                 i++;

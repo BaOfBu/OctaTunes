@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String belong;
     public static Fragment lastFrag;
     public static Fragment trackFrag = null;
-    private Thread myThread;
+    public Thread myThread;
     private Intent intent;
     public static List<SongModel> getSongList(){
         return songList;

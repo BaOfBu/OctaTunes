@@ -99,28 +99,21 @@ public class UserActivity extends Fragment {
         FirebaseAuth.getInstance().signOut();
 
         //clear auto login account
-        SharedPreferences preferences = getActivity().getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        SharedPreferences preferences = requireActivity().getSharedPreferences("auto_login", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = preferences.edit();
         editor.putString("logged_account", "");
         editor.putString("logged_password", "");
         editor.putInt("logged_time", 0);
         editor.apply();
 
-        MainActivity main = (MainActivity) getActivity();
+        //interrupt music thread
+        MainActivity main = (MainActivity) requireActivity();
+        songList.clear();
+        if(!main.myThread.isInterrupted()) main.myThread.interrupt();
 
-        if (main != null) {
-            songList.clear();
-            main.myThread.interrupt();
-            if (isServiceBound) {
-                main.unbindService(main.connection);
-                main.stopService(main.intent);
-                isServiceBound = false;
-            }
-
-            // Move to login home
-            Intent intent = new Intent(getActivity(), LoginActivity.class);
-            startActivity(intent);
-        }
+        // Move to login home
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
+        startActivity(intent);
     }
 
     private void editProfile() {
