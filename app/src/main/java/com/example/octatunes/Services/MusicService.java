@@ -381,6 +381,10 @@ public class MusicService extends Service {
 
         List<SongModel> newList = new ArrayList<>();
 
+        if (songList.isEmpty() || index < 0 || index >= songList.size()) {
+            return newList;
+        }
+
         for (int i = index + 1; i < songTmp.size(); i++){
             newList.add(songTmp.get(i));
         }
@@ -389,33 +393,7 @@ public class MusicService extends Service {
             newList.add(songTmp.get(j));
         }
 
-        //pos = newList.size() - 1;
-
         return newList;
-//        if (index == 0) {
-//            Log.i("INDEX", "EQUAL " + songTmp);
-//            if(songList != null) songList.clear();
-//            for(int k = 1; k < songTmp.size(); k++){
-//                songList.add(songTmp.get(k));
-//            }
-//            Log.i("LAST ELEMENT", songTmp.get(0).toString());
-//            songList.add(songTmp.get(0));
-//            pos = songList.size() - 1;
-//            return songList;
-//        }else{
-//            if(songList != null) songList.clear();
-//
-//            for (int i = index + 1; i < songTmp.size(); i++){
-//                songList.add(songTmp.get(i));
-//            }
-//
-//            for (int j = 0; j <= index; j++){
-//                songList.add(songTmp.get(j));
-//            }
-//            pos = songList.size() - 1;
-//
-//            return songList;
-//        }
     }
     public void updateNotification(){
         if (notificationManager == null) {

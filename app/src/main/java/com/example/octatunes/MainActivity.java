@@ -204,21 +204,45 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
                     }
 
+                    if(songList != null) Log.i("SONG LIST MAIN BEFORE", songList.toString());
+
                     myThread = new Thread(new MainActivity.MyThread());
                     myThread.start();
 
                     MusicService.setPos(pos);
 
+                    isServiceBound = false;
                     intent = new Intent(MainActivity.this, MusicService.class);
                     startService(intent);
-
                     bindService(intent, connection, BIND_AUTO_CREATE);
 
+                    Log.i(TAG, "ĐÃ VÔ HÀM LOAD DATA");
+                    Log.i("POS SERVICE", String.valueOf(MusicService.getPos()));
+
                     pos = MusicService.getPos();
+
+                    if(songList != null) Log.i("SONG LIST MAIN AFTER", songList.toString());
+
+//                    if(flag){
+//                        binder.setMediaPlayer(pos);
+//                    }
+//                    initNowPlayingBar();
+
                     if(flag){
+                        List<SongModel> newList = MusicService.loadSongQueue(pos);
+
+                        MusicService.setSongList(newList);
+                        MusicService.setPos(newList.size() - 1);
+
+                        songList = newList;
+
+                        setPos(newList.size() - 1);
+
                         binder.setMediaPlayer(pos);
+
+                        initNowPlayingBar();
+                        Log.i("FLAG", songList.toString());
                     }
-                    initNowPlayingBar();
                 }) ;
             });
         });
@@ -449,7 +473,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void initNowPlayingBar(){
         songList = MusicService.getSongList();
         Log.i("INIT NOW PLAYING BAR", songList.toString());
-        if(songList!=null) {
+        if(songList!=null && !songList.isEmpty()) {
             Glide.with(MainActivity.this).load(songList.get(pos).getImage()).into(binding.trackImage);
             binding.trackName.setText(songList.get(pos).getTitle());
             binding.trackArtist.setText(songList.get(pos).getArtist());
