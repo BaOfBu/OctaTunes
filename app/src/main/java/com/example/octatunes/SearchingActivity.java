@@ -63,7 +63,7 @@ public class SearchingActivity extends Fragment {
     private HistoryService historyService = new HistoryService();
     private UserService userService = new UserService();
     //public static Integer currentUserID;
-    LinearLayoutManager layoutManager = new LinearLayoutManager(getContext());
+    LinearLayoutManager layoutManager;
 
     RecyclerView searchResultsRecyclerView;
     TextView text;
@@ -92,8 +92,11 @@ public class SearchingActivity extends Fragment {
         View rootView = inflater.inflate(R.layout.layout_search, container, false);
         searchBox = rootView.findViewById(R.id.search_bar_edit_text);
         text = rootView.findViewById(R.id.BrowseAllText);
-        searchResultsRecyclerView = rootView.findViewById(R.id.recyclerview_recent_search);
-        searchResultsRecyclerView.setLayoutManager(layoutManager);
+        if (searchResultsRecyclerView == null) {
+            layoutManager = new LinearLayoutManager(getContext());
+            searchResultsRecyclerView = rootView.findViewById(R.id.recyclerview_recent_search);
+            searchResultsRecyclerView.setLayoutManager(layoutManager);
+        }
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
