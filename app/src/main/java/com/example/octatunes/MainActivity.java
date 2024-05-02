@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String from;
     private static String belong;
     public static Fragment lastFrag;
+    public static Fragment trackFrag = null;
     private Thread myThread;
     private Intent intent;
     public static List<SongModel> getSongList(){
@@ -118,7 +119,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 lastFrag = new SearchingActivity();
                 replaceFragment(lastFrag);
             }else if(itemID == R.id.library){
-                replaceFragment(new LibraryFragment());
+                lastFrag = new LibraryFragment();
+                replaceFragment(lastFrag);
             }else if(itemID == R.id.Premium){
 
             }
@@ -133,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.trackPlayPause.setOnClickListener(this);
 
         binding.frameLayout.setVisibility(View.GONE);
-
     }
 
     public void Search(List<TracksModel> tracksModels, int trackID, int playlistID, int albumID, String from, String belong, String mode){
@@ -183,12 +184,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                    startService(intent);
 
                    bindService(intent, connection, BIND_AUTO_CREATE);
+
+                   pos = MusicService.getPos();
                    if(flag){
-                       MusicService.setPos(pos - 1);
-                       binder.nextMusic();
+                       binder.setMediaPlayer(pos);
                    }
                    initNowPlayingBar();
-
                }) ;
             });
         });
@@ -238,7 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 }
                             }
 
-                            if(songList != null) Log.i(TAG, songList.toString());
+                            if(songList != null) Log.i("SONG LIST MAIN BEFORE", songList.toString());
 
                             myThread = new Thread(new MainActivity.MyThread());
                             myThread.start();
@@ -250,16 +251,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                             startService(intent);
                             bindService(intent, connection, BIND_AUTO_CREATE);
 
-                            if(MusicService.getSongList() != null && !MusicService.getSongList().isEmpty()){
-                                Log.i(TAG, "MUSIC SERVICE: " + MusicService.getSongList().toString());
-                            }else{
-                                Log.i(TAG, "MUSIC SERVICE: Don't receive song list");
-                            }
+                            Log.i(TAG, "ĐÃ VÔ HÀM LOAD DATA");
+                            Log.i("POS SERVICE", String.valueOf(MusicService.getPos()));
+
+                            pos = MusicService.getPos();
+
+                            if(songList != null) Log.i("SONG LIST MAIN AFTER", songList.toString());
+
+//                            if(MusicService.getSongList() != null && !MusicService.getSongList().isEmpty()){
+//                                Log.i(TAG, "MUSIC SERVICE: " + MusicService.getSongList());
+//                            }else{
+//                                Log.i(TAG, "MUSIC SERVICE: Don't receive song list");
+//                            }
                             if(flag){
-                                MusicService.setPos(pos - 1);
-                                binder.nextMusic();
+                                MusicService.loadSongQueue(pos);
+                                songList = MusicService.getSongList();
+                                setPos(MusicService.getPos());
+                                binder.setMediaPlayer(pos);
+
+                                initNowPlayingBar();
+                                Log.i("FLAG", songList.toString());
                             }
-                            initNowPlayingBar();
+                            //initNowPlayingBar();
                         }
                     });
                 });
@@ -268,69 +281,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void loadDataFromPlaylist(int playlistID, int trackID){
-        final boolean flag = !songList.isEmpty();
-        if(!songList.isEmpty()) songList.clear();
         trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
-            int totalTracks = tracksModels.size();
-            AtomicInteger processedTracks = new AtomicInteger(0);
-            for (int i = 0; i < tracksModels.size(); i++) {
-                TracksModel track = tracksModels.get(i);
-                SongModel songModel = new SongModel();
-                if(track != null){
-                    Log.i("TRACK SERVICE IN MAIN", track.toString());
-                    songModel.setTitle(track.getName());
-                    songModel.setFile(track.getFile());
-                    songModel.setDuration(track.getDuration());
-                    songModel.setSongID(track.getTrackID());
-                    // Fetch album asynchronously and set properties of songModel
-                    albumService.findAlbumById(track.getAlubumID()).thenAccept(albumsModel -> {
-                        songModel.setAlbum(albumsModel.getName());
-                        songModel.setImage(albumsModel.getImage());
-
-                        Log.i("ALBUM SERVICE IN MAIN", "Fetch album asynchronously and set properties of songModel");
-                        // Fetch artist asynchronously and set properties of songModel
-                        artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
-                            songModel.setArtist(artistsModel.getName());
-                            songModel.setGenre(artistsModel.getGenre());
-
-                            // Add songModel to MainActivity.songList after all data is loaded
-                            songList.add(songModel);
-                            int processed = processedTracks.incrementAndGet();
-                            if (processed == totalTracks) {
-                                // All tracks have been processed
-                                if(songList != null) Log.i(TAG, songList.toString());
-                                List<SongModel> songsTmp = songList;
-                                for(int j = 0; j < tracksModels.size(); j++){
-                                    for(int z = 0; z < songsTmp.size(); z++){
-                                        if(songsTmp.get(z).getSongID() == tracksModels.get(j).getTrackID()){
-                                            songList.set(j, songsTmp.get(z));
-                                            if(songsTmp.get(z).getSongID() == trackID) {
-                                                pos = j;
-                                            }
-                                            break;
-                                        }
-                                    }
-                                }
-
-                                myThread = new Thread(new MainActivity.MyThread());
-                                myThread.start();
-
-                                MusicService.setPos(pos);
-                                isServiceBound = false;
-                                intent = new Intent(MainActivity.this, MusicService.class);
-                                startService(intent);
-                                bindService(intent, connection, BIND_AUTO_CREATE);
-
-                                if(flag){
-                                    MusicService.setPos(pos - 1);
-                                    binder.nextMusic();
-                                }
-                                initNowPlayingBar();
-                            }
-                        });
-                    });
-                }
-            }
+            loadData(tracksModels, trackID);
         });
     }
     @Override
@@ -339,6 +291,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         if(id == R.id.frame_layout){
             SongModel currentSong = songList.get(pos);
             Fragment fragment = new ListenToMusicActivity(from, belong, currentSong);
+            trackFrag = fragment;
             replaceFragment(fragment);
             binding.frameLayout.setVisibility(View.GONE);
             binding.bottomNavigation.setVisibility(View.GONE);
@@ -368,6 +321,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             binding.frameLayout.setVisibility(View.VISIBLE);
         }
 
+    }
+
+    @Override
+    public void onSignalReceived3() {
+        songList = MusicService.getSongList();
+        setPos(MusicService.getPos());
+
+        myThread = new Thread(new MyThread());
+        myThread.start();
+
+        isServiceBound = false;
+        intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+        binder.setMediaPlayer(pos);
+
+        initNowPlayingBar();
     }
 
     @Override
@@ -434,7 +404,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         fragmentTransaction.commit();
     }
     public void initNowPlayingBar(){
+        songList = MusicService.getSongList();
+        Log.i("INIT NOW PLAYING BAR", songList.toString());
         if(songList!=null) {
+            //Log.i("SONG LIST", songList);
             Glide.with(MainActivity.this).load(songList.get(pos).getImage()).into(binding.trackImage);
             binding.trackName.setText(songList.get(pos).getTitle());
             binding.trackArtist.setText(songList.get(pos).getArtist());

@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +50,8 @@ import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,8 +65,9 @@ import java.util.Objects;
 import me.zhengken.lyricview.LyricView;
 
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
-    String from;
-    String belong;
+    public static String from;
+    public static String belong;
+    public static String mode;
     public static SongModel currentSong;
     TextView track_from;
     TextView track_belong;
@@ -385,16 +390,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         return false;
     }
 
-
-
-//    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
-//        if (listener != null) {
-//            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
-//        }
-//    }
-
-
-
     private class MyThread implements Runnable{
         @Override
         public void run() {
@@ -604,7 +599,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 }
             }
         }else if(id == R.id.imageButtonPlaylist){
-            Fragment fragment = new DetailPlaylistFragment(from, belong, currentSong);
+            Fragment fragment = new DetailPlaylistFragment(from, belong,  "sequencePlay", currentSong);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }
@@ -619,7 +614,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             }
         });
     }
-
     private void handleScheduleAlarm(int time){
         scheduleAlarm();
         isOnAlarm = true;
@@ -671,7 +665,4 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         seekBar.setMax(totalTime);
     }
-
-
-
 }

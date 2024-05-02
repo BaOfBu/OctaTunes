@@ -204,6 +204,7 @@ public class MusicService extends Service {
                 if(randomPlay) {
                     Random random = new Random();
                     int i = random.nextInt(songList.size());
+                    loadSongQueue(i);
                     setMediaPlayer(i);
                 } else if (singlePlay) {
                     ListenToMusicActivity.repeat.setImageResource(R.drawable.ic_repeat_clicked_one_green_24);
@@ -214,11 +215,20 @@ public class MusicService extends Service {
                         setSequencePlay();
                     }
                 } else {
-                    if (pos == songList.size() - 1) {
-                        pos = 0;
-                    } else {
-                        pos++;
-                    }
+//                    if (pos == songList.size() - 1) {
+//                        pos = 0;
+//                    } else {
+//                        pos++;
+//                    }
+                    Log.i("-INITIAL", songList.toString());
+                    Log.i("-NEXT MUSIC-", songList.get(0).toString());
+                    SongModel newSong = songList.get(0);
+                    songList.remove(0);
+                    songList.add(newSong);
+                    pos = songList.size() - 1;
+//                    pos = 0;
+                    MainActivity.songList = songList;
+                    MainActivity.setPos(pos);
                     setMediaPlayer(pos);
                 }
 
@@ -227,10 +237,10 @@ public class MusicService extends Service {
                 updateTrackView();
             }
         }
-
-        private void updateTrackView(){
-            ListenToMusicActivity.currentSong = songList.get(pos);
-            ListenToMusicActivity.initMediaPlayer();
+        public void updateTrackView(){
+            ListenToMusicActivity listenToMusicActivity = new ListenToMusicActivity(ListenToMusicActivity.from, ListenToMusicActivity.belong, songList.get(pos));
+//            ListenToMusicActivity.currentSong = songList.get(pos);
+            //ListenToMusicActivity.initMediaPlayer();
         }
     }
     @Override
@@ -248,11 +258,13 @@ public class MusicService extends Service {
             Log.e(TAG, "Song list is null");
         } else {
             Log.e(TAG, songList.toString());
-            if (!MainActivity.isServiceBound()) {
-                songService = new SongService();
-                musicBinder.setMediaPlayer(pos);
-                Log.i(TAG, "ONCREATE");
-            }
+            songService = new SongService();
+            musicBinder.setMediaPlayer(pos);
+            loadSongQueue(pos);
+            Log.i(TAG, "ONCREATE " + songList.toString());
+
+            MainActivity.songList = songList;
+            MainActivity.setPos(pos);
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -324,7 +336,34 @@ public class MusicService extends Service {
                         break;
                     case "nextMusic":
                         views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        //pos = 0;
+                        //musicBinder.setMediaPlayer(0);
+                        //loadSongQueue(pos);
+                        //pos = 0;
+                        songList = MainActivity.songList;
+                        //loadSongQueue(pos);
+
+//                        Log.i("MUSIC SERVICE", songList.toString());
+//                        musicBinder.setMediaPlayer(pos);
+//                        updateNotification();
+//                        musicBinder.updateTrackView();
+
+
                         musicBinder.nextMusic();
+//                        SongModel newMusic = new SongModel();
+//                        newMusic.setSongID(songList.get(0).getSongID());
+//                        newMusic.setImage(songList.get(0).getImage());
+//                        newMusic.setAlbum(songList.get(0).getAlbum());
+//                        newMusic.setArtist(songList.get(0).getArtist());
+//                        newMusic.setDuration(songList.get(0).getDuration());
+//                        newMusic.setGenre(songList.get(0).getGenre());
+//                        newMusic.setTitle(songList.get(0).getTitle());
+//                        newMusic.setFile(songList.get(0).getFile());
+
+//                        songList.remove(0);
+//                        songList.add(newMusic);
+//                        pos = songList.size() - 1;
+                        //musicBinder.setMediaPlayer(pos);
                         break;
                     case "shuffleMusic":
 
@@ -349,10 +388,51 @@ public class MusicService extends Service {
         intentFilter.addAction("playMusic");
         intentFilter.addAction("nextMusic");
         intentFilter.addAction("shuffleMusic");
-        registerReceiver(musicReceiver,intentFilter, Context.RECEIVER_EXPORTED);
+        registerReceiver(musicReceiver, intentFilter, Context.RECEIVER_EXPORTED);
+
         return super.onStartCommand(intent, flags, startId);
     }
-    private void updateNotification(){
+    public static List<SongModel> loadSongQueue(int index) {
+        List<SongModel> songTmp = new ArrayList<>(songList);
+
+        if(songList != null) songList.clear();
+
+        for (int i = index + 1; i < songTmp.size(); i++){
+            songList.add(songTmp.get(i));
+        }
+
+        for (int j = 0; j <= index; j++){
+            songList.add(songTmp.get(j));
+        }
+        pos = songList.size() - 1;
+
+        return songList;
+//        if (index == 0) {
+//            Log.i("INDEX", "EQUAL " + songTmp);
+//            if(songList != null) songList.clear();
+//            for(int k = 1; k < songTmp.size(); k++){
+//                songList.add(songTmp.get(k));
+//            }
+//            Log.i("LAST ELEMENT", songTmp.get(0).toString());
+//            songList.add(songTmp.get(0));
+//            pos = songList.size() - 1;
+//            return songList;
+//        }else{
+//            if(songList != null) songList.clear();
+//
+//            for (int i = index + 1; i < songTmp.size(); i++){
+//                songList.add(songTmp.get(i));
+//            }
+//
+//            for (int j = 0; j <= index; j++){
+//                songList.add(songTmp.get(j));
+//            }
+//            pos = songList.size() - 1;
+//
+//            return songList;
+//        }
+    }
+    public void updateNotification(){
         if (notificationManager == null) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             return;

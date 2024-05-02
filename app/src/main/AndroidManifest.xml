@@ -73,6 +73,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:name=".Activity.DetailPlaylistFragment"
+            android:label="DetailPlaylistFragment">
+
+        </activity>
+        <activity
             android:name=".Activity.PlaylistSpotifyActivity"
             android:label="PlaylistSpotifyActivity">
         </activity>
