@@ -21,7 +21,7 @@
         android:fontFamily="@font/main_font"
         android:text="Email hoặc tên người dùng"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
@@ -39,7 +39,7 @@
         android:fontFamily="@font/main_font"
         android:text="Mật khẩu"
         android:textColor="@color/white"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <com.google.android.material.textfield.TextInputLayout

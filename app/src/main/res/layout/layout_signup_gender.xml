@@ -32,9 +32,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/main_font"
-        android:text="Giới tính của bạn là gì"
+        android:text="Giới tính của bạn là gì?"
         android:textColor="@color/white"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
    <GridLayout

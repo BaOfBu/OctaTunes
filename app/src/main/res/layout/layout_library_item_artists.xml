@@ -30,6 +30,7 @@
             android:layout_marginBottom="10dp"
             android:text="Top 50 - Vietnam "
             android:layout_gravity="center"
+            android:fontFamily="@font/main_font"
             android:textSize="18dp"
             android:layout_marginLeft="10dp"
             android:textColor="#fff"
@@ -40,6 +41,7 @@
             android:text="Artist"
             android:layout_gravity="center"
             android:textSize="16dp"
+            android:fontFamily="@font/main_font"
             android:layout_marginLeft="10dp"
             android:textColor="#a0a0a0"
             android:layout_height="wrap_content"/>

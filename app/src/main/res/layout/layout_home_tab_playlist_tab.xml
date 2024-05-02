@@ -18,6 +18,7 @@
             android:id="@+id/music_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/main_font"
             android:text="O.Lew - Rồi ta sẽ ngắm pháo hoa cùng nhau"
             android:textColor="@color/white"></TextView>
 

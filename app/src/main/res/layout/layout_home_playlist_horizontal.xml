@@ -40,6 +40,7 @@
                     android:textColor="@color/white"
                     android:textSize="20sp"
                     android:textStyle="bold"
+                    android:fontFamily="@font/main_font"
                     android:layout_gravity="center_vertical"
                     tools:ignore="HardcodedText"
                     android:layout_marginBottom="5dp"/>
@@ -50,6 +51,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_gravity="center_vertical"
                     android:text="Playlist"
+                    android:fontFamily="@font/main_font"
                     android:textColor="@color/white"
                     android:textSize="16sp"
                     tools:ignore="HardcodedText" />
@@ -63,6 +65,7 @@
             android:maxLines="3"
             android:layout_marginTop="10dp"
             android:ellipsize="end"
+            android:fontFamily="@font/main_font"
             android:textColor="@color/white"
             android:text="Những ca khúc quốc tế trên đường thành hit. Ảnh bìa: Matt Champion, JENNIE">
         </TextView>

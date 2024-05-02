@@ -15,6 +15,7 @@
         android:paddingTop="16dp"
         android:padding="16dp"
         android:paddingLeft="16dp"
+        android:fontFamily="@font/main_font"
         android:textSize="24sp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         android:gravity="start"

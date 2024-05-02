@@ -36,13 +36,15 @@
                         android:layout_height="wrap_content"
                         android:textStyle="bold"
                         android:text="Device Songs"
+                        android:fontFamily="@font/main_font"
                         android:textColor="#FFFFFF"
-                        android:textSize="45sp" />
+                        android:textSize="28sp" />
                     <TextView
                         android:id="@+id/number_device_songs"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="2 songs"
+                        android:fontFamily="@font/main_font"
                         android:textColor="#a7a7a7"
                         android:textSize="14sp"/>
                 </LinearLayout>

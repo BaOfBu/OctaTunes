@@ -72,6 +72,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Tìm kiếm gần đây"
+                android:fontFamily="@font/main_font"
                 android:textSize="20sp"
                 android:textStyle="bold"
                 android:textColor="@color/white"

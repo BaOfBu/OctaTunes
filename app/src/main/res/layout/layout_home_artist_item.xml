@@ -24,6 +24,7 @@
             android:textSize="14sp"
             android:textStyle="bold"
             android:textAlignment="center"
+            android:fontFamily="@font/main_font"
             android:textColor="@color/white"
             android:text="RPT MCK"
             />
