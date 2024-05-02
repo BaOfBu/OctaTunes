@@ -264,6 +264,63 @@ public class TrackService {
         });
     }
 
+    public void findTrackByNameLimited(String trackName,Integer StartIndex,Integer threshold, final OnTracksLoadedListener listener) {
+        Query trackQuery = tracksRef.orderByChild("name");
+        String finalTrackName = StringUtil.removeAccents(trackName);
+        final Integer[] startIndex = {StartIndex};
+        trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Integer> trackIds = new ArrayList<>();
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                    if(trackIds.size() >= threshold){
+                        break;
+                    }
+                    String input = StringUtil.removeAccents(Objects.requireNonNull(snapshot.child("name").getValue(String.class)));
+
+                    Log.e("TrackService", "search keyword: " + input + " track name: " + finalTrackName);
+                    if (input.toLowerCase().contains(finalTrackName.toLowerCase())) {
+                        if(startIndex[0] > 0){
+                            startIndex[0]--;
+                            continue;
+                        }
+                        trackIds.add(snapshot.child("trackID").getValue(Integer.class));
+                    }
+                }
+
+                // Query tracks using the list of TrackIDs
+                final AtomicInteger count = new AtomicInteger(trackIds.size());
+                final List<TracksModel> tracks = new ArrayList<>();
+                for (Integer trackId : trackIds) {
+                    Query trackQuery = tracksRef.orderByChild("trackID").equalTo(trackId);
+                    trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+                                TracksModel track = snapshot.getValue(TracksModel.class);
+                                tracks.add(track);
+                            }
+                            if (count.decrementAndGet() == 0) {
+                                listener.onTracksLoaded(tracks);
+                            } else {
+                                listener.onTracksLoaded(null);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            listener.onTracksLoaded(null);
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+    }
+
     public void findTrackByID(final List<HistoryModel> trackIDs, final OnTracksLoadedListener listener) {
         Query trackQuery = tracksRef.orderByChild("trackID");
         trackQuery.addListenerForSingleValueEvent(new ValueEventListener() {

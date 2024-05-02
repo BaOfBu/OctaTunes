@@ -21,6 +21,7 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
 import com.example.octatunes.Model.SongModel;
@@ -58,6 +59,9 @@ public class MusicService extends Service {
     }
     public static List<SongModel> getSongList(){
         return songList;
+    }
+    public static void setSongList(List<SongModel> list){
+        songList = list;
     }
     private boolean singlePlay = false;
     private boolean randomPlay = false;
@@ -171,14 +175,17 @@ public class MusicService extends Service {
         }
         public void playMusic(){
             if(mediaPlayer != null) {
+                Log.i("MS - PLAYMUSIC", "MEDIA PLAYER != NULL");
                 if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
                     views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_play_white_70);
+                    mediaPlayer.pause();
                 } else {
-                    mediaPlayer.start();
                     views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                    mediaPlayer.start();
                 }
                 updateNotification();
+            }else{
+                Log.e("MS - PLAYMUSIC", "MEDIA PLAYER NULL");
             }
         }
         public void previousMusic(){
@@ -194,9 +201,18 @@ public class MusicService extends Service {
                         pos--;
                     }
                 }
+
+                List<SongModel> newList = loadSongQueue(pos);
+                songList = new ArrayList<>(newList);
+                setPos(newList.size() - 1);
                 setMediaPlayer(pos);
+
+                Log.i("MS - PREVIOUS MUSIC", songList.get(pos).toString());
                 updateNotification();
                 updateTrackView();
+                Intent intent = new Intent("update_now_playing");
+                sendBroadcast(intent);
+                Log.i("MS - SEND BROADCAST TO MAIN", "SUCCESS SENDING");
             }
         }
         public void nextMusic(){
@@ -204,7 +220,10 @@ public class MusicService extends Service {
                 if(randomPlay) {
                     Random random = new Random();
                     int i = random.nextInt(songList.size());
-                    setMediaPlayer(i);
+                    List<SongModel> newList = loadSongQueue(i);
+                    songList = new ArrayList<>(newList);
+                    setPos(newList.size() - 1);
+                    setMediaPlayer(pos);
                 } else if (singlePlay) {
                     ListenToMusicActivity.repeat.setImageResource(R.drawable.ic_repeat_clicked_one_green_24);
                     ListenToMusicActivity.chosenRepeatOneSong = false;
@@ -214,21 +233,22 @@ public class MusicService extends Service {
                         setSequencePlay();
                     }
                 } else {
-                    if (pos == songList.size() - 1) {
-                        pos = 0;
-                    } else {
-                        pos++;
-                    }
+                    pos = 0;
+                    List<SongModel> newList = loadSongQueue(pos);
+                    songList = new ArrayList<>(newList);
+                    setPos(newList.size() - 1);
                     setMediaPlayer(pos);
                 }
 
-                Log.i("NEXT MUSIC", songList.get(pos).toString());
+                Log.i("MS - NEXT MUSIC", songList.get(pos).toString());
                 updateNotification();
                 updateTrackView();
+                Intent intent = new Intent("update_now_playing");
+                sendBroadcast(intent);
+                Log.i("MS - SEND BROADCAST TO MAIN", "SUCCESS SENDING");
             }
         }
-
-        private void updateTrackView(){
+        public void updateTrackView(){
             ListenToMusicActivity.currentSong = songList.get(pos);
             ListenToMusicActivity.initMediaPlayer();
         }
@@ -248,11 +268,17 @@ public class MusicService extends Service {
             Log.e(TAG, "Song list is null");
         } else {
             Log.e(TAG, songList.toString());
-            if (!MainActivity.isServiceBound()) {
-                songService = new SongService();
-                musicBinder.setMediaPlayer(pos);
-                Log.i(TAG, "ONCREATE");
-            }
+            songService = new SongService();
+            musicBinder.setMediaPlayer(pos);
+
+            List<SongModel> newList = loadSongQueue(pos);
+            songList = new ArrayList<>(newList);
+            setPos(newList.size() - 1);
+
+            Log.i(TAG, "ONCREATE " + songList.toString());
+
+            MainActivity.songList = songList;
+            MainActivity.setPos(pos);
         }
     }
     @RequiresApi(api = Build.VERSION_CODES.TIRAMISU)
@@ -312,18 +338,15 @@ public class MusicService extends Service {
                 switch (Objects.requireNonNull(intent.getAction())){
                     case "previousMusic":
                         views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        songList = MainActivity.songList;
                         musicBinder.previousMusic();
                         break;
                     case "playMusic":
-                        if(mediaPlayer.isPlaying()){
-                            views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_play_white_70);
-                        }else {
-                            views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
-                        }
                         musicBinder.playMusic();
                         break;
                     case "nextMusic":
                         views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
+                        songList = MainActivity.songList;
                         musicBinder.nextMusic();
                         break;
                     case "shuffleMusic":
@@ -349,10 +372,30 @@ public class MusicService extends Service {
         intentFilter.addAction("playMusic");
         intentFilter.addAction("nextMusic");
         intentFilter.addAction("shuffleMusic");
-        registerReceiver(musicReceiver,intentFilter, Context.RECEIVER_EXPORTED);
+        registerReceiver(musicReceiver, intentFilter, Context.RECEIVER_EXPORTED);
         return super.onStartCommand(intent, flags, startId);
     }
-    private void updateNotification(){
+
+    public static List<SongModel> loadSongQueue(int index) {
+        List<SongModel> songTmp = new ArrayList<>(songList);
+
+        List<SongModel> newList = new ArrayList<>();
+
+        if (songList.isEmpty() || index < 0 || index >= songList.size()) {
+            return newList;
+        }
+
+        for (int i = index + 1; i < songTmp.size(); i++){
+            newList.add(songTmp.get(i));
+        }
+
+        for (int j = 0; j <= index; j++){
+            newList.add(songTmp.get(j));
+        }
+
+        return newList;
+    }
+    public void updateNotification(){
         if (notificationManager == null) {
             notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             return;
@@ -385,6 +428,7 @@ public class MusicService extends Service {
             Log.e(TAG, "Notification is null");
         }
     }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
