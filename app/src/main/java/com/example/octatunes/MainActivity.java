@@ -27,6 +27,7 @@ import com.bumptech.glide.Glide;
 import com.example.octatunes.Activity.HomeActivity;
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.Activity.LibraryFragment;
+import com.example.octatunes.Activity.UserActivity;
 import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.Services.AlbumService;
@@ -127,7 +128,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 lastFrag = new LibraryFragment();
                 replaceFragment(lastFrag);
             }else if(itemID == R.id.Premium){
-
+                replaceFragment(new UserActivity());
             }
             return true;
         });
@@ -142,7 +143,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binding.frameLayout.setVisibility(View.GONE);
     }
 
-    public void Search(List<TracksModel> tracksModels, int trackID, int playlistID, int albumID, String from, String belong, String mode){
+    public void Search(List<TracksModel> tracksModels, int trackID, int playlistID, int albumID, List<SongModel> songModels, int songID, String from, String belong, String mode){
         setFrom(from);
         setBelong(belong);
 
@@ -153,45 +154,72 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }else if(from.equals("PLAYING FROM PLAYLIST")){
             if(belong.equals("Liked Songs")){
                 loadDataFromPlaylist(playlistID, trackID);
-            }else{
+            } else if(belong.equals("Device Songs")){
+                setDataFromDevice(songModels, songID);
+            } else{
                 loadData(tracksModels, trackID);
             }
         }
     }
+    private void setDataFromDevice(List<SongModel> songModels, int songID){
+        final boolean flag = !songList.isEmpty();
+        if(!songList.isEmpty()) songList.clear();
 
+        for (int i = 0; i < songModels.size(); i++){
+            SongModel song = songModels.get(i);
+            if(song != null){
+                songList.add(song);
+                if(song.getSongID() == songID) pos = i;
+            }
+        }
+        myThread = new Thread(new MainActivity.MyThread());
+        myThread.start();
+
+        MusicService.setPos(pos);
+
+        intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+
+        bindService(intent, connection, BIND_AUTO_CREATE);
+        if(flag){
+            MusicService.setPos(pos - 1);
+            binder.nextMusic();
+        }
+        initNowPlayingBar();
+    }
     private void loadDataFromAlbum(int albumID, int trackID){
         final boolean flag = !songList.isEmpty();
         if(!songList.isEmpty()) songList.clear();
 
         trackService.getTracksByAlbumId(albumID).thenAccept(tracksModels -> {
             albumService.findAlbumById(albumID).thenAccept(albumsModel ->{
-               artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
-                   for(int i = 0; i < tracksModels.size(); i++){
-                       TracksModel track = tracksModels.get(i);
-                       if(track != null) {
-                           Log.i("TRACK SERVICE IN MAIN", track.toString());
-                           if(track.getTrackID() == trackID) pos = i;
-                           SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
-                           songList.add(songModel);
-                       }
-                   }
+                artistService.findArtistById(albumsModel.getArtistID()).thenAccept(artistsModel -> {
+                    for(int i = 0; i < tracksModels.size(); i++){
+                        TracksModel track = tracksModels.get(i);
+                        if(track != null) {
+                            Log.i("TRACK SERVICE IN MAIN", track.toString());
+                            if(track.getTrackID() == trackID) pos = i;
+                            SongModel songModel = new SongModel(track.getName(), artistsModel.getName(), albumsModel.getName(), artistsModel.getGenre(), albumsModel.getImage(), track.getFile(), track.getDuration());
+                            songList.add(songModel);
+                        }
+                    }
 
-                   myThread = new Thread(new MainActivity.MyThread());
-                   myThread.start();
+                    myThread = new Thread(new MainActivity.MyThread());
+                    myThread.start();
 
-                   MusicService.setPos(pos);
+                    MusicService.setPos(pos);
 
-                   intent = new Intent(MainActivity.this, MusicService.class);
-                   startService(intent);
+                    intent = new Intent(MainActivity.this, MusicService.class);
+                    startService(intent);
 
-                   bindService(intent, connection, BIND_AUTO_CREATE);
+                    bindService(intent, connection, BIND_AUTO_CREATE);
 
-                   pos = MusicService.getPos();
-                   if(flag){
-                       binder.setMediaPlayer(pos);
-                   }
-                   initNowPlayingBar();
-               }) ;
+                    pos = MusicService.getPos();
+                    if(flag){
+                        binder.setMediaPlayer(pos);
+                    }
+                    initNowPlayingBar();
+                }) ;
             });
         });
     }
@@ -317,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(tracksModels, trackID, -1, -1, from, belong, mode);
+        Search(tracksModels, trackID, -1, -1, null, -1, from, belong, mode);
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }
@@ -325,7 +353,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    public void onSignalReceived3() {
+    public void onSignalReceived4() {
         songList = MusicService.getSongList();
         setPos(MusicService.getPos());
 
@@ -352,7 +380,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(null, trackID, playlistID, albumID, from, belong, mode);
+        Search(null, trackID, playlistID, albumID, null, -1, from, belong, mode);
+        if(binding.frameLayout.getVisibility() == View.GONE){
+            binding.frameLayout.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void onSignalReceived3(List<SongModel> songModels, int songID, String from, String belong, String mode){
+        Log.i("SIGNAL RECEIVED IN MAIN", "SUCCESS");
+        if (myThread != null) {
+            myThread.interrupt();
+            myThread = null;
+        }
+        if (isServiceBound) {
+            unbindService(connection);
+            isServiceBound = false;
+        }
+        Search(null, -1, -1, -1, songModels, songID, from, belong, mode);
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }

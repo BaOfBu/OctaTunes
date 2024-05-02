@@ -533,7 +533,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 shuffle_dot.setVisibility(View.INVISIBLE);
             }
         }else if(id == R.id.imageButtonDownload){
-            Toast.makeText(getActivity(), "Start download", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Bắt đầu tải " + currentSong.getTitle(), Toast.LENGTH_SHORT).show();
             Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
             requireActivity().startService(downloadService);
         }else if(id == R.id.imageButtonAlarm){

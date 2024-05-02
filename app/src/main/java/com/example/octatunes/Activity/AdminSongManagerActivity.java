@@ -165,7 +165,7 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         _btnRemoveSearch = findViewById(R.id.btn_remove);
         _btn_menu = findViewById(R.id.menu_admin);
         _textTotalSongs = findViewById(R.id.text_total_songs);
-        _btnEditSong = findViewById(R.id.btn_edit_song);
+        //_btnEditSong = findViewById(R.id.btn_edit_song);
         _btnDeleteSong = findViewById(R.id.btn_delete_song);
     }
 
@@ -263,17 +263,4 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         getTracks();
     }
 
-    private void removeTrack() {
-        int position = _recyclerViewSongList.getChildAdapterPosition(_btnDeleteSong);
-        String trackId = String.valueOf(songs.get(position).getTrackID());
-        service.removeTrack(trackId, new TrackService.OnTrackRemovedListener() {
-            @Override
-            public void onTrackRemoved() {
-                Toast.makeText(AdminSongManagerActivity.this, "Track đã được xóa.", Toast.LENGTH_SHORT).show();
-                songs.remove(position);
-                adapter.notifyItemRemoved(position);
-                _textTotalSongs.setText("Tổng số bài hát: " + adapter.getItemCount());
-            }
-        });
-    }
 }

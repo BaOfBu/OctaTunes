@@ -34,7 +34,7 @@ public class SongInQueueAdapter extends RecyclerView.Adapter<SongInQueueAdapter.
     }
     private void sendSignalToMainActivity() {
         if (listener != null) {
-            listener.onSignalReceived3();
+            listener.onSignalReceived4();
         }
     }
     @NonNull
