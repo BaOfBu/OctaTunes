@@ -98,7 +98,7 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
             textViewName = itemView.findViewById(R.id.textViewName);
             textViewArtist = itemView.findViewById(R.id.textViewArtist);
             btnDetele = itemView.findViewById(R.id.btn_delete_song);
-            btnEdit = itemView.findViewById(R.id.btn_edit_song);
+            //btnEdit = itemView.findViewById(R.id.btn_edit_song);
 
             btnDetele.setOnClickListener(new View.OnClickListener() {
                 @Override
