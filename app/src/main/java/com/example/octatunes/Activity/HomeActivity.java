@@ -1,6 +1,7 @@
 package com.example.octatunes.Activity;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -28,14 +29,26 @@ import com.example.octatunes.R;
 import com.example.octatunes.Services.ArtistService;
 import com.example.octatunes.Services.PlaylistService;
 import com.example.octatunes.Services.SongService;
+import com.example.octatunes.Services.SpotifyPlaylistFetcher;
 import com.example.octatunes.Services.TrackService;
 import com.example.octatunes.Services.UserService;
 import com.example.octatunes.Services.UserSongService;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class HomeActivity extends Fragment {
     ToggleButton toggleAll, toggleMusic;
@@ -108,9 +121,7 @@ public class HomeActivity extends Fragment {
     private void getFeaturedPlaylists(List<String> sectionTitles) {
         playlistService.getRandomPlaylists(6).thenAccept(playlists -> {
             List<PlaylistsModel> featuredPlaylists = new ArrayList<>();
-            for (PlaylistsModel playlist : playlists) {
-                featuredPlaylists.add(playlist);
-            }
+            featuredPlaylists.addAll(playlists);
             playlistsBySection.add(featuredPlaylists);
             setupPlaylistSectionAdapter(sectionTitles);
         }).exceptionally(throwable -> {
@@ -120,13 +131,10 @@ public class HomeActivity extends Fragment {
         });
     }
     private void getRecommendedPlaylists(List<String> sectionTitles) {
+        fetchSpotifyRecommendedPlaylists();
         List<PlaylistsModel> recommendedPlaylists = new ArrayList<>();
         UserSongService userSongService = new UserSongService();
-
         playlistService.getRandomPlaylists(5).thenAccept(playlists -> {
-            for (PlaylistsModel playlist : playlists) {
-                recommendedPlaylists.add(playlist);
-            }
             //userSongService.getAllSongIdsForUser(new UserSongService.SongIdListCallback() {
             //    @Override
             //    public void onSongIdsRetrieved(List<Integer> songIds) {
@@ -177,6 +185,7 @@ public class HomeActivity extends Fragment {
             //        }
             //    }
             //});
+            recommendedPlaylists.addAll(playlists);
             playlistsBySection.add(recommendedPlaylists);
             setupPlaylistSectionAdapter(sectionTitles);
         }).exceptionally(throwable -> {
@@ -185,6 +194,20 @@ public class HomeActivity extends Fragment {
             return null;
         });
     }
+
+    private void fetchSpotifyRecommendedPlaylists() {
+        // Create an instance of SpotifyPlaylistFetcher
+        SpotifyPlaylistFetcher playlistFetcher = new SpotifyPlaylistFetcher();
+        List<String> sectionTitles = new ArrayList<>();
+        sectionTitles.add("vpop");
+        // Call fetchSpotifyRecommendedPlaylists with the sectionTitles list
+        playlistFetcher.fetchSpotifyRecommendedPlaylists(sectionTitles);
+    }
+
+    private List<PlaylistsModel> parseLastFmResponse(String string) {
+        return null;
+    }
+
     private void getArtists(List<String> sectionTitles) {
         artistService.getRandomArtists(6,
                 new OnSuccessListener<List<ArtistsModel>>() {
