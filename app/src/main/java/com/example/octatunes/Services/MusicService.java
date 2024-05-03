@@ -49,6 +49,16 @@ public class MusicService extends Service {
     public  static MediaPlayer mediaPlayer;
     private MusicBinder musicBinder = new MusicBinder();
     private static List<SongModel> songList = new ArrayList<>();
+
+    public static List<SongModel> getSongQueue() {
+        return songQueue;
+    }
+
+    public static void setSongQueue(List<SongModel> songQueue) {
+        MusicService.songQueue = songQueue;
+    }
+    private static int posQueue;
+    private static List<SongModel> songQueue = new ArrayList<>();
     private static int pos;
     public static int getPos() {
         return pos;
