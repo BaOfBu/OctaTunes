@@ -3,6 +3,8 @@ package com.example.octatunes.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -46,7 +48,7 @@ public class AdminSongManagerActivity extends AppCompatActivity {
     private TextView _textTitleAdmin, _textTotalSongs;
     private EditText _editTextSearch;
     private Button _btnAddSong;
-    private ImageView _btnRemoveSearch, _btnEditSong, _btnDeleteSong, _btnSearch;
+    private ImageView _btnRemoveSearch;
     private RecyclerView _recyclerViewSongList;
     private ImageButton _btn_menu;
     private LayoutInflater _inflater;
@@ -80,15 +82,6 @@ public class AdminSongManagerActivity extends AppCompatActivity {
             }
         });
 
-        // Xử lý sự kiện khi người dùng nhấn vào nút tìm kiếm
-        _btnSearch.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String keyword = _editTextSearch.getText().toString();
-                searchSongs(keyword);
-            }
-        });
-
         // Xử lý sự kiện khi người dùng nhấn vào nút xóa nội dung tìm kiếm
         _btnRemoveSearch.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,6 +96,29 @@ public class AdminSongManagerActivity extends AppCompatActivity {
                 Intent intent = new Intent(AdminSongManagerActivity.this, AdminAddSongActivity.class);
                 intent.putExtra("TOTAL_TRACKS_CUR", String.valueOf(adapter.getTotal()));
                 startActivity(intent);
+            }
+        });
+
+        // Add listener to the search EditText
+        _editTextSearch.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                // Trigger search when text changes
+                String searchText = s.toString().trim();
+                if (!searchText.isEmpty()) {
+                    searchSongs(searchText);
+                } else {
+                    // If search text is empty, show all tracks
+                    getTracks();
+                }
             }
         });
     }
@@ -158,15 +174,12 @@ public class AdminSongManagerActivity extends AppCompatActivity {
 
     private void linktoLayout() {
         _textTitleAdmin = findViewById(R.id.text_title_admin);
+        _btn_menu = findViewById(R.id.menu_admin);
         _editTextSearch = findViewById(R.id.edit_text_search);
-        _btnSearch = findViewById(R.id.btn_search);
+        _btnRemoveSearch = findViewById(R.id.btn_remove);
         _recyclerViewSongList = findViewById(R.id.song_list);
         _btnAddSong = findViewById(R.id.btn_add_song);
-        _btnRemoveSearch = findViewById(R.id.btn_remove);
-        _btn_menu = findViewById(R.id.menu_admin);
         _textTotalSongs = findViewById(R.id.text_total_songs);
-        //_btnEditSong = findViewById(R.id.btn_edit_song);
-        _btnDeleteSong = findViewById(R.id.btn_delete_song);
     }
 
     private void getTracks() {
@@ -262,5 +275,4 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         _editTextSearch.setText("");
         getTracks();
     }
-
 }

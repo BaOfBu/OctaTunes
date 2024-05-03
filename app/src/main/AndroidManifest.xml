@@ -35,7 +35,11 @@
             android:exported="false"/>
         <activity
             android:name=".Activity.AdminSongManagerActivity"
-            android:exported="false"/>
+            android:exported="false">
+
+
+
+        </activity>
 
         <service
             android:name=".Services.MusicService"
