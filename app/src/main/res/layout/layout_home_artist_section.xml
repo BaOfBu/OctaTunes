@@ -14,6 +14,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
+        android:fontFamily="@font/main_font"
         android:gravity="start"
         android:textSize="24sp"
         android:textColor="@color/white"

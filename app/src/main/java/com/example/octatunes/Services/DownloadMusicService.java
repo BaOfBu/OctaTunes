@@ -43,12 +43,11 @@ public class DownloadMusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        song = ListenToMusicActivity.currentSong;
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, final int startId) {
-        downloadFile(song);
+        downloadFile();
         downloadReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -90,7 +89,8 @@ public class DownloadMusicService extends Service {
         notificationManager.notify(123, builder.build());
     }
 
-    private void downloadFile(SongModel songModel) {
+    private void downloadFile() {
+        SongModel songModel = ListenToMusicActivity.currentSong;
         String downloadUrl = songModel.getFile();
         String songTitle = songModel.getTitle();
         String filename = getFilenameFromUrl(downloadUrl);

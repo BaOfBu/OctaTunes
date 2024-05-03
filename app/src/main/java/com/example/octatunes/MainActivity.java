@@ -1,13 +1,9 @@
 package com.example.octatunes;
 
 import android.annotation.SuppressLint;
-import android.content.BroadcastReceiver;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.ServiceConnection;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -17,7 +13,6 @@ import android.view.View;
 import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -51,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         pos = p;
     }
     private MusicService.MusicBinder binder;
-    private static boolean isServiceBound = false;
+    public static boolean isServiceBound = false;
     private TrackService trackService;
     private AlbumService albumService;
     private ArtistService artistService;
@@ -60,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String belong;
     public static Fragment lastFrag;
     public static Fragment trackFrag = null;
-    private Thread myThread;
+    public Thread myThread;
     private Intent intent;
     public static List<SongModel> getSongList(){
         return songList;
@@ -332,7 +327,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
     private void loadDataFromPlaylist(int playlistID, int trackID){
         trackService.getTracksByPlaylistId(playlistID).thenAccept(tracksModels -> {
             loadData(tracksModels, trackID);
@@ -391,6 +385,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         binder.setMediaPlayer(pos);
 
         initNowPlayingBar();
+        binder.updateTrackView();
     }
 
     @Override
@@ -410,8 +405,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    public void onSignalReceived3(List<SongModel> songModels, int songID, String from, String belong, String mode){
-        Log.i("SIGNAL RECEIVED IN MAIN", "SUCCESS");
+    public void onSignalReceived3(List<SongModel> songModels, int posCurrent, String f, String b, String mode){
         if (myThread != null) {
             myThread.interrupt();
             myThread = null;
@@ -420,7 +414,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             unbindService(connection);
             isServiceBound = false;
         }
-        Search(null, -1, -1, -1, songModels, songID, from, belong, mode);
+
+        final boolean flag = !songList.isEmpty();
+        if(!songList.isEmpty()) songList.clear();
+
+        Log.i("ON SIGNAL RECEIVED 3", String.valueOf(posCurrent));
+        songList = songModels;
+        pos = posCurrent;
+        Log.i("ON SIGNAL RECEIVED 3", songModels.toString());
+
+        if(songList != null) Log.i("SONG LIST MAIN BEFORE", songList.toString());
+
+        myThread = new Thread(new MainActivity.MyThread());
+        myThread.start();
+
+        MusicService.setPos(pos);
+
+        isServiceBound = false;
+        intent = new Intent(MainActivity.this, MusicService.class);
+        startService(intent);
+        bindService(intent, connection, BIND_AUTO_CREATE);
+
+        Log.i(TAG, "ĐÃ VÔ HÀM LOAD DATA");
+        Log.i("POS SERVICE", String.valueOf(MusicService.getPos()));
+
+        pos = MusicService.getPos();
+
+        if(songList != null) Log.i("SONG LIST MAIN AFTER", songList.toString());
+
+        if(flag){
+            MusicService.setSongList(songList);
+            List<SongModel> newList = MusicService.loadSongQueue(pos);
+
+            MusicService.setSongList(newList);
+            MusicService.setPos(newList.size() - 1);
+
+            songList = newList;
+
+            setPos(newList.size() - 1);
+
+            binder.setMediaPlayer(pos);
+
+            Log.i("FLAG", songList.toString());
+        }
+
+        setFrom(from);
+        setBelong(belong);
+
         if(binding.frameLayout.getVisibility() == View.GONE){
             binding.frameLayout.setVisibility(View.VISIBLE);
         }
@@ -484,7 +524,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
     @Override
-    protected void onDestroy() {
+    public void onDestroy() {
         super.onDestroy();
         songList.clear();
         myThread.interrupt();

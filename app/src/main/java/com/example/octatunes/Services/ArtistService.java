@@ -516,9 +516,6 @@ public class ArtistService {
         }
     }
 
-
-
-
     private void checkAllDataRetrieved(OnSuccessListener<List<PlaylistsModel>> successListener, List<PlaylistsModel> playlistList) {
         successListener.onSuccess(playlistList);
     }

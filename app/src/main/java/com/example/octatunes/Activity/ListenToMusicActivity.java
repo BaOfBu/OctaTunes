@@ -525,12 +525,13 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 shuffle.setImageResource(R.drawable.ic_shuffle_clicked_green_24);
                 shuffle_dot.setVisibility(View.VISIBLE);
                 chosenShuffle = true;
-                if(!chosenSequence && !chosenRepeatOneSong){
+                if(!chosenRepeatOneSong){
                     binder.setRandomPlay();
                 }
             }else{
                 shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
                 shuffle_dot.setVisibility(View.INVISIBLE);
+                if (!binder.isSinglePlay()) binder.setSequencePlay();
             }
         }else if(id == R.id.imageButtonDownload){
             Toast.makeText(getActivity(), "Bắt đầu tải " + currentSong.getTitle(), Toast.LENGTH_SHORT).show();
@@ -570,7 +571,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     bottomSheetDialog.cancel();
-                    int delay = (currentSong.getDuration() + 3) * 1000 - 500 - MusicService.mediaPlayer.getCurrentPosition();
+                    int delay = (currentSong.getDuration() + 2) * 1000 + 1 - MusicService.mediaPlayer.getCurrentPosition();
                     handleScheduleAlarm(delay);
                     if(isOnAlarm){
                         title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
