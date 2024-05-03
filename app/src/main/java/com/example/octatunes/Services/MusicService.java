@@ -12,7 +12,6 @@ import android.content.IntentFilter;
 import android.content.pm.ServiceInfo;
 import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
-import android.media.MediaPlayer;
 import android.os.Binder;
 import android.os.Build;
 import android.os.IBinder;
@@ -28,6 +27,10 @@ import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.R;
+import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.Player;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,7 +40,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -46,7 +48,7 @@ import java.util.Random;
 
 public class MusicService extends Service {
     private static final String TAG = "MusicService";
-    public  static MediaPlayer mediaPlayer;
+    public static SimpleExoPlayer player;
     private MusicBinder musicBinder = new MusicBinder();
     private static List<SongModel> songList = new ArrayList<>();
     private static int pos;
@@ -101,95 +103,99 @@ public class MusicService extends Service {
         }
         public void setMediaPlayer(int position){
             if (songList != null && !songList.isEmpty() && position >= 0 && position < songList.size()) {
-                try {
-                    pos = position;
+                pos = position;
 
-                    SongModel songCurrent = songList.get(pos);
-                    songService.addSong(songCurrent);
+                SongModel songCurrent = songList.get(pos);
+                songService.addSong(songCurrent);
 
-                    FirebaseAuth auth = FirebaseAuth.getInstance();
-                    FirebaseUser user = auth.getCurrentUser();
+                FirebaseAuth auth = FirebaseAuth.getInstance();
+                FirebaseUser user = auth.getCurrentUser();
 
-                    if (user != null) {
-                        String uid = user.getUid();
-                        DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
-                        usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (dataSnapshot.exists()) {
-                                    UsersModel userModel = dataSnapshot.getValue(UsersModel.class);
-                                    if (userModel != null) {
-                                        int userId = userModel.getUserID();
-                                        UserSongModel userSongModel = new UserSongModel(userId, songCurrent.getSongID(), new Date());
-                                        UserSongService userSongService = new UserSongService();
-                                        userSongService.addUserSong(userSongModel);
-                                    }
+                if (user != null) {
+                    String uid = user.getUid();
+                    DatabaseReference usersRef = FirebaseDatabase.getInstance().getReference().child("users");
+                    usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (dataSnapshot.exists()) {
+                                UsersModel userModel = dataSnapshot.getValue(UsersModel.class);
+                                if (userModel != null) {
+                                    int userId = userModel.getUserID();
+                                    UserSongModel userSongModel = new UserSongModel(userId, songCurrent.getSongID(), new Date());
+                                    UserSongService userSongService = new UserSongService();
+                                    userSongService.addUserSong(userSongModel);
                                 }
                             }
+                        }
 
-                            @Override
-                            public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
-
-                            }
-                        });
-                    }
-
-                    mediaPlayer.reset();
-                    mediaPlayer.setDataSource(songList.get(pos).getFile());
-                    mediaPlayer.prepareAsync();
-                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                         @Override
-                        public void onPrepared(MediaPlayer mp) {
-                            mediaPlayer.start();
+                        public void onCancelled(@androidx.annotation.NonNull DatabaseError error) {
+
                         }
                     });
-                    mediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            if(sequencePlay) {
+                }
+
+                player.setMediaItem(MediaItem.fromUri(songList.get(pos).getFile()));
+                player.prepare();
+                player.setPlayWhenReady(true);
+
+                player.addListener(new Player.Listener() {
+                    @Override
+                    public void onPlaybackStateChanged(int playbackState) {
+                        if (playbackState == Player.STATE_ENDED) {
+                            if (sequencePlay) {
                                 nextMusic();
-                            }else if(singlePlay){
+                            } else if (singlePlay) {
                                 setMediaPlayer(pos);
-                            }else if(randomPlay){
+                            } else if (randomPlay) {
                                 Random random = new Random();
                                 int i = random.nextInt(songList.size());
                                 setMediaPlayer(i);
-                            }else {
+                            } else {
                                 nextMusic();
                             }
                             updateTrackView();
                         }
-                    });
-                } catch (IOException e) {
-                    Log.i(TAG, Objects.requireNonNull(e.getMessage()));
-                }
+                    }
+                });
             }
         }
-        public void pauseMusic(){
-            if(mediaPlayer != null) {
-                if (mediaPlayer.isPlaying()) {
-                    mediaPlayer.pause();
+        private Runnable updateLyricProgress = new Runnable() {
+            @Override
+            public void run() {
+                if (MusicService.player != null && MusicService.player.isPlaying()) {
+                    int currentPosition = (int) MusicService.player.getCurrentPosition();
+                    if (ListenToMusicActivity.mLyricView != null) {
+                        ListenToMusicActivity.mLyricView.setCurrentTimeMillis(currentPosition);
+                    }
+                    ListenToMusicActivity.handlerLyric.postDelayed(this, 500); // Cập nhật mỗi 500ms
                 }
+            }
+        };
+        public void pauseMusic(){
+            if(player != null) {
+                player.pause();
+                ListenToMusicActivity.handlerLyric.removeCallbacks(updateLyricProgress);
                 updateNotification();
             }
         }
         public void playMusic(){
-            if(mediaPlayer != null) {
-                Log.i("MS - PLAYMUSIC", "MEDIA PLAYER != NULL");
-                if (mediaPlayer.isPlaying()) {
+            if(player != null) {
+                if (player.isPlaying()) {
                     views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_play_white_70);
-                    mediaPlayer.pause();
+                    player.pause();
                 } else {
                     views.setImageViewResource(R.id.imageButtonPlayPause, R.drawable.ic_circle_pause_white_70);
-                    mediaPlayer.start();
+                    player.play();
+                    ListenToMusicActivity.handlerLyric.postDelayed(updateLyricProgress, 500);
                 }
                 updateNotification();
-            }else{
-                Log.e("MS - PLAYMUSIC", "MEDIA PLAYER NULL");
+            } else {
+                Log.e("MS - PLAYMUSIC", "ExoPlayer NULL");
             }
         }
         public void previousMusic(){
-            if(mediaPlayer!=null) {
+            if(player != null) {
                 if(randomPlay) {
                     if(pos != 0){
                         pos--;
@@ -216,7 +222,7 @@ public class MusicService extends Service {
             }
         }
         public void nextMusic(){
-            if(mediaPlayer!=null) {
+            if(player != null) {
                 if(randomPlay) {
                     Random random = new Random();
                     int i = random.nextInt(songList.size());
@@ -254,8 +260,8 @@ public class MusicService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mediaPlayer = new MediaPlayer();
 
+        player = new SimpleExoPlayer.Builder(this).build();
         songList = MainActivity.getSongList();
 
         if (songList == null) {
@@ -426,9 +432,9 @@ public class MusicService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.stop();
-            mediaPlayer.release();
+        if (player != null) {
+            player.stop();
+            player.release();
         }
         stopForeground(true);
         if(notificationManager!=null){

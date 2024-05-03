@@ -93,18 +93,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    MusicService.mediaPlayer.seekTo(progress);
+                    MusicService.player.seekTo(progress);
                 }
             }
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                MusicService.mediaPlayer.pause();
+                MusicService.player.pause();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                MusicService.mediaPlayer.start();
+                MusicService.player.setPlayWhenReady(true);
             }
         });
 
@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 lastFrag = new LibraryFragment();
                 replaceFragment(lastFrag);
             }else if(itemID == R.id.Premium){
-                replaceFragment(new UserActivity());
+                lastFrag = new UserActivity();
+                replaceFragment(lastFrag);
             }
             return true;
         });
@@ -344,7 +345,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             binding.bottomNavigation.setVisibility(View.GONE);
         }else if(id == R.id.track_play_pause){
             binder.playMusic();
-            if(MusicService.mediaPlayer.isPlaying()){
+            if(MusicService.player.isPlaying()){
                 binding.trackPlayPause.setImageResource(R.drawable.ic_pause_white_24);
             }else{
                 binding.trackPlayPause.setImageResource(R.drawable.ic_play_white_24);
@@ -470,7 +471,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()){
-                if(MusicService.mediaPlayer!= null ) {
+                if(MusicService.player!= null ) {
                     Message message = new Message();
                     message.what = UPDATE;
                     message.arg1 = MusicService.getPos();
@@ -493,12 +494,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 case UPDATE:
                     initNowPlayingBar();
 
-                    if(MusicService.mediaPlayer.isPlaying()){
+                    if(MusicService.player.isPlaying()){
                         binding.trackPlayPause.setImageResource(R.drawable.ic_pause_white_24);
                     }else{
                         binding.trackPlayPause.setImageResource(R.drawable.ic_play_white_24);
                     }
-                    binding.seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
+                    binding.seekBar.setProgress((int) MusicService.player.getCurrentPosition());
                     break;
                 default:
             }

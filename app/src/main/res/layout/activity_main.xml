@@ -63,6 +63,8 @@
                             android:textColor="@android:color/white"
                             android:fontFamily="@font/main_font"
                             android:textStyle="bold"
+                            android:maxLines="1"
+                            android:ellipsize="end"
                             android:layout_marginStart="8dp" />
 
                         <TextView
