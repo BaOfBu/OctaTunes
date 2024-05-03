@@ -123,7 +123,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 lastFrag = new LibraryFragment();
                 replaceFragment(lastFrag);
             }else if(itemID == R.id.Premium){
-                replaceFragment(new UserActivity());
+                lastFrag = new UserActivity();
+                replaceFragment(lastFrag);
             }
             return true;
         });
