@@ -131,7 +131,6 @@ public class HomeActivity extends Fragment {
         });
     }
     private void getRecommendedPlaylists(List<String> sectionTitles) {
-        fetchSpotifyRecommendedPlaylists();
         List<PlaylistsModel> recommendedPlaylists = new ArrayList<>();
         UserSongService userSongService = new UserSongService();
         playlistService.getRandomPlaylists(5).thenAccept(playlists -> {
@@ -194,16 +193,6 @@ public class HomeActivity extends Fragment {
             return null;
         });
     }
-
-    private void fetchSpotifyRecommendedPlaylists() {
-        // Create an instance of SpotifyPlaylistFetcher
-        SpotifyPlaylistFetcher playlistFetcher = new SpotifyPlaylistFetcher();
-        List<String> sectionTitles = new ArrayList<>();
-        sectionTitles.add("vpop");
-        // Call fetchSpotifyRecommendedPlaylists with the sectionTitles list
-        playlistFetcher.fetchSpotifyRecommendedPlaylists(sectionTitles);
-    }
-
     private List<PlaylistsModel> parseLastFmResponse(String string) {
         return null;
     }
