@@ -1,7 +1,5 @@
 package com.example.octatunes.Adapter;
 
-import android.app.AlertDialog;
-import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,14 +8,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.example.octatunes.Model.AlbumsModel;
-import com.example.octatunes.Model.ArtistsModel;
 import com.example.octatunes.Model.SongManagerModel;
-import com.example.octatunes.Model.TracksModel;
 import com.example.octatunes.R;
 import com.example.octatunes.Services.TrackService;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -30,7 +24,6 @@ import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +52,7 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
     @NonNull
     @Override
     public SongViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_song_preview, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_song_preview_admin, parent, false);
         return new SongViewHolder(view, this, totalSongs);
     }
 
@@ -82,9 +75,9 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
     public static class SongViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView imageViewSong;
-        private TextView textViewName;
-        private TextView textViewArtist;
-        private ImageView btnDetele, btnEdit;
+        private TextView textViewSongName;
+        private TextView textViewSongArtistName;
+        private ImageView btnDetele;
         private SongManagerModel song;
         private SongManagerAdapter adapter;
         private List<SongManagerModel> totalSongs;
@@ -95,10 +88,9 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
             this.totalSongs = totalSongs;
 
             imageViewSong = itemView.findViewById(R.id.imageViewSong);
-            textViewName = itemView.findViewById(R.id.textViewName);
-            textViewArtist = itemView.findViewById(R.id.textViewArtist);
+            textViewSongName = itemView.findViewById(R.id.textViewSongName);
+            textViewSongArtistName = itemView.findViewById(R.id.textViewSongArtistName);
             btnDetele = itemView.findViewById(R.id.btn_delete_song);
-            //btnEdit = itemView.findViewById(R.id.btn_edit_song);
 
             btnDetele.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -237,7 +229,6 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
                                 @Override
                                 public void onSuccess(Void aVoid) {
                                     Toast.makeText(itemView.getContext(), "Xóa track thành công", Toast.LENGTH_SHORT).show();
-
                                 }
                             }).addOnFailureListener(new OnFailureListener() {
                                 @Override
@@ -253,8 +244,8 @@ public class SongManagerAdapter extends RecyclerView.Adapter<SongManagerAdapter.
 
         public void bind(final SongManagerModel songManagerModel) {
             Glide.with(itemView.getContext()).load(songManagerModel.getImage()).into(imageViewSong);
-            textViewName.setText(songManagerModel.getTrackName());
-            textViewArtist.setText(songManagerModel.getArtistName());
+            textViewSongName.setText(songManagerModel.getTrackName());
+            textViewSongArtistName.setText(songManagerModel.getArtistName());
         }
     }
 
