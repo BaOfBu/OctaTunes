@@ -12,10 +12,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -50,8 +47,6 @@ import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -93,11 +88,11 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private ImageButton show_options;
     private ImageButton track_minimize;
     private ImageButton imageButtonDownload;
-    LyricView mLyricView;
+    public static LyricView mLyricView;
     @SuppressLint("StaticFieldLeak")
     private static View rootView;
     private FragmentListener listener;
-    private Handler handlerLyric;
+    public static Handler handlerLyric;
     private Handler checkDownload;
     @SuppressLint("StaticFieldLeak")
     public static ImageButton repeat;
@@ -219,7 +214,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             mLyricView.setOnPlayerClickListener(new LyricView.OnPlayerClickListener() {
                 @Override
                 public void onPlayerClicked(long progress, String content) {
-                    MusicService.mediaPlayer.seekTo((int) progress);
+                    MusicService.player.seekTo((int) progress);
                 }
             });
         });
@@ -238,7 +233,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if(fromUser){
-                    MusicService.mediaPlayer.seekTo(progress);
+                    MusicService.player.seekTo(progress);
                     if(mLyricView != null){
                         mLyricView.setCurrentTimeMillis(progress);
 //                        handlerLyric.postDelayed(updateProgress, 500);
@@ -248,12 +243,12 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-                MusicService.mediaPlayer.pause();
+                MusicService.player.pause();
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                MusicService.mediaPlayer.start();
+                MusicService.player.setPlayWhenReady(true);
             }
         });
 
@@ -263,7 +258,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         Intent intent = new Intent(getActivity(), MusicService.class);
         getActivity().bindService(intent, connection, BIND_AUTO_CREATE);
 
-        if(MusicService.mediaPlayer.isPlaying()){
+        if(MusicService.player.isPlaying()){
             play.setImageResource(R.drawable.ic_circle_pause_white_70);
         }else {
             play.setImageResource(R.drawable.ic_circle_play_white_70);
@@ -349,8 +344,8 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     private Runnable updateProgress = new Runnable() {
         @Override
         public void run() {
-            if (MusicService.mediaPlayer != null && MusicService.mediaPlayer.isPlaying()) {
-                int currentPosition = MusicService.mediaPlayer.getCurrentPosition();
+            if (MusicService.player != null && MusicService.player.isPlaying()) {
+                int currentPosition = (int) MusicService.player.getCurrentPosition();
                 Log.d("MLyricView", "mLyricView: " + mLyricView);
                 // Call method to update lyrics progress
                 mLyricView.setCurrentTimeMillis(currentPosition);
@@ -394,7 +389,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         @Override
         public void run() {
             while (!Thread.currentThread().isInterrupted()){
-                if(MusicService.mediaPlayer!= null ) {
+                if(MusicService.player!= null ) {
                     Message message = new Message();
                     message.what = UPDATE;
                     message.arg1 = MusicService.getPos();
@@ -419,15 +414,21 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                         pos=msg.arg1;
                         initMediaPlayer();
                     }
-                    if(MusicService.mediaPlayer.isPlaying()){
+                    if(MusicService.player.isPlaying()){
                         play.setImageResource(R.drawable.ic_circle_pause_white_70);
                     }else{
                         play.setImageResource(R.drawable.ic_circle_play_white_70);
                     }
                     //handlerLyric.postDelayed(updateProgress, 500);
-                    playTime.setText(MusicUtils.formatTime(MusicService.mediaPlayer.getCurrentPosition()));
-                    seekBar.setProgress(MusicService.mediaPlayer.getCurrentPosition());
-                    //mLyricView.setCurrentTimeMillis(MusicService.mediaPlayer.getCurrentPosition());
+                    int currentPos = (int) MusicService.player.getCurrentPosition();
+                    playTime.setText(MusicUtils.formatTime(currentPos));
+                    seekBar.setProgress(currentPos);
+
+                    long buffer = MusicService.player.getBufferedPosition();
+
+                    seekBar.setSecondaryProgress((int) buffer);
+
+//                    mLyricView.setCurrentTimeMillis(MusicService.player.getCurrentPosition());
                     break;
                 default:
             }
@@ -445,12 +446,24 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
 
         }
     };
+    private Runnable updateLyricProgress = new Runnable() {
+        @Override
+        public void run() {
+            if (MusicService.player != null && MusicService.player.isPlaying()) {
+                int currentPosition = (int) MusicService.player.getCurrentPosition();
+                if (mLyricView != null) {
+                    mLyricView.setCurrentTimeMillis(currentPosition);
+                }
+                handlerLyric.postDelayed(this, 500); // Cập nhật mỗi 500ms
+            }
+        }
+    };
     @Override
     public void onClick(View v) {
         int id = v.getId();
         if(id == R.id.imageButtonPlayPause){
             binder.playMusic();
-            if(MusicService.mediaPlayer.isPlaying()){
+            if(MusicService.player.isPlaying()){
                 play.setImageResource(R.drawable.ic_circle_pause_white_70);
             }else {
                 play.setImageResource(R.drawable.ic_circle_play_white_70);
@@ -580,7 +593,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     bottomSheetDialog.cancel();
-                    int delay = (currentSong.getDuration() + 2) * 1000 + 1 - MusicService.mediaPlayer.getCurrentPosition();
+                    int delay = (int) ((currentSong.getDuration() + 2) * 1000 + 1 - MusicService.player.getCurrentPosition());
                     handleScheduleAlarm(delay);
                     if(isOnAlarm){
                         title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
@@ -669,6 +682,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             Glide.with(rootView).load(currentSong.getImage()).into(imageView);
             songName.setText(currentSong.getTitle());
             singer.setText(currentSong.getArtist());
+
             int totalTime = currentSong.getDuration() * 1000; //miliseconds
 
             String time = MusicUtils.formatTime(totalTime);
