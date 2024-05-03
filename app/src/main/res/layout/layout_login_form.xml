@@ -21,7 +21,7 @@
         android:fontFamily="@font/main_font"
         android:text="Email hoặc tên người dùng"
         android:textColor="@color/white"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <EditText
@@ -31,14 +31,15 @@
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
         android:background="@drawable/login_edit_border"
-        android:paddingHorizontal="15dp"/>
+        android:paddingHorizontal="15dp"
+        android:singleLine="true"/>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:fontFamily="@font/main_font"
         android:text="Mật khẩu"
         android:textColor="@color/white"
-        android:textSize="32sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginTop="50dp"/>
     <com.google.android.material.textfield.TextInputLayout
@@ -54,7 +55,8 @@
         android:layout_marginTop="10dp"
         android:textSize="20sp"
         android:fontFamily="@font/main_font"
-        android:background="@drawable/login_edit_border" />
+        android:background="@drawable/login_edit_border"
+        android:singleLine="true"/>
     </com.google.android.material.textfield.TextInputLayout>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnLogin"
@@ -68,10 +70,10 @@
         android:textStyle="bold"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:paddingLeft="40dp"
-        android:paddingRight="40dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="30dp"
+        android:paddingRight="30dp"
         android:background="@drawable/login_white_button"/>
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnNoPass"

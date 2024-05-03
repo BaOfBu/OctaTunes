@@ -45,8 +45,8 @@ public class AdminSongManagerActivity extends AppCompatActivity {
     DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
     private TextView _textTitleAdmin, _textTotalSongs;
     private EditText _editTextSearch;
-    private Button _btnSearch, _btnAddSong;
-    private ImageView _btnRemoveSearch, _btnEditSong, _btnDeleteSong;
+    private Button _btnAddSong;
+    private ImageView _btnRemoveSearch, _btnEditSong, _btnDeleteSong, _btnSearch;
     private RecyclerView _recyclerViewSongList;
     private ImageButton _btn_menu;
     private LayoutInflater _inflater;
@@ -165,7 +165,7 @@ public class AdminSongManagerActivity extends AppCompatActivity {
         _btnRemoveSearch = findViewById(R.id.btn_remove);
         _btn_menu = findViewById(R.id.menu_admin);
         _textTotalSongs = findViewById(R.id.text_total_songs);
-        _btnEditSong = findViewById(R.id.btn_edit_song);
+        //_btnEditSong = findViewById(R.id.btn_edit_song);
         _btnDeleteSong = findViewById(R.id.btn_delete_song);
     }
 

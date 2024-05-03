@@ -32,6 +32,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Premium"
+            android:fontFamily="@font/main_font"
             android:textColor="@color/white"
             android:textSize="14dp" />
     </LinearLayout>
@@ -50,6 +51,7 @@
         android:textStyle="bold"
         android:layout_marginTop="20dp"
         android:textAlignment="center"
+        android:fontFamily="@font/main_font"
         android:text="Want to download Top 50 - Vietnam?"
     />
     <TextView
@@ -57,7 +59,7 @@
         android:textAlignment="center"
         android:textColor="#a7a7a7"
         android:textSize="14dp"
-
+        android:fontFamily="@font/main_font"
         android:layout_marginTop="10dp"
         android:text="Download music to listen without Wi-Fi and save your mobile data with Premium."
         android:layout_height="wrap_content"/>
@@ -68,6 +70,7 @@
         android:paddingLeft="25dp"
         android:paddingRight="25dp"
         android:textColor="@color/black"
+        android:fontFamily="@font/main_font"
         android:backgroundTint="#1ed760"
         android:gravity="center"
         android:layout_marginTop="10dp"
@@ -81,6 +84,7 @@
         android:layout_marginTop="10dp"
         android:textStyle="bold"
         android:textSize="19dp"
+        android:fontFamily="@font/main_font"
         android:text="Stay on Spotify Free"
         android:layout_height="wrap_content"/>
 </LinearLayout>

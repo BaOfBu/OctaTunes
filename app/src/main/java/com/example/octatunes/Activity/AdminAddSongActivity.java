@@ -101,7 +101,7 @@ public class AdminAddSongActivity extends AppCompatActivity {
                 // Tạo Adapter cho Spinner
                 ArrayAdapter<String> adapter = new ArrayAdapter<>(AdminAddSongActivity.this,
                         R.layout.layout_spinner_item, albumNames);
-
+                adapter.setDropDownViewResource(R.layout.layout_spinner_dropdown_item);
                 // Cài Adapter cho Spinner
                 _albumSpinner.setAdapter(adapter);
                 adapter.notifyDataSetChanged();

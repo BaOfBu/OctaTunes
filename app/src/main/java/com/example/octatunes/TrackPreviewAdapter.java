@@ -30,6 +30,7 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     private String belong;
     private String mode = "sequencePlay";
     private FragmentListener fragmentListener;
+    private Integer itemCountDisplay = 10;
 
     HistoryService historyService = new HistoryService();
 
@@ -111,7 +112,26 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     }
     @Override
     public int getItemCount() {
-        return trackPreviewModels.size();
+        if (trackPreviewModels != null) {
+            return Math.min(itemCountDisplay, trackPreviewModels.size());
+        }
+        return 0;
+    }
+
+    public void loadMore() {
+        if (trackPreviewModels != null) {
+            Log.i("TRACK ADAPTER", "LOAD MORE:" + itemCountDisplay);
+            itemCountDisplay = Math.min(itemCountDisplay + 10, trackPreviewModels.size());
+        }
+    }
+
+    public void addTracks(List<TracksModel> tracks) {
+        int curSize = trackPreviewModels.size();
+        if (trackPreviewModels == null) {
+            trackPreviewModels = new ArrayList<>();
+        }
+        trackPreviewModels.addAll(tracks);
+        notifyItemRangeInserted(curSize, trackPreviewModels.size());
     }
 
 }

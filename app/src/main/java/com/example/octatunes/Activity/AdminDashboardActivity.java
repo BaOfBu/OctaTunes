@@ -2,7 +2,9 @@ package com.example.octatunes.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -13,7 +15,11 @@ import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.octatunes.LoginActivity;
 import com.example.octatunes.R;
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.Objects;
 
 public class AdminDashboardActivity extends AppCompatActivity {
     ImageButton _btn_more;
@@ -80,6 +86,7 @@ public class AdminDashboardActivity extends AppCompatActivity {
         TextView dashboard = popupView.findViewById(R.id.dashboard);
         TextView userManager = popupView.findViewById(R.id.user_manager);
         TextView musicManager = popupView.findViewById(R.id.music_manager);
+        TextView logout = popupView.findViewById(R.id.logout);
 
         dashboard.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,5 +110,29 @@ public class AdminDashboardActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        logout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                logout();
+            }
+        });
+    }
+
+    private void logout() {
+        //logout firebase
+        FirebaseAuth.getInstance().signOut();
+
+        //clear auto login account
+        SharedPreferences preferences = getSharedPreferences("auto_login", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("logged_account", "");
+        editor.putString("logged_password", "");
+        editor.putInt("logged_time", 0);
+        editor.apply();
+
+        //move to login home
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
     }
 }

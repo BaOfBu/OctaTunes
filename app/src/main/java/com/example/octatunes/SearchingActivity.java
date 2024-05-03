@@ -19,6 +19,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.MutableLiveData;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.octatunes.Model.AlbumsModel;
@@ -62,7 +63,7 @@ public class SearchingActivity extends Fragment {
     private HistoryService historyService = new HistoryService();
     private UserService userService = new UserService();
     //public static Integer currentUserID;
-
+    LinearLayoutManager layoutManager;
 
     RecyclerView searchResultsRecyclerView;
     TextView text;
@@ -91,8 +92,11 @@ public class SearchingActivity extends Fragment {
         View rootView = inflater.inflate(R.layout.layout_search, container, false);
         searchBox = rootView.findViewById(R.id.search_bar_edit_text);
         text = rootView.findViewById(R.id.BrowseAllText);
-        searchResultsRecyclerView = rootView.findViewById(R.id.recyclerview_recent_search);
-
+        if (searchResultsRecyclerView == null) {
+            layoutManager = new LinearLayoutManager(getContext());
+            searchResultsRecyclerView = rootView.findViewById(R.id.recyclerview_recent_search);
+            searchResultsRecyclerView.setLayoutManager(layoutManager);
+        }
         searchBox.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
@@ -158,6 +162,40 @@ public class SearchingActivity extends Fragment {
                 text.setVisibility(View.GONE);
                 TrackPreviewAdapter trackPreviewAdapter = new TrackPreviewAdapter(tracks,getContext(),listener, FormatSpace(searchBox.getText().toString())+" From Search");
                 searchResultsRecyclerView.setAdapter(trackPreviewAdapter);
+                searchResultsRecyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//                    @Override
+//                    public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+//                        super.onScrollStateChanged(recyclerView, newState);
+//                        // Check if the user has stopped scrolling
+//                        if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                            int totalItemCount = layoutManager.getItemCount();
+//                            int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+//                            if (lastVisibleItem + 1 == totalItemCount) {
+//                                // Load more data
+//                                trackPreviewAdapter.loadMore();
+//                            }
+//                        }
+//                    }
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        super.onScrolled(recyclerView, dx, dy);
+                        int totalItemCount = layoutManager.getItemCount();
+                        int lastVisibleItem = layoutManager.findLastVisibleItemPosition();
+
+                        // Load more data when the user reaches near the end of the list
+                        int threshold = 5; // Load more when 5 items are left
+                        if (lastVisibleItem >= totalItemCount - 1 - threshold) {
+                            // Load more data
+                            recyclerView.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    // Load more data
+                                    trackPreviewAdapter.loadMore();
+                                }
+                            });
+                        }
+                    }
+                });
                 trackPreviewAdapter.notifyDataSetChanged();
             }
         });

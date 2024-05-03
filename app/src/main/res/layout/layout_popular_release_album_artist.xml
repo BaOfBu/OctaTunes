@@ -25,6 +25,7 @@
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end"
+            android:fontFamily="@font/main_font"
             android:textSize="16dp"
             android:text="Đìu Anh Luôn Giữ Kín Trong Tym"
             android:layout_height="wrap_content"/>
@@ -33,6 +34,7 @@
             android:layout_width="match_parent"
             android:textColor="#a7a7a7"
             android:textSize="14dp"
+            android:fontFamily="@font/main_font"
             android:text="2021 - Single"
             android:layout_height="wrap_content"/>
     </LinearLayout>

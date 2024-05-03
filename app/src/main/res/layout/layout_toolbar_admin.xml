@@ -24,8 +24,10 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Dashboard"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textSize="20sp"
+            android:fontFamily="@font/main_font"
+            android:textStyle="bold"
+            android:textColor="@color/white"/>
 
     </androidx.appcompat.widget.Toolbar>
 

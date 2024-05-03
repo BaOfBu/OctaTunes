@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -48,6 +50,8 @@ import com.example.octatunes.Services.MusicService;
 import com.example.octatunes.Utils.MusicUtils;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
+import com.squareup.picasso.Target;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -61,8 +65,9 @@ import java.util.Objects;
 import me.zhengken.lyricview.LyricView;
 
 public class ListenToMusicActivity extends Fragment implements View.OnClickListener {
-    String from;
-    String belong;
+    public static String from;
+    public static String belong;
+    public static String mode;
     public static SongModel currentSong;
     TextView track_from;
     TextView track_belong;
@@ -111,10 +116,10 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     Handler handlerAlarm = new Handler();
     private AlarmManager alarmManager;
     private PendingIntent pendingIntent;
-    public ListenToMusicActivity(String from, String belong, SongModel song){
-        this.from = from;
-        this.belong = belong;
-        currentSong = song;
+    public ListenToMusicActivity(String From, String Belong, SongModel Song){
+        from = From;
+        belong = Belong;
+        currentSong = Song;
     }
 
     @Nullable
@@ -385,16 +390,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
         return false;
     }
 
-
-
-//    private void sendSignalToMainActivity(int trackID, int playlistID, int albumID, String from, String belong, String mode) {
-//        if (listener != null) {
-//            listener.onSignalReceived(trackID, playlistID, albumID, from, belong, mode);
-//        }
-//    }
-
-
-
     private class MyThread implements Runnable{
         @Override
         public void run() {
@@ -530,17 +525,27 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 shuffle.setImageResource(R.drawable.ic_shuffle_clicked_green_24);
                 shuffle_dot.setVisibility(View.VISIBLE);
                 chosenShuffle = true;
-                if(!chosenSequence && !chosenRepeatOneSong){
+                if(!chosenRepeatOneSong){
                     binder.setRandomPlay();
                 }
             }else{
                 shuffle.setImageResource(R.drawable.ic_shuffle_white_24);
                 shuffle_dot.setVisibility(View.INVISIBLE);
+                if (!binder.isSinglePlay()) binder.setSequencePlay();
             }
         }else if(id == R.id.imageButtonDownload){
-            Toast.makeText(getActivity(), "Start download", Toast.LENGTH_SHORT).show();
+            String songTitle = currentSong.getTitle();
+            String songFile = currentSong.getFile();
+
+            Toast.makeText(getActivity(), "Bắt đầu tải " + songTitle, Toast.LENGTH_SHORT).show();
+
             Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
+
+            downloadService.putExtra("SONG_TITLE", songTitle);
+            downloadService.putExtra("SONG_FILE", songFile);
+
             requireActivity().startService(downloadService);
+
         }else if(id == R.id.imageButtonAlarm){
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
             bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
@@ -575,7 +580,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 @Override
                 public void onClick(View v) {
                     bottomSheetDialog.cancel();
-                    int delay = (currentSong.getDuration() + 3) * 1000 - 500 - MusicService.mediaPlayer.getCurrentPosition();
+                    int delay = (currentSong.getDuration() + 2) * 1000 + 1 - MusicService.mediaPlayer.getCurrentPosition();
                     handleScheduleAlarm(delay);
                     if(isOnAlarm){
                         title.setText("Hẹn giờ đi ngủ - Cuối bản nhạc");
@@ -604,7 +609,7 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 }
             }
         }else if(id == R.id.imageButtonPlaylist){
-            Fragment fragment = new DetailPlaylistFragment(from, belong, currentSong);
+            Fragment fragment = new DetailPlaylistFragment(from, belong,  "sequencePlay", currentSong);
             getFragmentManager().beginTransaction().replace(R.id.fragment_container, fragment).commit();
         }
     }
@@ -619,7 +624,6 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
             }
         });
     }
-
     private void handleScheduleAlarm(int time){
         scheduleAlarm();
         isOnAlarm = true;
@@ -661,17 +665,16 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
     }
 
     public static void initMediaPlayer(){
-        Glide.with(rootView).load(currentSong.getImage()).into(imageView);
-        songName.setText(currentSong.getTitle());
-        singer.setText(currentSong.getArtist());
-        int totalTime = currentSong.getDuration() * 1000; //miliseconds
+        if(rootView != null) {
+            Glide.with(rootView).load(currentSong.getImage()).into(imageView);
+            songName.setText(currentSong.getTitle());
+            singer.setText(currentSong.getArtist());
+            int totalTime = currentSong.getDuration() * 1000; //miliseconds
 
-        String time = MusicUtils.formatTime(totalTime);
-        duration.setText(time);
+            String time = MusicUtils.formatTime(totalTime);
+            duration.setText(time);
 
-        seekBar.setMax(totalTime);
+            seekBar.setMax(totalTime);
+        }
     }
-
-
-
 }
