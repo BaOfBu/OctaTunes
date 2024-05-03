@@ -534,9 +534,18 @@ public class ListenToMusicActivity extends Fragment implements View.OnClickListe
                 if (!binder.isSinglePlay()) binder.setSequencePlay();
             }
         }else if(id == R.id.imageButtonDownload){
-            Toast.makeText(getActivity(), "Bắt đầu tải " + currentSong.getTitle(), Toast.LENGTH_SHORT).show();
+            String songTitle = currentSong.getTitle();
+            String songFile = currentSong.getFile();
+
+            Toast.makeText(getActivity(), "Bắt đầu tải " + songTitle, Toast.LENGTH_SHORT).show();
+
             Intent downloadService = new Intent(getActivity(), DownloadMusicService.class);
+
+            downloadService.putExtra("SONG_TITLE", songTitle);
+            downloadService.putExtra("SONG_FILE", songFile);
+
             requireActivity().startService(downloadService);
+
         }else if(id == R.id.imageButtonAlarm){
             final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(getContext());
             bottomSheetDialog.setContentView(R.layout.bottom_sheet_schedule_alarm);
