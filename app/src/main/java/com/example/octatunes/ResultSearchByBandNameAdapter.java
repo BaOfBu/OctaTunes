@@ -80,6 +80,7 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
             holder.artistImage.setVisibility(View.VISIBLE);
             Picasso.get().load(artistProfileModel.get(0).getImage()).into(holder.artistImage);
             holder.artistName.setText(artistProfileModel.get(0).getName());
+
             holder.artistLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -103,6 +104,10 @@ public class ResultSearchByBandNameAdapter extends RecyclerView.Adapter<ResultSe
         else{
             holder.albumRecyclerView.setVisibility(View.VISIBLE);
             holder.cosuxuathien.setVisibility(View.VISIBLE);
+            if(artistProfileModel.size() == 0)
+                holder.cosuxuathien.setText("Các album liên quan");
+            else
+                holder.cosuxuathien.setText("Có sự xuất hiện của " + artistProfileModel.get(0).getName());
             AlbumPreviewAdapter albumPreviewAdapter = new AlbumPreviewAdapter(albumPreviewModels, context);
             holder.albumRecyclerView.setAdapter(albumPreviewAdapter);
             albumPreviewAdapter.notifyDataSetChanged();
