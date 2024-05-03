@@ -142,7 +142,8 @@
             android:gravity="center"
             android:fontFamily="@font/main_font"
             android:paddingHorizontal="20dp"
-            android:text="Thêm Bài Hát Mới" />
+            android:text="Thêm Bài Hát Mới"
+            android:textStyle="bold"/>
 
     </LinearLayout>
 </RelativeLayout>
