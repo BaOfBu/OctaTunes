@@ -2,6 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/background_color">
 
@@ -80,6 +81,31 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:textSize="20sp"
+        android:text="Ca sĩ thể hiện:"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        android:layout_marginHorizontal="20dp"
+        />
+
+    <EditText
+        android:id="@+id/artist_song"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:hint="Tên ca sĩ"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="20dp"
+        android:textSize="16sp"
+        android:fontFamily="@font/main_font"
+        android:background="@drawable/login_edit_border"
+        android:paddingHorizontal="15dp"
+        android:singleLine="true"
+        />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:textSize="20sp"
         android:text="Thời lượng bài hát:"
         android:textColor="@color/white"
         android:textStyle="bold"
@@ -99,6 +125,30 @@
         android:paddingHorizontal="15dp"
         android:singleLine="true"
         />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_gravity="center"
+        android:orientation="vertical">
+
+        <!-- PlayerControlView để hiển thị giao diện điều khiển -->
+        <androidx.media3.ui.PlayerControlView
+            android:id="@+id/exo_controller"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:show_timeout="0"
+            app:show_buffering="when_playing"
+            app:controller_layout_id="@layout/layout_custom_player"/>
+        <SeekBar
+            android:id="@+id/seekBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:layout_marginTop="8dp"/>
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -138,6 +188,7 @@
             android:textStyle="bold"
             android:backgroundTint="@color/track_artist"
             android:background="@drawable/button_border"/>
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
