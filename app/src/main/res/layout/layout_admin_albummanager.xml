@@ -107,7 +107,7 @@
                 android:layout_height="match_parent"
                 android:padding="8dp"
                 android:fontFamily="@font/main_font"
-                tools:listitem="@layout/layout_song_preview_admin" />
+                tools:listitem="@layout/layout_album_preview_admin" />
         </LinearLayout>
 
     </ScrollView>
@@ -142,7 +142,7 @@
             android:gravity="center"
             android:fontFamily="@font/main_font"
             android:paddingHorizontal="20dp"
-            android:text="Thêm Bài Hát Mới"
+            android:text="Thêm Album Mới"
             android:textStyle="bold"/>
 
     </LinearLayout>
