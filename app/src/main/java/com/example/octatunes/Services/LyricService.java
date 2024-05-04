@@ -39,6 +39,8 @@ public class LyricService {
                     future.complete(lyricModel);
                     return;
                 }
+                future.complete(null);
+                return;
             }
 
             @Override

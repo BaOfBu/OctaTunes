@@ -126,10 +126,10 @@ public class TrackPreviewAdapter extends RecyclerView.Adapter<TrackPreviewAdapte
     }
 
     public void addTracks(List<TracksModel> tracks) {
-        int curSize = trackPreviewModels.size();
         if (trackPreviewModels == null) {
             trackPreviewModels = new ArrayList<>();
         }
+        int curSize = trackPreviewModels.size();
         trackPreviewModels.addAll(tracks);
         notifyItemRangeInserted(curSize, trackPreviewModels.size());
     }
