@@ -61,7 +61,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public class AdminAddSongActivity extends AppCompatActivity {
+@UnstableApi public class AdminAddSongActivity extends AppCompatActivity {
 
     private DatabaseReference databaseReference;
     private StorageReference storageReference;

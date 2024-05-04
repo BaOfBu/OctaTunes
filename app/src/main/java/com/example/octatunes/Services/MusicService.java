@@ -20,6 +20,9 @@ import android.util.Log;
 import android.widget.RemoteViews;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
+import androidx.media3.common.MediaItem;
+import androidx.media3.common.Player;
+import androidx.media3.exoplayer.ExoPlayer;
 
 import com.example.octatunes.Activity.ListenToMusicActivity;
 import com.example.octatunes.MainActivity;
@@ -27,10 +30,6 @@ import com.example.octatunes.Model.SongModel;
 import com.example.octatunes.Model.UserSongModel;
 import com.example.octatunes.Model.UsersModel;
 import com.example.octatunes.R;
-import com.google.android.exoplayer2.MediaItem;
-import com.google.android.exoplayer2.Player;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,7 +47,7 @@ import java.util.Random;
 
 public class MusicService extends Service {
     private static final String TAG = "MusicService";
-    public static SimpleExoPlayer player;
+    public static ExoPlayer player;
     private MusicBinder musicBinder = new MusicBinder();
     private static List<SongModel> songList = new ArrayList<>();
     private static int pos;
@@ -135,11 +134,12 @@ public class MusicService extends Service {
                     });
                 }
 
-                player.setMediaItem(MediaItem.fromUri(songList.get(pos).getFile()));
+                MediaItem mediaItem = MediaItem.fromUri(songList.get(pos).getFile());
+                player.setMediaItem(mediaItem);
                 player.prepare();
                 player.setPlayWhenReady(true);
 
-                player.addListener(new Player.Listener() {
+                player.addListener(new androidx.media3.common.Player.Listener() {
                     @Override
                     public void onPlaybackStateChanged(int playbackState) {
                         if (playbackState == Player.STATE_ENDED) {
@@ -261,7 +261,7 @@ public class MusicService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        player = new SimpleExoPlayer.Builder(this).build();
+        player = new ExoPlayer.Builder(this).build();
         songList = MainActivity.getSongList();
 
         if (songList == null) {
