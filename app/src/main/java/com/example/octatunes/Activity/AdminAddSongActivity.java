@@ -8,6 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.OptIn;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 import androidx.media3.common.MediaItem;
 import androidx.media3.common.Player;
 import androidx.media3.common.util.UnstableApi;
@@ -17,6 +18,7 @@ import androidx.media3.ui.PlayerControlView;
 import android.app.Activity;
 import android.app.Instrumentation;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.database.Cursor;
 import android.media.MediaMetadataRetriever;
 import android.net.Uri;
@@ -68,7 +70,7 @@ public class AdminAddSongActivity extends AppCompatActivity {
     private EditText _edtTxtSongName, _edtTxtSongDuration;
     private TextView _txtPath;
     private Spinner _albumSpinner;
-    private Button _btnChooseFile, _btnSave;
+    private Button _btnChooseFile, _btnSave, _btnUnlink;
     private ImageView _btnBack, _btnNext, _btnPlay, _btnPrev;
     private Uri _audio, _audioPath;
     private List<String> albumNames;
@@ -87,6 +89,12 @@ public class AdminAddSongActivity extends AppCompatActivity {
             if (result.getResultCode() == RESULT_OK) {
                 if (result.getData() != null) {
                     _btnSave.setEnabled(true);
+                    _btnUnlink.setEnabled(true);
+                    _btnChooseFile.setEnabled(false);
+                    _btnSave.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.spotify_color)));
+                    _btnUnlink.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.track_artist)));
+                    _btnChooseFile.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.dark_gray)));
+
                     _audio = result.getData().getData();
 
                     // Lấy thời lượng của file audio
@@ -101,8 +109,7 @@ public class AdminAddSongActivity extends AppCompatActivity {
 
                     _txtPath.setText(_audio.getPath());
 
-                    // Trình phát nhạc
-                    initPlayer();
+                    initPlayer(_audio);
                 }
             }
         }
@@ -118,6 +125,13 @@ public class AdminAddSongActivity extends AppCompatActivity {
         _nextID = Integer.parseInt(intent.getStringExtra("TOTAL_TRACKS_CUR")) + 1;
         albumNames = new ArrayList<>();
         _player = new ExoPlayer.Builder(this).build();
+
+        _btnSave.setEnabled(false);
+        _btnUnlink.setEnabled(false);
+        _btnChooseFile.setEnabled(true);
+        _btnSave.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.dark_gray)));
+        _btnUnlink.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.dark_gray)));
+        _btnChooseFile.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.track_artist)));
 
         // Đặt sự kiện click cho các nút điều khiển
         _btnPlay.setOnClickListener(view -> {
@@ -272,6 +286,13 @@ public class AdminAddSongActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+        _btnUnlink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                unlinkAudio();
+            }
+        });
     }
 
     @Override
@@ -282,8 +303,13 @@ public class AdminAddSongActivity extends AppCompatActivity {
     }
 
     private void updateSeekBar() {
-        _seekBar.setMax((int) _player.getDuration());
-        _seekBar.setProgress((int) _player.getCurrentPosition());
+        if (_player != null && _player.isPlaying()) {
+            _seekBar.setMax((int) _player.getDuration());
+            _seekBar.setProgress((int) _player.getCurrentPosition());
+        } else {
+            _seekBar.setMax(0);
+            _seekBar.setProgress(0);
+        }
 
         if (!isUserSeeking) {
             handler.postDelayed(this::updateSeekBar, 1000);
@@ -291,9 +317,9 @@ public class AdminAddSongActivity extends AppCompatActivity {
     }
 
     @UnstableApi
-    private void initPlayer() {
+    private void initPlayer(Uri audio) {
         // Tạo MediaItem từ URI của file audio
-        MediaItem mediaItem = MediaItem.fromUri(_audio);
+        MediaItem mediaItem = MediaItem.fromUri(audio);
 
         // Set MediaItem cho ExoPlayer
         _player.setMediaItem(mediaItem);
@@ -303,9 +329,6 @@ public class AdminAddSongActivity extends AppCompatActivity {
 
         // Bắt đầu phát âm nhạc
         _player.prepare();
-
-        // Đặt trình nghe sự kiện để theo dõi sự thay đổi trong trạng thái phát nhạc
-
     }
 
     private void uploadAudio(Uri audio, String SongName, int songDuration) {
@@ -336,6 +359,29 @@ public class AdminAddSongActivity extends AppCompatActivity {
                 });
     }
 
+    @UnstableApi
+    private void unlinkAudio() {
+        _audioPath = null; // Xóa URI của file âm nhạc
+        _audio = null; // Xóa URI của file âm nhạc
+        _edtTxtSongName.setText(""); // Xóa tên bài hát
+        _edtTxtSongDuration.setText(""); // Xóa thời lượng bài hát
+        _txtPath.setText("Chưa có file nào được chọn"); // Cập nhật thông tin đường dẫn
+
+        // Đặt lại trạng thái của player và seek bar nếu cần
+        _player.release();
+        _seekBar.setProgress(0);
+
+        _btnPlay.setImageResource(R.drawable.ic_circle_play);
+
+        _btnSave.setEnabled(false);
+        _btnUnlink.setEnabled(false);
+        _btnChooseFile.setEnabled(true);
+        _btnSave.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.dark_gray)));
+        _btnUnlink.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.dark_gray)));
+        _btnChooseFile.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(AdminAddSongActivity.this, R.color.track_artist)));
+    }
+
+
     private void linktolayout() {
         _edtTxtSongName = findViewById(R.id.songNameEditText);
         _albumSpinner = findViewById(R.id.albumNameSpinner);
@@ -349,5 +395,6 @@ public class AdminAddSongActivity extends AppCompatActivity {
         _btnPlay = findViewById(R.id.btn_play);
         _btnPrev = findViewById(R.id.btn_prev);
         _seekBar = findViewById(R.id.seekBar);
+        _btnUnlink = findViewById(R.id.btn_unlink_file);
     }
 }

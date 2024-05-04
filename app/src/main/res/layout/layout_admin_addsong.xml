@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="@color/background_color">
+    android:background="@color/background_color"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
@@ -24,113 +24,107 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:text="Thêm bài hát mới"
+            android:textColor="@color/white"
             android:textSize="20sp"
-            android:textStyle="bold"
-            android:textColor="@color/white"/>
+            android:textStyle="bold" />
 
     </androidx.appcompat.widget.Toolbar>
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"
         android:text="Tên bài hát:"
         android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/songNameEditText"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Nhập ca khúc"
-        android:layout_marginTop="5dp"
         android:layout_marginHorizontal="20dp"
-        android:textSize="16sp"
-        android:fontFamily="@font/main_font"
+        android:layout_marginTop="5dp"
         android:background="@drawable/login_edit_border"
+        android:fontFamily="@font/main_font"
+        android:hint="Nhập ca khúc"
         android:paddingHorizontal="15dp"
-        android:singleLine="true"/>
+        android:singleLine="true"
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"
         android:text="Album:"
         android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <Spinner
         android:id="@+id/albumNameSpinner"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:fontFamily="@font/main_font"
-        android:layout_marginTop="5dp"
         android:layout_marginHorizontal="20dp"
+        android:layout_marginTop="5dp"
+        android:background="@drawable/login_edit_border"
+        android:fontFamily="@font/main_font"
         android:paddingHorizontal="15dp"
-        android:paddingVertical="12dp"
-        android:background="@drawable/login_edit_border"/>
+        android:paddingVertical="12dp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"
         android:text="Ca sĩ thể hiện:"
         android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/artist_song"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Tên ca sĩ"
-        android:layout_marginTop="5dp"
         android:layout_marginHorizontal="20dp"
-        android:textSize="16sp"
-        android:fontFamily="@font/main_font"
+        android:layout_marginTop="5dp"
         android:background="@drawable/login_edit_border"
+        android:fontFamily="@font/main_font"
+        android:hint="Tên ca sĩ"
         android:paddingHorizontal="15dp"
         android:singleLine="true"
-        />
+        android:textSize="16sp" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
         android:layout_marginTop="20dp"
-        android:textSize="20sp"
         android:text="Thời lượng bài hát:"
         android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        />
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
     <EditText
         android:id="@+id/songDurationEditText"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:hint="Nhập thời gian"
-        android:layout_marginTop="5dp"
         android:layout_marginHorizontal="20dp"
-        android:textSize="16sp"
-        android:fontFamily="@font/main_font"
+        android:layout_marginTop="5dp"
         android:background="@drawable/login_edit_border"
+        android:fontFamily="@font/main_font"
+        android:hint="Nhập thời gian"
         android:paddingHorizontal="15dp"
         android:singleLine="true"
-        />
+        android:textSize="16sp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_gravity="center"
+        android:layout_marginTop="20dp"
         android:orientation="vertical">
 
         <!-- PlayerControlView để hiển thị giao diện điều khiển -->
@@ -138,69 +132,106 @@
             android:id="@+id/exo_controller"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:show_timeout="0"
+            app:controller_layout_id="@layout/layout_custom_player"
             app:show_buffering="when_playing"
-            app:controller_layout_id="@layout/layout_custom_player"/>
+            app:show_timeout="0" />
+
         <SeekBar
             android:id="@+id/seekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
             android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:layout_marginTop="8dp"/>
+            android:paddingRight="8dp" />
     </LinearLayout>
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:textSize="20sp"
-        android:text="Đường đẫn file:"
-        android:textColor="@color/white"
-        android:textStyle="bold"
-        android:layout_marginHorizontal="20dp"
-        />
-    <TextView
-        android:id="@+id/textPath"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:textSize="16sp"
-        android:textColor="@color/white"
-        android:fontFamily="@font/main_font"
-        android:text="Chưa có file nào được chọn"
-        android:layout_marginHorizontal="20dp"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_marginHorizontal="20dp"
+        android:gravity="center"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingRight="40dp"
+            android:orientation="vertical"
+            android:layout_weight="1"
+            android:layout_gravity="center_vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Đường đẫn file:"
+                android:textColor="@color/white"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/textPath"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:fontFamily="@font/main_font"
+                android:text="Chưa có file nào được chọn"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:gravity="end">
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/btn_unlink_file"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_border"
+                android:backgroundTint="@color/track_artist"
+                android:fontFamily="@font/main_font"
+                android:text="Unlink file"
+                android:textColor="@color/black"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginHorizontal="70dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal">
+
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_choose_file"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
             android:layout_marginTop="16dp"
-            android:text="Chọn File"
-            android:fontFamily="@font/main_font"
-            android:textColor="@color/black"
-            android:textStyle="bold"
+            android:layout_weight="1"
+            android:background="@drawable/button_border"
             android:backgroundTint="@color/track_artist"
-            android:background="@drawable/button_border"/>
+            android:fontFamily="@font/main_font"
+            android:text="Chọn File"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_save"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:layout_marginTop="16dp"
             android:layout_marginStart="5dp"
-            android:text="Lưu bài hát"
-            android:fontFamily="@font/main_font"
-            android:textColor="@color/white"
-            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/button_border"
             android:backgroundTint="@color/spotify_color"
-            android:background="@drawable/button_border"/>
+            android:fontFamily="@font/main_font"
+            android:text="Lưu bài hát"
+            android:textColor="@color/white"
+            android:textStyle="bold" />
     </LinearLayout>
 </LinearLayout>
